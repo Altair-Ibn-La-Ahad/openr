@@ -14,18 +14,6 @@ public class FileEntry extends AbstractEntry implements EntryOperations {
     }
 
     @Override
-    public void rename(String newName) {
-        File targetFile = new File(getFilesystemEntry().getParentFile(), newName);
-        try {
-            FileUtils.moveFile(getFilesystemEntry(), targetFile);
-            setFilesystemEntry(targetFile);
-            setEntryProperties(new EntryProperties(targetFile));
-        } catch (IOException exception) {
-            log.error("Renaming file exception", exception);
-        }
-    }
-
-    @Override
     public void copy() {
         clipboard = this;
         super.cut = false;
@@ -33,7 +21,7 @@ public class FileEntry extends AbstractEntry implements EntryOperations {
 
     @Override
     public void cut() {
-        clipboard = this;
+        copy();
         super.cut = true;
     }
 
@@ -54,19 +42,10 @@ public class FileEntry extends AbstractEntry implements EntryOperations {
 
     @Override
     public void move(AbstractEntry target) {
-        try {
-            if (target.getEntryProperties().isDirectory()) {
-                FileUtils.moveFileToDirectory(getFilesystemEntry(), target.getFilesystemEntry(), false);
-                File result = new File(target.getFilesystemEntry(), super.getEntryProperties().getName());
-                super.setEntryProperties(new EntryProperties(result));
-                super.setFilesystemEntry(result);
-            } else {
-                FileUtils.moveFile(getFilesystemEntry(), target.getFilesystemEntry());
-                super.setFilesystemEntry(target.getFilesystemEntry());
-                super.setEntryProperties(new EntryProperties(target.getFilesystemEntry()));
-            }
+        try{
+            FileUtils.moveFile(getFilesystemEntry(), target.getFilesystemEntry());
         } catch (IOException exception) {
-            log.error("Move file exception", exception);
+            log.error("Rename file exception", exception);
         }
     }
 

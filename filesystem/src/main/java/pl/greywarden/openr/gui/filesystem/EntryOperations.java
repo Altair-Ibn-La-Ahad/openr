@@ -1,4 +1,4 @@
-package pl.greywarden.openr.filesystem;
+package pl.greywarden.openr.gui.filesystem;
 
 public interface EntryOperations {
 

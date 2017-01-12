@@ -1,4 +1,4 @@
-package pl.greywarden.openr.filesystem;
+package pl.greywarden.openr.gui.filesystem;
 
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.io.FileUtils;
@@ -7,29 +7,30 @@ import java.io.File;
 import java.io.IOException;
 
 @Log4j
-public class DirectoryEntry extends AbstractEntry implements EntryOperations {
+public class FileEntry extends AbstractEntry implements EntryOperations {
 
-    public DirectoryEntry(String path) {
+    public FileEntry(String path) {
         super(path);
     }
 
     @Override
     public void copy() {
         clipboard = this;
+        super.cut = false;
     }
 
     @Override
     public void cut() {
         copy();
-        cut = true;
+        super.cut = true;
     }
 
     @Override
     public void paste(AbstractEntry target) {
-        File targetDirectory = target.getFilesystemEntry();
+        File targetFile = target.getFilesystemEntry();
         try {
-            FileUtils.deleteQuietly(targetDirectory);
-            FileUtils.copyFile(getFilesystemEntry(), targetDirectory);
+            FileUtils.deleteQuietly(targetFile);
+            FileUtils.copyFile(getFilesystemEntry(), targetFile);
             if (cut) {
                 FileUtils.deleteQuietly(getFilesystemEntry());
                 clipboard = null;
@@ -41,11 +42,10 @@ public class DirectoryEntry extends AbstractEntry implements EntryOperations {
 
     @Override
     public void move(AbstractEntry target) {
-        try {
-            FileUtils.deleteQuietly(target.getFilesystemEntry());
-            FileUtils.moveDirectory(getFilesystemEntry(), target.getFilesystemEntry());
+        try{
+            FileUtils.moveFile(getFilesystemEntry(), target.getFilesystemEntry());
         } catch (IOException exception) {
-            log.error("Move directory exception", exception);
+            log.error("Rename file exception", exception);
         }
     }
 
@@ -53,4 +53,5 @@ public class DirectoryEntry extends AbstractEntry implements EntryOperations {
     public void delete() {
         FileUtils.deleteQuietly(getFilesystemEntry());
     }
+
 }

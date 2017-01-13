@@ -57,9 +57,12 @@ public class EntryProperties {
             String result = PosixFilePermissions.toString(attributes.permissions());
             if (filesystemEntry.isDirectory()) {
                 result = "d" + result;
-            }
-            if (FileUtils.isSymlink(filesystemEntry)) {
-                result = "l" + result;
+            } else {
+                if (FileUtils.isSymlink(filesystemEntry)) {
+                    result = "l" + result;
+                } else {
+                    result = "-" + result;
+                }
             }
             return result;
         } catch (IOException exception) {
@@ -71,10 +74,10 @@ public class EntryProperties {
     public String getDosFilePermissions() {
         try {
             DosFileAttributes attributes = Files.readAttributes(filesystemEntry.toPath(), DosFileAttributes.class);
-            return (attributes.isArchive() ? "A" : "") +
-                    (attributes.isHidden() ? "H" : "") +
-                    (attributes.isReadOnly() ? "R" : "") +
-                    (attributes.isSystem() ? "S" : "");
+            return (attributes.isArchive() ? "A" : "-") +
+                    (attributes.isHidden() ? "H" : "-") +
+                    (attributes.isReadOnly() ? "R" : "-") +
+                    (attributes.isSystem() ? "S" : "-");
         } catch (IOException exception) {
             log.error("Get file permissions exception", exception);
             return null;

@@ -1,4 +1,4 @@
-package pl.greywarden.openr.filesystem;
+package pl.greywarden.openr.gui.filesystem;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;

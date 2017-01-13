@@ -1,4 +1,4 @@
-package pl.greywarden.openr.gui.filesystem;
+package pl.greywarden.openr.filesystem;
 
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -3,6 +3,7 @@ package pl.greywarden.openr.filesystem;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -99,6 +100,10 @@ public class EntryProperties {
             log.error("Get MIME type exception", exception);
             return null;
         }
+    }
+
+    public String getExtension() {
+        return filesystemEntry.isDirectory() ? "" : FilenameUtils.getExtension(filesystemEntry.getAbsolutePath());
     }
 
 }

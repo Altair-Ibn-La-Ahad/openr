@@ -51,6 +51,10 @@ public class I18nManager {
         return this.supportedLocales;
     }
 
+    public void setActualLocale(String languageCode) {
+        actualLocale = supportedLocales.getOrDefault(languageCode, Locale.forLanguageTag("en"));
+    }
+
     private Locale getActualLocale() {
         return supportedLocales.containsKey(Locale.getDefault().getLanguage())
                 ? Locale.getDefault() : supportedLocales.get("en");

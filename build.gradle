@@ -1,7 +1,19 @@
 apply plugin: 'java'
+apply plugin: 'application'
 
 group 'pl.greywarden.openr'
 version '0.0.1-dev'
+
+mainClassName = 'pl.greywarden.openr.app.Main'
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':app')
+}
 
 subprojects {
     apply plugin: 'java'

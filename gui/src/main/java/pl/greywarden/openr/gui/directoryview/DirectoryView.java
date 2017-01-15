@@ -23,6 +23,7 @@ public class DirectoryView extends TableView {
     private final I18nManager i18n = I18nManager.getInstance();
 
     public DirectoryView(String rootPath) {
+        super.setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
         build(rootPath);
     }
 

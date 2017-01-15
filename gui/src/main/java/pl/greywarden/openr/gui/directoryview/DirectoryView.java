@@ -1,7 +1,6 @@
 package pl.greywarden.openr.gui.directoryview;
 
 import javafx.collections.FXCollections;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -14,6 +13,7 @@ import pl.greywarden.openr.filesystem.EntryWrapper;
 import pl.greywarden.openr.i18n.I18nManager;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Objects;
 
 public class DirectoryView extends TableView {
@@ -75,12 +75,33 @@ public class DirectoryView extends TableView {
                 privileges = new TableColumn(i18n.getString("privileges"));
 
         name.setCellValueFactory(new PropertyValueFactory<>("entry"));
-        name.setCellFactory(param -> createEntryNameCell());
+        name.setCellFactory(param -> new DirectoryViewEntryNameCell());
         name.setComparator(nameComparator());
+
         extension.setCellValueFactory(new PropertyValueFactory<>("extension"));
+        extension.setCellFactory(param -> new DirectoryViewEntryStringPropertyCell());
+        extension.maxWidthProperty().set(150);
+        extension.minWidthProperty().set(100);
+        extension.setComparator(stringComparator());
+
         size.setCellValueFactory(new PropertyValueFactory<>("size"));
+        size.setCellFactory(param -> new DirectoryViewEntrySizePropertyCell());
+        size.maxWidthProperty().set(150);
+        size.minWidthProperty().set(100);
+        size.setComparator(longComparator());
+
         modificationDate.setCellValueFactory(new PropertyValueFactory<>("modificationDate"));
+        modificationDate.maxWidthProperty().set(300);
+        modificationDate.minWidthProperty().set(200);
+        modificationDate.setCellFactory(param -> new DirectoryViewEntryDatePropertyCell());
+        modificationDate.setComparator(dateComparator());
+
         privileges.setCellValueFactory(new PropertyValueFactory<>("privileges"));
+        privileges.maxWidthProperty().set(200);
+        privileges.minWidthProperty().set(150);
+        privileges.setCellFactory(param -> new DirectoryViewEntryStringPropertyCell());
+        privileges.setComparator(stringComparator());
+
         super.getColumns().addAll(name, extension, size, modificationDate, privileges);
         setRowFactory();
     }
@@ -93,6 +114,33 @@ public class DirectoryView extends TableView {
                 return -1;
             }
             return n1.compareToIgnoreCase(n2);
+        };
+    }
+
+    private Comparator<String> stringComparator(){
+        return (o1, o2) -> {
+            if ("..".equals(o1) || "..".equals(o2)) {
+                return -1;
+            }
+            return o1.compareToIgnoreCase(o2);
+        };
+    }
+
+    private Comparator<Date> dateComparator() {
+        return (o1, o2) -> {
+            if (o1.equals(new Date(Long.MIN_VALUE)) || o2.equals(new Date(Long.MIN_VALUE))) {
+                return -1;
+            }
+            return o1.compareTo(o2);
+        };
+    }
+
+    private Comparator<Long> longComparator() {
+        return (o1, o2) -> {
+            if (o1.equals(Long.MIN_VALUE) || o2.equals(Long.MIN_VALUE)) {
+                return -1;
+            }
+            return o1.compareTo(o2);
         };
     }
 
@@ -114,10 +162,6 @@ public class DirectoryView extends TableView {
             }
         });
         return row;
-    }
-
-    private TableCell createEntryNameCell() {
-        return new DirectoryViewEntryNameCell();
     }
 
 }

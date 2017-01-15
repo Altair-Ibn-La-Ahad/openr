@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import pl.greywarden.openr.filesystem.AbstractEntry;
+import pl.greywarden.openr.filesystem.ParentDirectoryEntry;
 
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
@@ -28,7 +29,7 @@ public class DirectoryViewEntryNameCell extends TableCell <AbstractEntry, Abstra
             String nameOfEntry = item.getEntryProperties().getBaseName();
             Label nameLabel = new Label(nameOfEntry);
             ImageView iv = new ImageView(getFileIcon(item.getEntryProperties().getAbsolutePath()));
-            HBox.setMargin(iv, new Insets(0, 3, 0, 0));
+            HBox.setMargin(iv, new Insets(0, 3, 0, (item instanceof ParentDirectoryEntry) ? 0 : 5));
             vb.getChildren().addAll(iv, nameLabel);
             setGraphic(vb);
             Tooltip.install(this, new Tooltip(item.getEntryProperties().getName()));

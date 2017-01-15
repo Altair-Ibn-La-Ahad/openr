@@ -1,4 +1,4 @@
-package pl.greywarden.openr.gui;
+package pl.greywarden.openr.gui.directoryview;
 
 import javafx.collections.FXCollections;
 import javafx.scene.control.TableCell;

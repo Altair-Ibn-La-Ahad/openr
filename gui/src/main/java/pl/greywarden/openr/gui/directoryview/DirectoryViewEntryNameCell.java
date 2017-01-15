@@ -1,4 +1,4 @@
-package pl.greywarden.openr.gui;
+package pl.greywarden.openr.gui.directoryview;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
@@ -18,10 +18,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class DirectoryViewEntryNameCell extends TableCell <AbstractEntry, AbstractEntry> {
-
-    public DirectoryViewEntryNameCell() {
-
-    }
 
     @Override
     protected void updateItem(AbstractEntry item, boolean empty) {

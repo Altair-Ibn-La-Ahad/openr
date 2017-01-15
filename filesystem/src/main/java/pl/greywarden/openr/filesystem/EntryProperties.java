@@ -109,4 +109,13 @@ public class EntryProperties {
         return filesystemEntry.isDirectory() ? "" : FilenameUtils.getExtension(filesystemEntry.getAbsolutePath());
     }
 
+    public File getParentFile() {
+        return filesystemEntry.getParentFile();
+    }
+
+    public String getBaseName() {
+        return filesystemEntry.isDirectory()
+                ? filesystemEntry.getName() : FilenameUtils.getBaseName(filesystemEntry.getName());
+    }
+
 }

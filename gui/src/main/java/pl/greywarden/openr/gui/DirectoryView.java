@@ -1,162 +1,122 @@
 package pl.greywarden.openr.gui;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.SystemUtils;
+import javafx.util.Callback;
+
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
-import pl.greywarden.openr.filesystem.FileEntry;
+import pl.greywarden.openr.filesystem.EntryWrapper;
 import pl.greywarden.openr.i18n.I18nManager;
 
-import javax.swing.ImageIcon;
-import javax.swing.filechooser.FileSystemView;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.Comparator;
+import java.util.Objects;
 
 public class DirectoryView extends TableView {
 
-    private String path;
-    private DirectoryEntry root;
+    private DirectoryEntry rootEntry;
 
     private final I18nManager i18n = I18nManager.getInstance();
 
-    public DirectoryView(String path) {
-        this.path = path;
-        this.root = new DirectoryEntry(path);
-        build();
+    public DirectoryView(String rootPath) {
+        build(rootPath);
     }
 
-    public void changePath(String path) {
-        this.path = path;
-        root = new DirectoryEntry(path);
-        build();
+    public void changePath(String rootPath) {
+        rootEntry = new DirectoryEntry(rootPath);
+        loadData();
+    }
+
+    private void build(String rootPath) {
+        changePath(rootPath);
+        i18n.setBundle("directory-view");
+        createColumns();
     }
 
     @SuppressWarnings("unchecked")
-    private void build() {
-        File rootDirectory = new File(root.getEntryProperties().getAbsolutePath());
-        File[] filesArray = rootDirectory.listFiles();
-        if (filesArray == null) {
-            filesArray = FileUtils.EMPTY_FILE_ARRAY;
-        }
-        Collection<File> files = Arrays.asList(filesArray);
-        Collections.sort((List<File>)files, (first, second) -> first.getName().compareTo(second.getName()));
+    private void loadData() {
+        DirectoryViewDataBuilder builder = new DirectoryViewDataBuilder(rootEntry);
+        makeFirstRowAlwaysFirst();
+        super.setItems(builder.getData());
+        super.refresh();
+    }
 
-        i18n.setBundle("directory-view");
+    @SuppressWarnings("unchecked")
+    private void makeFirstRowAlwaysFirst() {
+        super.sortPolicyProperty().set((Callback<TableView<EntryWrapper>, Boolean>) param -> {
+            Comparator<EntryWrapper> comparator1 = (r1, r2) -> {
+                if (Objects.equals(r1.getName(), "..")) {
+                    return -1;
+                } else if (Objects.equals(r2.getName(), "..")) {
+                    return 1;
+                } else if (param.getComparator() == null) {
+                    return 0;
+                } else {
+                    return param.getComparator().compare(r1, r2);
+                }
+            };
+            FXCollections.sort(getItems(), comparator1);
+            return true;
+        });
+    }
 
-        TableColumn
+    @SuppressWarnings("unchecked")
+    private void createColumns() {
+        final TableColumn
                 name = new TableColumn(i18n.getString("name")),
                 extension = new TableColumn(i18n.getString("extension")),
                 size = new TableColumn(i18n.getString("size")),
                 modificationDate = new TableColumn(i18n.getString("modification-date")),
                 privileges = new TableColumn(i18n.getString("privileges"));
 
-        name.setCellValueFactory(new PropertyValueFactory<>("name"));
-        name.setCellFactory(param -> new TableCell<AbstractEntry, EntryNameCell>() {
-            @Override
-            protected void updateItem(EntryNameCell item, boolean empty) {
-                super.updateItem(item, empty);
-                if (!empty) {
-                    HBox vb = new HBox();
-                    vb.setAlignment(Pos.CENTER_LEFT);
-                    Label name = new Label(item.getName());
-                    ImageView iv = new ImageView(item.getImage());
-                    HBox.setMargin(iv, new Insets(0, 3, 0, 0));
-                    vb.getChildren().addAll(iv, name);
-                    setGraphic(vb);
-                }
-            }
-        });
+        name.setCellValueFactory(new PropertyValueFactory<>("entry"));
+        name.setCellFactory(param -> createEntryNameCell());
+        name.setComparator(nameComparator());
         extension.setCellValueFactory(new PropertyValueFactory<>("extension"));
         size.setCellValueFactory(new PropertyValueFactory<>("size"));
         modificationDate.setCellValueFactory(new PropertyValueFactory<>("modificationDate"));
         privileges.setCellValueFactory(new PropertyValueFactory<>("privileges"));
-        super.getColumns().add(name);
-        super.getColumns().add(extension);
-        super.getColumns().add(size);
-        super.getColumns().add(modificationDate);
-        super.getColumns().add(privileges);
-        final ObservableList data = FXCollections.observableList(createEntries(files));
-        super.setItems(data);
+        super.getColumns().addAll(name, extension, size, modificationDate, privileges);
+        setRowFactory();
     }
 
-    private List<EntryWrapper> createEntries(Collection<File> files) {
-        List<AbstractEntry> abstractEntries = new ArrayList<>();
-        files.forEach(file -> abstractEntries.add(file.isDirectory()
-                ? new DirectoryEntry(file.getAbsolutePath())
-                : new FileEntry(file.getAbsolutePath())));
-
-        List<EntryWrapper> result = new ArrayList<>();
-        abstractEntries.forEach(entry -> result.add(new EntryWrapper(entry)));
-        return result;
-    }
-
-    @Getter
-    public static class EntryWrapper {
-        private final EntryNameCell name;
-        private final String extension;
-        private final String size;
-        private final String modificationDate;
-        private final String privileges;
-
-        private EntryWrapper(AbstractEntry entry) {
-            this.name = new EntryNameCell(entry);
-            this.extension = entry.getEntryProperties().getExtension();
-            this.size = FileUtils.byteCountToDisplaySize(entry.getEntryProperties().getSizeInBytes());
-            this.privileges = SystemUtils.IS_OS_WINDOWS
-                    ? entry.getEntryProperties().getDosFilePermissions()
-                    : entry.getEntryProperties().getPosixFilePermissions();
-            Date date = new Date();
-            date.setTime(entry.getEntryProperties().getLastModified());
-            this.modificationDate = new SimpleDateFormat("HH:mm:ss YYYY-MM-dd").format(date);
-        }
-    }
-
-    @Getter
-    private static class EntryNameCell {
-        private final Image image;
-        private final String name;
-
-        private EntryNameCell(AbstractEntry entry) {
-            File file = new File(entry.getEntryProperties().getAbsolutePath());
-            java.awt.Image awtImage = ((ImageIcon) FileSystemView.getFileSystemView().getSystemIcon(file)).getImage();
-
-            BufferedImage bImg;
-            if (awtImage instanceof BufferedImage) {
-                bImg = (BufferedImage) awtImage;
-            } else {
-                bImg = new BufferedImage(awtImage.getWidth(null), awtImage.getHeight(null),
-                        BufferedImage.TYPE_INT_ARGB);
-                Graphics2D graphics = bImg.createGraphics();
-                graphics.drawImage(awtImage, 0, 0, null);
-                graphics.dispose();
+    private Comparator<AbstractEntry> nameComparator() {
+        return (o1, o2) -> {
+            String n1 = o1.getEntryProperties().getBaseName();
+            String n2 = o2.getEntryProperties().getBaseName();
+            if ("..".equals(n1) || "..".equals(n2)) {
+                return -1;
             }
-            this.image = SwingFXUtils.toFXImage(bImg, null);
-            this.name = entry.getEntryProperties().getName();
-        }
+            return n1.compareToIgnoreCase(n2);
+        };
     }
+
+    @SuppressWarnings("unchecked")
+    private void setRowFactory() {
+        super.setRowFactory(tv -> createTableRow());
+    }
+
+    private Object createTableRow() {
+        TableRow<EntryWrapper> row = new TableRow<>();
+        row.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                EntryWrapper rowData = row.getItem();
+                if (rowData.getEntry().getEntryProperties().isDirectory()) {
+                    TableViewSelectionModel model = super.getSelectionModel();
+                    model.setSelectionMode(null);
+                    changePath(rowData.getEntry().getEntryProperties().getAbsolutePath());
+                }
+            }
+        });
+        return row;
+    }
+
+    private TableCell createEntryNameCell() {
+        return new DirectoryViewEntryNameCell();
+    }
+
 }

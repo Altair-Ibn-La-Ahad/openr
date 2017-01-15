@@ -29,7 +29,7 @@ public class DirectoryViewEntryNameCell extends TableCell <AbstractEntry, Abstra
             String nameOfEntry = item.getEntryProperties().getBaseName();
             Label nameLabel = new Label(nameOfEntry);
             ImageView iv = new ImageView(getFileIcon(item.getEntryProperties().getAbsolutePath()));
-            HBox.setMargin(iv, new Insets(0, 3, 0, (item instanceof ParentDirectoryEntry) ? 0 : 5));
+            HBox.setMargin(iv, new Insets(0, 3, 0, (item instanceof ParentDirectoryEntry) ? 0 : 8));
             vb.getChildren().addAll(iv, nameLabel);
             setGraphic(vb);
             Tooltip.install(this, new Tooltip(item.getEntryProperties().getName()));

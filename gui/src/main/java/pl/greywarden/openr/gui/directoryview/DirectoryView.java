@@ -7,6 +7,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 
+import lombok.Getter;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.EntryWrapper;
@@ -22,12 +23,16 @@ public class DirectoryView extends TableView {
 
     private final I18nManager i18n = I18nManager.getInstance();
 
+    @Getter
+    private String rootPath;
+
     public DirectoryView(String rootPath) {
         super.setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
         build(rootPath);
     }
 
     public void changePath(String rootPath) {
+        this.rootPath = rootPath;
         rootEntry = new DirectoryEntry(rootPath);
         loadData();
     }

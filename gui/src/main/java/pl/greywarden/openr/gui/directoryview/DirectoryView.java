@@ -82,28 +82,22 @@ public class DirectoryView extends TableView {
         name.setCellValueFactory(new PropertyValueFactory<>("entry"));
         name.setCellFactory(param -> new DirectoryViewEntryNameCell());
         name.setComparator(nameComparator());
+        name.minWidthProperty().bind(super.widthProperty().multiply(0.3));
 
         extension.setCellValueFactory(new PropertyValueFactory<>("extension"));
         extension.setCellFactory(param -> new DirectoryViewEntryStringPropertyCell());
-        extension.maxWidthProperty().set(150);
-        extension.minWidthProperty().set(100);
         extension.setComparator(stringComparator());
 
         size.setCellValueFactory(new PropertyValueFactory<>("size"));
         size.setCellFactory(param -> new DirectoryViewEntrySizePropertyCell());
-        size.maxWidthProperty().set(150);
-        size.minWidthProperty().set(100);
         size.setComparator(longComparator());
 
         modificationDate.setCellValueFactory(new PropertyValueFactory<>("modificationDate"));
-        modificationDate.maxWidthProperty().set(300);
-        modificationDate.minWidthProperty().set(200);
         modificationDate.setCellFactory(param -> new DirectoryViewEntryDatePropertyCell());
+        modificationDate.minWidthProperty().bind(super.widthProperty().multiply((1 - 0.3) * 0.08));
         modificationDate.setComparator(dateComparator());
 
         privileges.setCellValueFactory(new PropertyValueFactory<>("privileges"));
-        privileges.maxWidthProperty().set(200);
-        privileges.minWidthProperty().set(150);
         privileges.setCellFactory(param -> new DirectoryViewEntryStringPropertyCell());
         privileges.setComparator(stringComparator());
 

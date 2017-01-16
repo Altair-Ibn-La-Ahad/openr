@@ -7,6 +7,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import pl.greywarden.openr.gui.wrappers.DirectoryViewWrapper;
 
+
 public class Main extends Application {
 
     public static void main(String... args) {
@@ -17,6 +18,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         DirectoryViewWrapper directoryViewWrapper = new DirectoryViewWrapper(System.getProperty("user.dir"));
         VBox.setVgrow(directoryViewWrapper, Priority.ALWAYS);
+        //AutoCompleteTextField autoCompleteTextField = new AutoCompleteTextField();
         primaryStage.setScene(new Scene(directoryViewWrapper));
         primaryStage.show();
     }

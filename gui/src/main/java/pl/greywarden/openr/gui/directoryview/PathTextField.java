@@ -1,9 +1,5 @@
 package pl.greywarden.openr.gui.directoryview;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.collections.ListChangeListener;
-import javafx.event.EventType;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 

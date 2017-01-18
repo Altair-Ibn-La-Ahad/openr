@@ -163,4 +163,8 @@ public class DirectoryView extends TableView {
         return row;
     }
 
+    public void reload() {
+        changePath(rootPath);
+    }
+
 }

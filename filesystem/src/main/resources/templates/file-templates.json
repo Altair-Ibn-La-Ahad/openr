@@ -1,0 +1,13 @@
+{"templates" : [
+  {"type" : "text",
+    "name" : "empty-file",
+    "builder" : "pl.greywarden.openr.templates.builders.EmptyFileTemplateBuilder"},
+  {"type" : "text",
+    "name" : "text-file",
+    "builder" : "pl.greywarden.openr.templates.builders.TextFileTemplateBuilder"},
+  {"type" : "text",
+    "name" : "xml-file",
+    "builder" : "pl.greywarden.openr.templates.builders.XmlFileTemplateBuilder"},
+  {"type" : "text",
+    "name" : "html-file",
+    "builder" : "pl.greywarden.openr.templates.builders.HtmlFileTemplateBuilder"}]}

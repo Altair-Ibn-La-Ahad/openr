@@ -40,7 +40,8 @@ public class I18nManager {
 
     public String getString(@NonNull String key) {
         try {
-            return ResourceBundle.getBundle(bundle, getActualLocale()).getString(key);
+            return ResourceBundle.getBundle("i18n/" + bundle, getActualLocale(),
+                    I18nManager.class.getClassLoader()).getString(key);
         } catch (MissingResourceException exception) {
             log.error("Unable to find key for specified bundle", exception);
             return bundle + "." + key;

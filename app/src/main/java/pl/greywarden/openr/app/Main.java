@@ -2,11 +2,9 @@ package pl.greywarden.openr.app;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;

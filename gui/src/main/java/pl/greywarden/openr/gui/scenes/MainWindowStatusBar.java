@@ -6,10 +6,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import lombok.Getter;
 import org.controlsfx.control.StatusBar;
 import pl.greywarden.openr.i18n.I18nManager;
 
 public class MainWindowStatusBar extends StatusBar {
+
+    @Getter
+    private TextField pathTextField;
 
     public MainWindowStatusBar() {
         super();
@@ -17,7 +21,7 @@ public class MainWindowStatusBar extends StatusBar {
         i18n.setBundle("menu-bar");
 
         Label label = new Label(i18n.getString("chosen-file"));
-        TextField pathTextField = new TextField();
+        pathTextField = new TextField();
 
         label.setPadding(new Insets(0, 5, 0, 5));
         HBox.setHgrow(label, Priority.ALWAYS);

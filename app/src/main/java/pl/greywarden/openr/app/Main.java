@@ -7,6 +7,7 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import pl.greywarden.openr.gui.dialogs.AboutDialog;
 import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;
 import pl.greywarden.openr.gui.scenes.MainWindowScene;
 import pl.greywarden.openr.i18n.I18nManager;
@@ -21,9 +22,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        I18nManager i18n = I18nManager.getInstance();
-        i18n.setBundle("default");
-        primaryStage.setTitle(i18n.getString("main-window-title"));
+        primaryStage.setTitle("OpenR " + AboutDialog.getVersion());
         Platform.setImplicitExit(false);
         MainWindowScene mainWindowScene = new MainWindowScene();
         primaryStage.setScene(new Scene(mainWindowScene));

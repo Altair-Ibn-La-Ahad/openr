@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
 import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.gui.IconManager;
+import pl.greywarden.openr.gui.dialogs.AboutDialog;
 import pl.greywarden.openr.gui.dialogs.CreateFileDialog;
 import pl.greywarden.openr.gui.dialogs.NewFileDialog;
 import pl.greywarden.openr.i18n.I18nManager;
@@ -45,7 +46,8 @@ public class MainWindowScene extends VBox {
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(
                 createFileMenu(),
-                createViewMenu());
+                createViewMenu(),
+                createHelpMenu());
 
         super.getChildren().addAll(menuBar);
     }
@@ -113,6 +115,16 @@ public class MainWindowScene extends VBox {
         });
         view.getItems().addAll(statusBarVisibility);
         return view;
+    }
+
+    private Menu createHelpMenu() {
+        Menu help = new Menu(i18n.getString("help"));
+
+        MenuItem about = new MenuItem(i18n.getString("about"));
+        about.setOnAction(event -> new AboutDialog().show());
+
+        help.getItems().addAll(about);
+        return help;
     }
 
     private void createToolBar() {

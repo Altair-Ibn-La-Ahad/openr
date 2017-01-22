@@ -10,7 +10,6 @@ import javafx.stage.Window;
 import pl.greywarden.openr.gui.dialogs.AboutDialog;
 import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;
 import pl.greywarden.openr.gui.scenes.MainWindowScene;
-import pl.greywarden.openr.i18n.I18nManager;
 
 import java.util.Optional;
 

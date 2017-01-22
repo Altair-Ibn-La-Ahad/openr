@@ -8,15 +8,20 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 
 import lombok.Getter;
+import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.EntryWrapper;
 import pl.greywarden.openr.i18n.I18nManager;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Objects;
 
+@Log4j
 public class DirectoryView extends TableView {
 
     private DirectoryEntry rootEntry;
@@ -157,6 +162,17 @@ public class DirectoryView extends TableView {
                     TableViewSelectionModel model = super.getSelectionModel();
                     model.setSelectionMode(null);
                     changePath(rowData.getEntry().getEntryProperties().getAbsolutePath());
+                } else {
+                    if (Desktop.isDesktopSupported()) {
+                        File target = new File(rowData.getEntry().getEntryProperties().getAbsolutePath());
+                        new Thread(() -> {
+                            try {
+                                Desktop.getDesktop().browse(target.toURI());
+                            } catch (IOException exception) {
+                                log.error("Unable to open selected file", exception);
+                            }
+                        }).start();
+                    }
                 }
             }
         });

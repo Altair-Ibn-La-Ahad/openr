@@ -34,7 +34,7 @@ public class DirectoryViewDataBuilder {
 
     private List<EntryWrapper> createEntryWrappers() {
         List<AbstractEntry> abstractEntries = new ArrayList<>();
-        files.forEach(file -> abstractEntries.add(file.isDirectory()
+        files.parallelStream().forEach(file -> abstractEntries.add(file.isDirectory()
                 ? new DirectoryEntry(file.getAbsolutePath())
                 : new FileEntry(file.getAbsolutePath())));
 
@@ -42,7 +42,7 @@ public class DirectoryViewDataBuilder {
         if (rootEntry.getEntryProperties().hasParent()) {
             result.add(createParentDirectoryEntryWrapper());
         }
-        abstractEntries.forEach(entry -> result.add(new EntryWrapper(entry)));
+        abstractEntries.parallelStream().forEach(entry -> result.add(new EntryWrapper(entry)));
         return result;
     }
 

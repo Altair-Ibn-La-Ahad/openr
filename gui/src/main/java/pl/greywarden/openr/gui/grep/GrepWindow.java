@@ -98,15 +98,7 @@ public class GrepWindow extends Stage {
 
         regexInput.setOnKeyPressed(event -> {
             if (regexInput.textProperty().isNotEmpty().get() && event.getCode().equals(KeyCode.ENTER)) {
-                String regex = regexInput.getText();
-                List<File> files = getFilesToGrep();
-                resultTableView.getItems().clear();
-                files.forEach(file -> {
-                    String result = Unix4j.grep(regex, file).toStringResult();
-                    if (!result.isEmpty()) {
-                        resultTableView.getItems().add(new GrepResult(file, result));
-                    }
-                });
+                grep();
             }
         });
 
@@ -133,17 +125,19 @@ public class GrepWindow extends Stage {
     }
 
     private EventHandler<ActionEvent> handleGrep() {
-        return event -> {
-            String regex = regexInput.getText();
-            List<File> files = getFilesToGrep();
-            resultTableView.getItems().clear();
-            files.forEach(file -> {
-                String result = Unix4j.grep(regex, file).toStringResult();
-                if (!result.isEmpty()) {
-                    resultTableView.getItems().add(new GrepResult(file, result));
-                }
-            });
-        };
+        return event -> grep();
+    }
+
+    private void grep() {
+        String regex = regexInput.getText();
+        List<File> files = getFilesToGrep();
+        resultTableView.getItems().clear();
+        files.parallelStream().forEach(file -> {
+            String result = Unix4j.grep(regex, file).toStringResult();
+            if (!result.isEmpty()) {
+                resultTableView.getItems().add(new GrepResult(file, result));
+            }
+        });
     }
 
     private List<File> getFilesToGrep() {
@@ -153,13 +147,14 @@ public class GrepWindow extends Stage {
                 Files.find(Paths.get(pathComboBox.getSelectionModel().getSelectedItem()),
                         Integer.MAX_VALUE,
                         (filePath, fileAttr) -> fileAttr.isRegularFile())
+                        .parallel()
                         .forEach(path -> files.add(path.toFile()));
             } else {
                 File[] filesToGrep = new File(pathComboBox.getSelectionModel().getSelectedItem()).listFiles();
                 if (filesToGrep == null) {
                     filesToGrep = FileUtils.EMPTY_FILE_ARRAY;
                 }
-                files.addAll(Arrays.stream(filesToGrep).filter(File::isFile).collect(Collectors.toList()));
+                files.addAll(Arrays.asList(filesToGrep).parallelStream().filter(File::isFile).collect(Collectors.toList()));
             }
             return files;
         } catch (IOException exception) {

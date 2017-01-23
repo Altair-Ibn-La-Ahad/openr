@@ -12,13 +12,12 @@ import pl.greywarden.openr.filesystem.ParentDirectoryEntry;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class DirectoryViewDataBuilder {
 
-    private Collection<File> files;
+    private List<File> files;
     private DirectoryEntry rootEntry;
 
     public DirectoryViewDataBuilder(DirectoryEntry rootEntry) {
@@ -26,9 +25,11 @@ public class DirectoryViewDataBuilder {
         File rootDirectory = new File(rootEntry.getEntryProperties().getAbsolutePath());
         File[] filesArray = rootDirectory.listFiles();
         this.files = Arrays.stream(filesArray == null ? FileUtils.EMPTY_FILE_ARRAY : filesArray)
+                .parallel()
                 .filter(file -> !file.isHidden())
                 .sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()))
                 .collect(Collectors.toList());
+        files.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
     }
 
     private List<EntryWrapper> createEntryWrappers() {

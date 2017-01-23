@@ -19,9 +19,10 @@ public class I18nManager {
     {
         supportedLocales = new HashMap<>();
         supportedLocales.put("en", Locale.forLanguageTag("en"));
-        supportedLocales.put("pl", Locale.forLanguageTag("pl"));
+        supportedLocales.put("pl", Locale.forLanguageTag("pl_PL"));
 
         bundle = "default";
+        actualLocale = Locale.getDefault();
     }
     private I18nManager() {
 
@@ -57,7 +58,6 @@ public class I18nManager {
     }
 
     private Locale getActualLocale() {
-        return supportedLocales.containsKey(Locale.getDefault().getLanguage())
-                ? Locale.getDefault() : supportedLocales.get("en");
+        return supportedLocales.containsKey(actualLocale.getLanguage()) ? actualLocale : Locale.forLanguageTag("en");
     }
 }

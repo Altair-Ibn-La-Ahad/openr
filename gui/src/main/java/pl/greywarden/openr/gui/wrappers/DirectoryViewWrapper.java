@@ -11,6 +11,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import pl.greywarden.openr.filesystem.EntryWrapper;
+import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.gui.directoryview.PathTextField;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
 import pl.greywarden.openr.i18n.I18nManager;
@@ -28,22 +29,25 @@ public class DirectoryViewWrapper extends VBox {
 
         directoryView = new DirectoryView(pathToRoot);
         PathTextField pathTextField = new PathTextField(directoryView);
-        HBox pathTextFieldWrapper = new HBox();
+        HBox pathTextFieldWrapper = new HBox(5);
         Label description = new Label(i18n.getString("path"));
-        Button goButton = new Button("->");
+        Button goButton = new Button();
+        goButton.setGraphic(IconManager.getIcon("go"));
         BorderPane borderPane = new BorderPane(directoryView);
+        Button refreshButton = new Button();
+        refreshButton.setGraphic(IconManager.getIcon("refresh"));
 
         description.setPadding(new Insets(0, 5, 0, 5));
         borderPane.setPadding(new Insets(0, 5, 5, 5));
         pathTextFieldWrapper.setPadding(new Insets(5, 5, 5, 5));
 
-        goButton.setOnMouseClicked(event -> pathTextField.goToEnteredDirectory());
+        goButton.setOnAction(event -> pathTextField.goToEnteredDirectory());
 
         HBox.setHgrow(pathTextField, Priority.ALWAYS);
-        HBox.setMargin(goButton, new Insets(0, 5, 0, 5));
+        refreshButton.setOnAction(event -> directoryView.changePath(directoryView.getRootPath()));
 
         pathTextFieldWrapper.setAlignment(Pos.CENTER);
-        pathTextFieldWrapper.getChildren().addAll(description, pathTextField, goButton);
+        pathTextFieldWrapper.getChildren().addAll(description, pathTextField, goButton, refreshButton);
 
         VBox.setVgrow(borderPane, Priority.ALWAYS);
         super.getChildren().addAll(pathTextFieldWrapper, borderPane);

@@ -1,10 +1,13 @@
 package pl.greywarden.openr.gui.directoryview;
 
 import javafx.collections.FXCollections;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.util.Callback;
 
 import lombok.Getter;
@@ -12,6 +15,7 @@ import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.EntryWrapper;
+import pl.greywarden.openr.gui.dialogs.EntryInfoDialog;
 import pl.greywarden.openr.i18n.I18nManager;
 
 import java.awt.Desktop;
@@ -179,6 +183,15 @@ public class DirectoryView extends TableView {
                         }).start();
                     }
                 }
+            }
+            if (event.getButton().equals(MouseButton.SECONDARY) && (!row.isEmpty())) {
+                EntryWrapper rowData = row.getItem();
+                ContextMenu menu = new ContextMenu();
+                MenuItem properties = new MenuItem("Właściwości");
+                menu.getItems().add(properties);
+                menu.show(row, event.getScreenX(), event.getScreenY());
+                properties.setOnAction(e ->
+                        new EntryInfoDialog(rowData.getEntry().getEntryProperties().getAbsolutePath()).show());
             }
         });
         return row;

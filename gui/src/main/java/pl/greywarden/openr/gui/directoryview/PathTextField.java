@@ -7,7 +7,7 @@ import java.io.File;
 
 public class PathTextField extends TextField {
 
-    private DirectoryView directoryView;
+    private final DirectoryView directoryView;
 
     private String lastPath;
 

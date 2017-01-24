@@ -13,7 +13,7 @@ import pl.greywarden.openr.i18n.I18nManager;
 public class MainWindowStatusBar extends StatusBar {
 
     @Getter
-    private TextField pathTextField;
+    private final TextField pathTextField;
 
     public MainWindowStatusBar() {
         super();

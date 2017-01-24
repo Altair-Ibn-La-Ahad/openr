@@ -4,7 +4,7 @@ import java.io.File;
 
 public class ParentDirectoryEntry extends DirectoryEntry {
 
-    private String path;
+    private final String path;
 
     public ParentDirectoryEntry(String path) {
         super(path);

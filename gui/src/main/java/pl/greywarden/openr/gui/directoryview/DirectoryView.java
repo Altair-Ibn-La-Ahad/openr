@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Log4j
@@ -52,27 +53,31 @@ public class DirectoryView extends TableView {
     private void loadData() {
         DirectoryViewDataBuilder builder = new DirectoryViewDataBuilder(rootEntry);
         makeFirstRowAlwaysFirst();
-        super.setItems(builder.getData());
+        List<EntryWrapper> data = builder.getData();
+        super.setItems(FXCollections.observableList(data));
         super.refresh();
     }
 
     @SuppressWarnings("unchecked")
     private void makeFirstRowAlwaysFirst() {
         super.sortPolicyProperty().set((Callback<TableView<EntryWrapper>, Boolean>) param -> {
-            Comparator<EntryWrapper> comparator1 = (r1, r2) -> {
-                if (Objects.equals(r1.getName(), "..")) {
-                    return -1;
-                } else if (Objects.equals(r2.getName(), "..")) {
-                    return 1;
-                } else if (param.getComparator() == null) {
-                    return 0;
-                } else {
-                    return param.getComparator().compare(r1, r2);
-                }
-            };
-            FXCollections.sort(getItems(), comparator1);
+            FXCollections.sort(getItems(), getWrapperComparator(param));
             return true;
         });
+    }
+
+    private Comparator<EntryWrapper> getWrapperComparator(TableView<EntryWrapper> param) {
+        return (r1, r2) -> {
+                    if (Objects.equals(r1.getName(), "..")) {
+                        return -1;
+                    } else if (Objects.equals(r2.getName(), "..")) {
+                        return 1;
+                    } else if (param.getComparator() == null) {
+                        return 0;
+                    } else {
+                        return param.getComparator().compare(r1, r2);
+                    }
+                };
     }
 
     @SuppressWarnings("unchecked")

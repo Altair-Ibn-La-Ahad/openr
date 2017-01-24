@@ -30,8 +30,8 @@ public class MainWindowScene extends VBox {
 
     private final I18nManager i18n = I18nManager.getInstance();
 
-    private CentralContainter centralContainter = new CentralContainter();
-    private MainWindowStatusBar statusBar = new MainWindowStatusBar();
+    private final CentralContainter centralContainter = new CentralContainter();
+    private final MainWindowStatusBar statusBar = new MainWindowStatusBar();
 
     public MainWindowScene() {
         i18n.setBundle("menu-bar");

@@ -1,7 +1,5 @@
 package pl.greywarden.openr.gui.directoryview;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import org.apache.commons.io.FileUtils;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
@@ -12,33 +10,33 @@ import pl.greywarden.openr.filesystem.ParentDirectoryEntry;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class DirectoryViewDataBuilder {
 
-    private List<File> files;
-    private DirectoryEntry rootEntry;
+    private final List<File> files;
+    private final DirectoryEntry rootEntry;
 
     public DirectoryViewDataBuilder(DirectoryEntry rootEntry) {
         this.rootEntry = rootEntry;
         File rootDirectory = new File(rootEntry.getEntryProperties().getAbsolutePath());
         File[] filesArray = rootDirectory.listFiles();
-        this.files = Arrays.stream(filesArray == null ? FileUtils.EMPTY_FILE_ARRAY : filesArray)
-                .parallel()
+        this.files = Arrays.asList(filesArray == null ? FileUtils.EMPTY_FILE_ARRAY : filesArray)
+                .parallelStream()
                 .filter(file -> !file.isHidden())
-                .sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()))
                 .collect(Collectors.toList());
-        files.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
     }
 
     private List<EntryWrapper> createEntryWrappers() {
-        List<AbstractEntry> abstractEntries = new ArrayList<>();
-        files.parallelStream().forEach(file -> abstractEntries.add(file.isDirectory()
+        List<AbstractEntry> abstractEntries = Collections.synchronizedList(new ArrayList<>());
+        List<File> synchronizedFiles = Collections.synchronizedList(files);
+        synchronizedFiles.parallelStream().forEach(file -> abstractEntries.add(file.isDirectory()
                 ? new DirectoryEntry(file.getAbsolutePath())
                 : new FileEntry(file.getAbsolutePath())));
 
-        List<EntryWrapper> result = new ArrayList<>();
+        List<EntryWrapper> result = Collections.synchronizedList(new ArrayList<>());
         if (rootEntry.getEntryProperties().hasParent()) {
             result.add(createParentDirectoryEntryWrapper());
         }
@@ -55,8 +53,8 @@ public class DirectoryViewDataBuilder {
         return new EntryWrapper(createParentDirectoryEntry());
     }
 
-    public ObservableList getData() {
-        return FXCollections.observableList(createEntryWrappers());
+    public List<EntryWrapper> getData() {
+        return Collections.synchronizedList(createEntryWrappers());
     }
 
 }

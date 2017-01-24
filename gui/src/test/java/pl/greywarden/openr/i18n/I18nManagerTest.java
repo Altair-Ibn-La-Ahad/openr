@@ -7,7 +7,7 @@ import java.util.Locale;
 
 public class I18nManagerTest {
 
-    private I18nManager i18n = I18nManager.getInstance();
+    private final I18nManager i18n = I18nManager.getInstance();
 
     @Before
     public void setUp() {

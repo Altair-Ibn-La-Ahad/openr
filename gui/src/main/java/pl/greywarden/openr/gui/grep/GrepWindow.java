@@ -39,13 +39,12 @@ import java.util.stream.Collectors;
 public class GrepWindow extends Stage {
 
     private TextField regexInput;
-    private Button doGrep;
     private TableView<GrepResult> resultTableView;
-    private VBox layout;
+    private final VBox layout;
     private CheckBox recursive;
     private ComboBox<String> pathComboBox;
 
-    private I18nManager i18n;
+    private final I18nManager i18n;
 
     private final DirectoryView left;
     private final DirectoryView right;
@@ -93,7 +92,7 @@ public class GrepWindow extends Stage {
         HBox wrapper = new HBox(5);
 
         regexInput = new TextField();
-        doGrep = new Button("->");
+        Button doGrep = new Button("->");
         doGrep.setOnAction(handleGrep());
 
         regexInput.setOnKeyPressed(event -> {

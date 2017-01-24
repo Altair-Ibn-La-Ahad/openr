@@ -26,7 +26,7 @@ public class CreateFileDialog extends Dialog<Pair<String, String>> {
 
     @Getter
     private GridPane grid;
-    protected I18nManager i18n = I18nManager.getInstance();
+    protected final I18nManager i18n = I18nManager.getInstance();
     protected ComboBox<String> pathComboBox;
     private TextField filename;
     private ButtonType create;

@@ -21,50 +21,59 @@ public class DirectoryViewWrapper extends VBox {
     @Getter
     private final DirectoryView directoryView;
 
+    private final I18nManager i18n = I18nManager.getInstance();
+
     @SuppressWarnings("unchecked")
     public DirectoryViewWrapper(String pathToRoot) {
         super();
-        I18nManager i18n = I18nManager.getInstance();
         i18n.setBundle("directory-view");
 
         directoryView = new DirectoryView(pathToRoot);
-        PathTextField pathTextField = new PathTextField(directoryView);
-        HBox pathTextFieldWrapper = new HBox(5);
-        Label description = new Label(i18n.getString("path"));
-        Button goButton = new Button();
-        goButton.setGraphic(IconManager.getIcon("go"));
         BorderPane borderPane = new BorderPane(directoryView);
-        Button refreshButton = new Button();
-        refreshButton.setGraphic(IconManager.getIcon("refresh"));
 
-        description.setPadding(new Insets(0, 5, 0, 5));
         borderPane.setPadding(new Insets(0, 5, 5, 5));
-        pathTextFieldWrapper.setPadding(new Insets(5, 5, 5, 5));
-
-        goButton.setOnAction(event -> pathTextField.goToEnteredDirectory());
-
-        HBox.setHgrow(pathTextField, Priority.ALWAYS);
-        refreshButton.setOnAction(event -> directoryView.changePath(directoryView.getRootPath()));
-
-        pathTextFieldWrapper.setAlignment(Pos.CENTER);
-        pathTextFieldWrapper.getChildren().addAll(description, pathTextField, goButton, refreshButton);
 
         VBox.setVgrow(borderPane, Priority.ALWAYS);
-        super.getChildren().addAll(pathTextFieldWrapper, borderPane);
+        createPathTextFieldWrapper();
 
-        directoryView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            EntryWrapper wrapper = (EntryWrapper) newValue;
-            TextField path = (TextField) super.getParent().getScene().lookup("#statusbar-text-field");
-            if (wrapper != null) {
-                path.setText(wrapper.getEntry().getEntryProperties().getAbsolutePath());
-            } else {
-                path.setText("");
-            }
-        });
+        super.getChildren().addAll(borderPane);
+
+        directoryView.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    EntryWrapper wrapper = (EntryWrapper) newValue;
+                    TextField path = (TextField) super.getParent().getScene().lookup("#statusbar-text-field");
+                    if (wrapper != null) {
+                        path.setText(wrapper.getEntry().getEntryProperties().getAbsolutePath());
+                    } else {
+                        path.setText("");
+                    }
+                });
     }
 
     public String getRoot() {
         return directoryView.getRootPath();
+    }
+
+    private void createPathTextFieldWrapper() {
+        HBox pathTextFieldWrapper = new HBox(5);
+
+        PathTextField pathTextField = new PathTextField(directoryView);
+        Label pathTextFieldLabel = new Label(i18n.getString("path"));
+        Button go = new Button();
+        Button refresh = new Button();
+
+        go.setGraphic(IconManager.getIcon("go"));
+        refresh.setGraphic(IconManager.getIcon("refresh"));
+
+        go.setOnAction(e -> pathTextField.goToEnteredDirectory());
+        refresh.setOnAction(e -> directoryView.reload());
+
+        pathTextFieldWrapper.getChildren().addAll(pathTextFieldLabel, pathTextField, go, refresh);
+        HBox.setHgrow(pathTextField, Priority.ALWAYS);
+        pathTextFieldWrapper.setPadding(new Insets(3, 5, 3, 5));
+        pathTextFieldWrapper.setAlignment(Pos.BASELINE_LEFT);
+
+        super.getChildren().add(pathTextFieldWrapper);
     }
 
 }

@@ -1,12 +1,10 @@
 package pl.greywarden.openr.gui.dialogs;
 
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -16,12 +14,9 @@ import org.apache.commons.lang3.SystemUtils;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.FileEntry;
+import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.i18n.I18nManager;
 
-import javax.swing.ImageIcon;
-import javax.swing.filechooser.FileSystemView;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class EntryInfoDialog extends Dialog {
@@ -36,25 +31,9 @@ public class EntryInfoDialog extends Dialog {
 
         createInfo();
         super.getDialogPane().getButtonTypes().add(new ButtonType(i18n.getString("ok"), ButtonBar.ButtonData.OK_DONE));
-        super.setGraphic(new ImageView(getFileIcon(pathToEntry)));
+        super.setGraphic(new ImageView(IconManager.getFileIcon(pathToEntry)));
         super.setTitle(selectedEntry.getName());
         super.getDialogPane().minWidthProperty().setValue(600);
-    }
-
-    private Image getFileIcon(String path) {
-        File file = new File(path);
-        java.awt.Image awtImage = ((ImageIcon) FileSystemView.getFileSystemView().getSystemIcon(file)).getImage();
-        BufferedImage bImg;
-        if (awtImage instanceof BufferedImage) {
-            bImg = (BufferedImage) awtImage;
-        } else {
-            bImg = new BufferedImage(awtImage.getWidth(null), awtImage.getHeight(null),
-                    BufferedImage.TYPE_INT_ARGB);
-            Graphics2D graphics = bImg.createGraphics();
-            graphics.drawImage(awtImage, 0, 0, null);
-            graphics.dispose();
-        }
-        return SwingFXUtils.toFXImage(bImg, null);
     }
 
     private void createInfo() {

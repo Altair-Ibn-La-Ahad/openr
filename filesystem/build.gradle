@@ -1,5 +1,5 @@
 group 'pl.greywarden.openr'
-version '0.0.1-dev'
+version '0.0.3-dev'
 
 dependencies {
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'

@@ -1,8 +1,6 @@
 package pl.greywarden.openr.gui.directoryview;
 
 import javafx.collections.FXCollections;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -15,7 +13,6 @@ import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.EntryWrapper;
-import pl.greywarden.openr.gui.dialogs.EntryInfoDialog;
 import pl.greywarden.openr.i18n.I18nManager;
 
 import java.awt.Desktop;
@@ -27,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Log4j
-public class DirectoryView extends TableView {
+public class DirectoryView extends TableView <EntryWrapper> {
 
     private DirectoryEntry rootEntry;
 
@@ -159,7 +156,7 @@ public class DirectoryView extends TableView {
 
     @SuppressWarnings("unchecked")
     private void setRowFactory() {
-        super.setRowFactory(tv -> createTableRow());
+        super.setRowFactory((TableView <EntryWrapper> tv) -> (TableRow<EntryWrapper>) createTableRow());
     }
 
     private Object createTableRow() {
@@ -186,12 +183,9 @@ public class DirectoryView extends TableView {
             }
             if (event.getButton().equals(MouseButton.SECONDARY) && (!row.isEmpty())) {
                 EntryWrapper rowData = row.getItem();
-                ContextMenu menu = new ContextMenu();
-                MenuItem properties = new MenuItem("Właściwości");
-                menu.getItems().add(properties);
-                menu.show(row, event.getScreenX(), event.getScreenY());
-                properties.setOnAction(e ->
-                        new EntryInfoDialog(rowData.getEntry().getEntryProperties().getAbsolutePath()).show());
+                AbstractEntry target = rowData.getEntry();
+                new EntryContextMenu(this, target)
+                        .show(row, event.getScreenX(), event.getScreenY());
             }
         });
         return row;

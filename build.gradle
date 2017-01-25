@@ -15,6 +15,10 @@ dependencies {
     compile project(':app')
 }
 
+
+task install {}
+install.dependsOn (build, installDist)
+
 subprojects {
     apply plugin: 'java'
 

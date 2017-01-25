@@ -9,6 +9,7 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.KeyCode;
@@ -24,6 +25,7 @@ import pl.greywarden.openr.gui.dialogs.AboutDialog;
 import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;
 import pl.greywarden.openr.gui.dialogs.CreateFileDialog;
 import pl.greywarden.openr.gui.dialogs.NewFileDialog;
+import pl.greywarden.openr.gui.find.FindWindow;
 import pl.greywarden.openr.gui.grep.GrepWindow;
 import pl.greywarden.openr.i18n.I18nManager;
 import pl.greywarden.openr.templates.Template;
@@ -172,7 +174,12 @@ public class MainWindow extends Stage {
                 centralContainter.getLeftView().getDirectoryView(),
                 centralContainter.getRightView().getDirectoryView()));
 
-        toolBar.getItems().addAll(newFile, grep);
+        Button find = new Button();
+        find.setGraphic(IconManager.getIcon("find"));
+        find.setOnAction(event -> new FindWindow(centralContainter.getLeftView().getDirectoryView(),
+                centralContainter.getRightView().getDirectoryView()));
+
+        toolBar.getItems().addAll(newFile, new Separator(), grep, find);
         layout.getChildren().add(toolBar);
     }
 }

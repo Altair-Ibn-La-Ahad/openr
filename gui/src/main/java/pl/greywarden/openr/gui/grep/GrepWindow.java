@@ -68,7 +68,6 @@ public class GrepWindow extends Stage {
 
         super.setScene(new Scene(layout));
         super.centerOnScreen();
-        super.setMaximized(true);
         super.show();
     }
 

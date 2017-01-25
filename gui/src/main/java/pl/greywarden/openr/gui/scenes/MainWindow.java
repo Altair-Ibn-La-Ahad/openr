@@ -23,15 +23,11 @@ import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.gui.dialogs.AboutDialog;
 import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;
-import pl.greywarden.openr.gui.dialogs.CreateFileDialog;
 import pl.greywarden.openr.gui.dialogs.NewFileDialog;
 import pl.greywarden.openr.gui.find.FindWindow;
 import pl.greywarden.openr.gui.grep.GrepWindow;
 import pl.greywarden.openr.i18n.I18nManager;
-import pl.greywarden.openr.templates.Template;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Log4j
@@ -64,9 +60,9 @@ public class MainWindow extends Stage {
     }
 
     private void buildScene() {
+        createCentralContainer();
         createMenuBar();
         createToolBar();
-        createCentralContainer();
         createStatusBar();
     }
 
@@ -78,32 +74,22 @@ public class MainWindow extends Stage {
                 createViewMenu(),
                 createHelpMenu());
 
-        layout.getChildren().addAll(menuBar);
+        layout.getChildren().add(0, menuBar);
     }
 
     private Menu createFileMenu() {
         Menu file = new Menu(i18n.getString("file"));
-        file.getItems().add(createNewFileMenu());
+        file.getItems().add(new NewFileMenu(
+                centralContainter.getLeftView().getDirectoryView(),
+                centralContainter.getRightView().getDirectoryView()));
+        file.getItems().add(new NewDocumentMenu(
+                centralContainter.getLeftView().getDirectoryView(),
+                centralContainter.getRightView().getDirectoryView()));
         file.getItems().add(createSettingsMenuItem());
         file.getItems().add(new SeparatorMenuItem());
         file.getItems().add(createExitMenuItem());
 
         return file;
-    }
-
-    private Menu createNewFileMenu() {
-        Menu menu = new Menu(i18n.getString("new-file"));
-        List<MenuItem> items = new ArrayList<>();
-        Template.getAvailableTemplates().forEach(template -> {
-            MenuItem item = new MenuItem(i18n.getString(template.getName()));
-            item.setOnAction(event ->
-                    new CreateFileDialog(template,
-                            centralContainter.getLeftView().getDirectoryView(),
-                            centralContainter.getRightView().getDirectoryView()));
-            items.add(item);
-        });
-        menu.getItems().addAll(items);
-        return menu;
     }
 
     private MenuItem createSettingsMenuItem() {
@@ -180,6 +166,6 @@ public class MainWindow extends Stage {
                 centralContainter.getRightView().getDirectoryView()));
 
         toolBar.getItems().addAll(newFile, new Separator(), grep, find);
-        layout.getChildren().add(toolBar);
+        layout.getChildren().add(1, toolBar);
     }
 }

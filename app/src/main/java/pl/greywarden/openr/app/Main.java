@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import pl.greywarden.openr.gui.dialogs.AboutDialog;
 import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;
-import pl.greywarden.openr.gui.scenes.MainWindowScene;
+import pl.greywarden.openr.gui.scenes.MainWindow;
 
 import java.util.Optional;
 
@@ -21,22 +21,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("OpenR " + AboutDialog.getVersion());
         Platform.setImplicitExit(false);
-        MainWindowScene mainWindowScene = new MainWindowScene();
-        primaryStage.setScene(new Scene(mainWindowScene));
-        primaryStage.setMaximized(true);
-        primaryStage.show();
-
-        Window mainWindow = primaryStage.getScene().getWindow();
-        mainWindow.setOnCloseRequest(event -> {
-            Optional<ButtonType> confirm = new ConfirmExitDialog().showAndWait();
-            if (confirm.isPresent()) {
-                if (ButtonBar.ButtonData.YES.equals(confirm.get().getButtonData())) {
-                    Platform.exit();
-                }
-            }
-            event.consume();
-        });
+        Platform.runLater(() -> new MainWindow().show());
     }
 }

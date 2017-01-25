@@ -1,6 +1,10 @@
 package pl.greywarden.openr.gui.scenes;
 
+import javafx.application.Platform;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -12,10 +16,12 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.gui.dialogs.AboutDialog;
+import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;
 import pl.greywarden.openr.gui.dialogs.CreateFileDialog;
 import pl.greywarden.openr.gui.dialogs.NewFileDialog;
 import pl.greywarden.openr.gui.grep.GrepWindow;
@@ -24,33 +30,50 @@ import pl.greywarden.openr.templates.Template;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j
-public class MainWindowScene extends VBox {
+public class MainWindow extends Stage {
 
     private final I18nManager i18n = I18nManager.getInstance();
 
     private final CentralContainter centralContainter = new CentralContainter();
     private final MainWindowStatusBar statusBar = new MainWindowStatusBar();
 
-    public MainWindowScene() {
-        i18n.setBundle("menu-bar");
-        createMenuBar();
+    private final VBox layout = new VBox();
 
-        i18n.setBundle("tool-bar");
+    public MainWindow() {
+        createMenuBar();
         createToolBar();
         createCentralContainer();
         createStatusBar();
+
+        Scene scene = new Scene(layout);
+
+        super.setTitle("OpenR " + AboutDialog.getVersion());
+        super.setScene(scene);
+        super.setMaximized(true);
+
+        super.setOnCloseRequest(event -> {
+            Optional<ButtonType> confirm = new ConfirmExitDialog().showAndWait();
+            if (confirm.isPresent()) {
+                if (ButtonBar.ButtonData.YES.equals(confirm.get().getButtonData())) {
+                    Platform.exit();
+                }
+            }
+            event.consume();
+        });
     }
 
     private void createMenuBar() {
+        i18n.setBundle("menu-bar");
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(
                 createFileMenu(),
                 createViewMenu(),
                 createHelpMenu());
 
-        super.getChildren().addAll(menuBar);
+        layout.getChildren().addAll(menuBar);
     }
 
     private Menu createFileMenu() {
@@ -98,11 +121,11 @@ public class MainWindowScene extends VBox {
 
     private void createCentralContainer() {
         VBox.setVgrow(centralContainter, Priority.ALWAYS);
-        super.getChildren().add(centralContainter);
+        layout.getChildren().add(centralContainter);
     }
 
     private void createStatusBar() {
-        super.getChildren().add(statusBar);
+        layout.getChildren().add(statusBar);
     }
 
     private Menu createViewMenu() {
@@ -129,6 +152,7 @@ public class MainWindowScene extends VBox {
     }
 
     private void createToolBar() {
+        i18n.setBundle("tool-bar");
         ToolBar toolBar = new ToolBar();
 
         Button newFile = new Button();
@@ -144,6 +168,6 @@ public class MainWindowScene extends VBox {
                 centralContainter.getRightView().getDirectoryView()));
 
         toolBar.getItems().addAll(newFile, grep);
-        super.getChildren().add(toolBar);
+        layout.getChildren().add(toolBar);
     }
 }

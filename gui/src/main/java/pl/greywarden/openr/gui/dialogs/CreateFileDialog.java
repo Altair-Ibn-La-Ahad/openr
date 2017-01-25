@@ -87,14 +87,20 @@ public class CreateFileDialog extends Dialog<Pair<String, String>> {
     protected void createDialogContent() {
         filename = new TextField();
         filename.setPromptText(i18n.getString("filename"));
+        Label pathLabel = new Label(i18n.getString("path") + ":");
         pathComboBox = new ComboBox<>();
-        pathComboBox.getItems().addAll(left.getRootPath(), right.getRootPath());
+        if (right == null) {
+            pathComboBox.getItems().setAll(left.getRootPath());
+            pathComboBox.setVisible(false);
+        } else {
+            pathComboBox.getItems().setAll(left.getRootPath(), right.getRootPath());
+            grid.add(pathLabel, 0, 1);
+            grid.add(pathComboBox, 1, 1);
+        }
         pathComboBox.getSelectionModel().select(0);
 
         grid.add(new Label(i18n.getString("filename") + ":"), 0, 0);
         grid.add(filename, 1, 0);
-        grid.add(new Label(i18n.getString("path") + ":"), 0, 1);
-        grid.add(pathComboBox, 1, 1);
 
         filename.setMinWidth(400);
         pathComboBox.setMinWidth(400);

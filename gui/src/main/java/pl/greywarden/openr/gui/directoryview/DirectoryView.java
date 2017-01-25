@@ -197,6 +197,9 @@ public class DirectoryView extends TableView <EntryWrapper> {
                             .show(row, event.getScreenX(), event.getScreenY());
                 }
             }
+            if (event.getButton().equals(MouseButton.SECONDARY) && row.isEmpty()) {
+                new CreateNewEntryContextMenu(this).show(row, event.getScreenX(), event.getScreenY());
+            }
         });
         return row;
     }

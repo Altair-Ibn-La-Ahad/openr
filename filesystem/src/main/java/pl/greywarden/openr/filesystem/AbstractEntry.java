@@ -47,6 +47,9 @@ public abstract class AbstractEntry implements EntryOperations {
             } else {
                 FileUtils.copyFileToDirectory(clipboard.filesystemEntry, target.filesystemEntry);
             }
+            if (cut) {
+                clipboard.delete();
+            }
             clipboard = null;
         } catch (IOException exception) {
             log.error("Exception during paste", exception);

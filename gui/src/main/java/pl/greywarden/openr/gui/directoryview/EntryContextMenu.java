@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.gui.IconManager;
+import pl.greywarden.openr.gui.dialogs.ConfirmDeleteDialog;
 import pl.greywarden.openr.gui.dialogs.EntryInfoDialog;
 import pl.greywarden.openr.i18n.I18nManager;
 
@@ -71,10 +72,15 @@ public class EntryContextMenu extends ContextMenu {
         paste.disableProperty().bind(AbstractEntry.clipboardEmptyBinding());
 
         MenuItem moveToTrash = new MenuItem(i18n.getString("move-to-trash"));
+        moveToTrash.setGraphic(IconManager.getIcon("trash"));
         moveToTrash.setOnAction(event -> {
             entry.moveToTrash();
             directoryView.reload();
         });
+
+        MenuItem deletePermanently = new MenuItem(i18n.getString("delete-permanently"));
+        deletePermanently.setGraphic(IconManager.getIcon("delete-permanent-small"));
+        deletePermanently.setOnAction(event -> new ConfirmDeleteDialog(directoryView));
 
         MenuItem properties = new MenuItem(i18n.getString("properties"));
         properties.setOnAction(event -> new EntryInfoDialog(entry.getEntryProperties().getAbsolutePath()).show());
@@ -85,6 +91,7 @@ public class EntryContextMenu extends ContextMenu {
                 cut, copy, paste,
                 new SeparatorMenuItem(),
                 moveToTrash,
+                deletePermanently,
                 new SeparatorMenuItem(),
                 properties);
 

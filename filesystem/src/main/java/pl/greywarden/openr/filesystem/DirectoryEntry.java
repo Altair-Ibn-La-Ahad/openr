@@ -23,8 +23,4 @@ public class DirectoryEntry extends AbstractEntry {
         }
     }
 
-    @Override
-    public void delete() {
-        FileUtils.deleteQuietly(getFilesystemEntry());
-    }
 }

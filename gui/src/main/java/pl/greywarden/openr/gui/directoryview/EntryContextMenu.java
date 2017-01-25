@@ -70,6 +70,12 @@ public class EntryContextMenu extends ContextMenu {
 
         paste.disableProperty().bind(AbstractEntry.clipboardEmptyBinding());
 
+        MenuItem moveToTrash = new MenuItem(i18n.getString("move-to-trash"));
+        moveToTrash.setOnAction(event -> {
+            entry.moveToTrash();
+            directoryView.reload();
+        });
+
         MenuItem properties = new MenuItem(i18n.getString("properties"));
         properties.setOnAction(event -> new EntryInfoDialog(entry.getEntryProperties().getAbsolutePath()).show());
 
@@ -77,6 +83,8 @@ public class EntryContextMenu extends ContextMenu {
                 open,
                 new SeparatorMenuItem(),
                 cut, copy, paste,
+                new SeparatorMenuItem(),
+                moveToTrash,
                 new SeparatorMenuItem(),
                 properties);
 

@@ -10,4 +10,7 @@
     "builder" : "pl.greywarden.openr.templates.builders.XmlFileTemplateBuilder"},
   {"type" : "text",
     "name" : "html-file",
-    "builder" : "pl.greywarden.openr.templates.builders.HtmlFileTemplateBuilder"}]}
+    "builder" : "pl.greywarden.openr.templates.builders.HtmlFileTemplateBuilder"},
+  {"type" : "text",
+    "name" : "docx-file",
+    "builder" : "pl.greywarden.openr.templates.builders.DocxFileTemplateBuilder"}]}

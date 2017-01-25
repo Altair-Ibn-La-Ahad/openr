@@ -9,6 +9,7 @@ import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.gui.dialogs.ConfirmDeleteDialog;
 import pl.greywarden.openr.gui.dialogs.EntryInfoDialog;
+import pl.greywarden.openr.gui.dialogs.RenameDialog;
 import pl.greywarden.openr.i18n.I18nManager;
 
 import java.awt.Desktop;
@@ -46,6 +47,9 @@ public class EntryContextMenu extends ContextMenu {
                 directoryView.changePath(entry.getEntryProperties().getAbsolutePath());
             }
         });
+
+        MenuItem rename = new MenuItem(i18n.getString("rename"));
+        rename.setOnAction(event -> new RenameDialog(directoryView));
 
         MenuItem cut = new MenuItem(i18n.getString("cut"));
         MenuItem copy = new MenuItem(i18n.getString("copy"));
@@ -86,7 +90,7 @@ public class EntryContextMenu extends ContextMenu {
         properties.setOnAction(event -> new EntryInfoDialog(entry.getEntryProperties().getAbsolutePath()).show());
 
         super.getItems().addAll(
-                open,
+                open, rename,
                 new SeparatorMenuItem(),
                 cut, copy, paste,
                 new SeparatorMenuItem(),

@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.EntryWrapper;
+import pl.greywarden.openr.filesystem.ParentDirectoryEntry;
 import pl.greywarden.openr.i18n.I18nManager;
 
 import java.awt.Desktop;
@@ -35,6 +36,11 @@ public class DirectoryView extends TableView <EntryWrapper> {
     public DirectoryView(String rootPath) {
         super.setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
         build(rootPath);
+        super.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                super.getSelectionModel().clearSelection();
+            }
+        });
     }
 
     public void changePath(String rootPath) {
@@ -161,6 +167,9 @@ public class DirectoryView extends TableView <EntryWrapper> {
     private Object createTableRow() {
         TableRow<EntryWrapper> row = new TableRow<>();
         row.setOnMouseClicked(event -> {
+            if (row.isEmpty()) {
+                super.getSelectionModel().clearSelection();
+            }
             if (event.getClickCount() == 2 && (!row.isEmpty())) {
                 EntryWrapper rowData = row.getItem();
                 if (rowData.getEntry().getEntryProperties().isDirectory()) {
@@ -183,8 +192,10 @@ public class DirectoryView extends TableView <EntryWrapper> {
             if (event.getButton().equals(MouseButton.SECONDARY) && (!row.isEmpty())) {
                 EntryWrapper rowData = row.getItem();
                 AbstractEntry target = rowData.getEntry();
-                new EntryContextMenu(this, target)
-                        .show(row, event.getScreenX(), event.getScreenY());
+                if (!(target instanceof ParentDirectoryEntry)) {
+                    new EntryContextMenu(this, target)
+                            .show(row, event.getScreenX(), event.getScreenY());
+                }
             }
         });
         return row;

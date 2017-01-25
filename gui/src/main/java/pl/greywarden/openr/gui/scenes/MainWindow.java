@@ -37,18 +37,14 @@ public class MainWindow extends Stage {
 
     private final I18nManager i18n = I18nManager.getInstance();
 
-    private final CentralContainter centralContainter = new CentralContainter();
-    private final MainWindowStatusBar statusBar = new MainWindowStatusBar();
+    private CentralContainter centralContainter;
+    private MainWindowStatusBar statusBar;
 
     private final VBox layout = new VBox();
 
     public MainWindow() {
-        createMenuBar();
-        createToolBar();
-        createCentralContainer();
-        createStatusBar();
-
         Scene scene = new Scene(layout);
+        buildScene();
 
         super.setTitle("OpenR " + AboutDialog.getVersion());
         super.setScene(scene);
@@ -63,6 +59,13 @@ public class MainWindow extends Stage {
             }
             event.consume();
         });
+    }
+
+    private void buildScene() {
+        createMenuBar();
+        createToolBar();
+        createCentralContainer();
+        createStatusBar();
     }
 
     private void createMenuBar() {
@@ -120,11 +123,13 @@ public class MainWindow extends Stage {
     }
 
     private void createCentralContainer() {
+        centralContainter = new CentralContainter();
         VBox.setVgrow(centralContainter, Priority.ALWAYS);
         layout.getChildren().add(centralContainter);
     }
 
     private void createStatusBar() {
+        statusBar = new MainWindowStatusBar();
         layout.getChildren().add(statusBar);
     }
 

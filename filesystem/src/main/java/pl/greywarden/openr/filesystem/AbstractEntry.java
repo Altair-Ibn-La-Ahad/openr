@@ -1,5 +1,6 @@
 package pl.greywarden.openr.filesystem;
 
+import com.sun.jna.platform.win32.W32FileUtils;
 import javafx.beans.binding.BooleanBinding;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -81,6 +82,8 @@ public abstract class AbstractEntry implements EntryOperations {
     public void moveToTrash() {
         if (SystemUtils.IS_OS_LINUX) {
             moveToTrashLinux();
+        } else if (SystemUtils.IS_OS_WINDOWS) {
+            moveToTrashWindows();
         }
     }
 
@@ -100,7 +103,15 @@ public abstract class AbstractEntry implements EntryOperations {
             Files.write(trashInfoFile.toPath(), trashInfo.toString().getBytes());
             FileUtils.moveToDirectory(filesystemEntry, new File(pathToTrash, "files"), false);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Exception during moving to trash", e);
+        }
+    }
+
+    private void moveToTrashWindows() {
+        try {
+            new W32FileUtils().moveToTrash(new File[]{filesystemEntry});
+        } catch (IOException e) {
+            log.error("Exception during moving to trash", e);
         }
     }
 

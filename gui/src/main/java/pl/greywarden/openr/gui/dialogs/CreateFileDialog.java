@@ -49,6 +49,7 @@ public class CreateFileDialog extends Dialog<Pair<String, String>> {
 
         super.getDialogPane().setContent(grid);
 
+        filename.requestFocus();
         showDialog();
     }
 

@@ -1,6 +1,7 @@
 package pl.greywarden.openr.gui.directoryview;
 
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import lombok.extern.log4j.Log4j;
@@ -8,13 +9,18 @@ import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.gui.dialogs.ConfirmDeleteDialog;
+import pl.greywarden.openr.gui.dialogs.CreateFileDialog;
 import pl.greywarden.openr.gui.dialogs.EntryInfoDialog;
+import pl.greywarden.openr.gui.dialogs.NewDirectoryDialog;
 import pl.greywarden.openr.gui.dialogs.RenameDialog;
 import pl.greywarden.openr.i18n.I18nManager;
+import pl.greywarden.openr.templates.Template;
 
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j
 public class EntryContextMenu extends ContextMenu {
@@ -50,6 +56,11 @@ public class EntryContextMenu extends ContextMenu {
 
         MenuItem rename = new MenuItem(i18n.getString("rename"));
         rename.setOnAction(event -> new RenameDialog(directoryView));
+
+        Menu newFile = createNewFileMenu();
+
+        MenuItem createDirectory = new MenuItem(i18n.getString("create-directory"));
+        createDirectory.setOnAction(event -> new NewDirectoryDialog(directoryView));
 
         MenuItem cut = new MenuItem(i18n.getString("cut"));
         MenuItem copy = new MenuItem(i18n.getString("copy"));
@@ -92,6 +103,8 @@ public class EntryContextMenu extends ContextMenu {
         super.getItems().addAll(
                 open, rename,
                 new SeparatorMenuItem(),
+                newFile, createDirectory,
+                new SeparatorMenuItem(),
                 cut, copy, paste,
                 new SeparatorMenuItem(),
                 moveToTrash,
@@ -99,6 +112,20 @@ public class EntryContextMenu extends ContextMenu {
                 new SeparatorMenuItem(),
                 properties);
 
+    }
+
+    private Menu createNewFileMenu() {
+        Menu menu = new Menu(i18n.getString("new-file"));
+        List<MenuItem> items = new ArrayList<>();
+        Template.getAvailableTemplates().forEach(template -> {
+            MenuItem item = new MenuItem(i18n.getString(template.getName()));
+            item.setOnAction(event ->
+                    new CreateFileDialog(template,
+                            directoryView, null));
+            items.add(item);
+        });
+        menu.getItems().addAll(items);
+        return menu;
     }
 
 }

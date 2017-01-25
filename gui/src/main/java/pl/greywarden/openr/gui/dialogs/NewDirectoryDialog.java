@@ -42,6 +42,7 @@ public class NewDirectoryDialog extends Dialog <ButtonType> {
             buttonOk.setDisable(newValue.trim().isEmpty() || target.exists());
         });
         buttonOk.setDisable(true);
+        directoryName.requestFocus();
         super.showAndWait().ifPresent(buttonType -> {
             if (buttonType.getButtonData().equals(ButtonBar.ButtonData.OK_DONE)) {
                 File target = new File(view.getRootPath(), directoryName.getText());

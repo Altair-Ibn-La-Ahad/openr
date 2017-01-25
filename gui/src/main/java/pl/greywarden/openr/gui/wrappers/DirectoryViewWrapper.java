@@ -10,7 +10,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
-import pl.greywarden.openr.filesystem.EntryWrapper;
 import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.gui.directoryview.PathTextField;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
@@ -40,18 +39,13 @@ public class DirectoryViewWrapper extends VBox {
 
         directoryView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
-                    EntryWrapper wrapper = (EntryWrapper) newValue;
                     TextField path = (TextField) super.getParent().getScene().lookup("#statusbar-text-field");
-                    if (wrapper != null) {
-                        path.setText(wrapper.getEntry().getEntryProperties().getAbsolutePath());
+                    if (newValue != null) {
+                        path.setText(newValue.getEntry().getEntryProperties().getAbsolutePath());
                     } else {
                         path.setText("");
                     }
                 });
-    }
-
-    public String getRoot() {
-        return directoryView.getRootPath();
     }
 
     private void createPathTextFieldWrapper() {

@@ -11,7 +11,6 @@ import org.apache.commons.lang3.SystemUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -20,10 +19,8 @@ import java.util.Date;
 @Log4j
 public abstract class AbstractEntry implements EntryOperations {
 
-    @Getter(AccessLevel.PROTECTED)
-    @Setter(AccessLevel.PROTECTED)
-    private File filesystemEntry;
-    private EntryProperties entryProperties;
+    protected final File filesystemEntry;
+    private final EntryProperties entryProperties;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
@@ -56,13 +53,11 @@ public abstract class AbstractEntry implements EntryOperations {
         }
     }
 
-    @Override
     public void copy() {
         clipboard = this;
         cut = false;
     }
 
-    @Override
     public void cut() {
         copy();
         cut = true;

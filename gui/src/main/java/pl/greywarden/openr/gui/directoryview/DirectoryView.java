@@ -6,7 +6,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
-import javafx.util.Callback;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
@@ -61,7 +60,7 @@ public class DirectoryView extends TableView <EntryWrapper> {
 
     @SuppressWarnings("unchecked")
     private void makeFirstRowAlwaysFirst() {
-        super.sortPolicyProperty().set((Callback<TableView<EntryWrapper>, Boolean>) param -> {
+        super.sortPolicyProperty().set(param -> {
             FXCollections.sort(getItems(), getWrapperComparator(param));
             return true;
         });

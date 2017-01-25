@@ -29,12 +29,4 @@ public class CentralContainter extends HBox {
         rightView.getDirectoryView().setId("right-view");
     }
 
-    public String getLeftViewRootPath() {
-        return leftView.getRoot();
-    }
-
-    public String getRightViewRootPath() {
-        return rightView.getRoot();
-    }
-
 }

@@ -20,7 +20,7 @@ public class HelpTopicWrapper {
 
     public String getUrlToContent() {
         URL url = this.getClass().getClassLoader()
-                .getResource(topic + "_" +  I18nManager.getActualLocale().getLanguage() + ".html");
+                .getResource("help/" + topic + "_" +  I18nManager.getActualLocale().getLanguage() + ".html");
         return url != null ? url.toString() : "";
     }
 

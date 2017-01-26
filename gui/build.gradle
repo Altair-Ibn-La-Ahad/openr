@@ -1,5 +1,5 @@
 group 'pl.greywarden.openr'
-version '0.0.3-dev'
+version '0.1.0-alpha'
 
 dependencies {
     compile project(':filesystem')

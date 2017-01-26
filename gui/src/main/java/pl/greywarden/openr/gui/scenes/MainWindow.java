@@ -144,13 +144,17 @@ public class MainWindow extends Stage {
     }
 
     private Menu createHelpMenu() {
-        Menu help = new Menu(getString("help-menu"));
+        Menu helpMenu = new Menu(getString("help-menu"));
 
         MenuItem about = new MenuItem(getString("about-menu-item"));
         about.setOnAction(event -> new AboutDialog().show());
 
-        help.getItems().addAll(about);
-        return help;
+        MenuItem help = new MenuItem(getString("help-menu-item"));
+        help.setGraphic(IconManager.getIcon("help"));
+        help.setOnAction(event -> Platform.runLater(HelpWindow::new));
+
+        helpMenu.getItems().addAll(about, help);
+        return helpMenu;
     }
 
     private void createToolBar() {

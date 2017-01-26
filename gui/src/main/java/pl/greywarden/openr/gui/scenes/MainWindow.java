@@ -1,6 +1,7 @@
 package pl.greywarden.openr.gui.scenes;
 
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -177,7 +178,12 @@ public class MainWindow extends Stage {
         find.setOnAction(event -> new FindWindow(centralContainter.getLeftView().getDirectoryView(),
                 centralContainter.getRightView().getDirectoryView()));
 
-        toolBar.getItems().addAll(newFile, new Separator(), grep, find);
+        Button exit = new Button();
+        exit.setGraphic(IconManager.getIcon("exit"));
+        exit.setOnAction(event -> super.fireEvent(
+                new WindowEvent(this.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
+
+        toolBar.getItems().addAll(newFile, new Separator(), grep, find, new Separator(), exit);
         layout.getChildren().add(1, toolBar);
     }
 }

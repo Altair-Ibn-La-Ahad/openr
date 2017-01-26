@@ -12,52 +12,39 @@ import java.util.ResourceBundle;
 @Log4j
 public class I18nManager {
 
-    private static I18nManager instance;
-    private final Map<String, Locale> supportedLocales;
-    private String bundle;
-    private Locale actualLocale;
-    {
+    private static Map<String, Locale> supportedLocales;
+    private static Locale actualLocale;
+    static {
         supportedLocales = new HashMap<>();
         supportedLocales.put("en", Locale.forLanguageTag("en"));
-        supportedLocales.put("pl", Locale.forLanguageTag("pl_PL"));
+        supportedLocales.put("pl", Locale.forLanguageTag("pl"));
 
-        bundle = "default";
         actualLocale = Locale.getDefault();
     }
     private I18nManager() {
 
     }
-    public static I18nManager getInstance() {
-        return instance == null ? instance = new I18nManager() : instance;
-    }
 
-    public void setBundle(@NonNull String bundle) {
-        this.bundle = bundle;
-    }
-
-    public String getBundle() {
-        return bundle;
-    }
-
-    public String getString(@NonNull String key) {
+    public static String getString(@NonNull String key) {
         try {
-            return ResourceBundle.getBundle("i18n/" + bundle, getActualLocale(),
+            return ResourceBundle.getBundle("i18n/strings", getActualLocale(),
                     I18nManager.class.getClassLoader()).getString(key);
         } catch (MissingResourceException exception) {
             log.error("Unable to find key for specified bundle", exception);
-            return bundle + "." + key;
+            return key;
         }
     }
 
-    public Map<String, Locale> getSupportedLocales() {
-        return this.supportedLocales;
+    public static Map<String, Locale> getSupportedLocales() {
+        return supportedLocales;
     }
 
-    public void setActualLocale(String languageCode) {
+    public static void setLocale(String languageCode) {
         actualLocale = supportedLocales.getOrDefault(languageCode, Locale.forLanguageTag("en"));
     }
 
-    private Locale getActualLocale() {
-        return supportedLocales.containsKey(actualLocale.getLanguage()) ? actualLocale : Locale.forLanguageTag("en");
+    private static Locale getActualLocale() {
+        return supportedLocales.containsKey(actualLocale.getLanguage())
+                ? actualLocale : Locale.forLanguageTag("en");
     }
 }

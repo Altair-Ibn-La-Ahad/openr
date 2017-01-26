@@ -21,12 +21,12 @@ import java.io.File;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static pl.greywarden.openr.i18n.I18nManager.getString;
 
 public class CreateFileDialog extends Dialog<Pair<String, String>> {
 
     @Getter
     private GridPane grid;
-    protected final I18nManager i18n = I18nManager.getInstance();
     protected ComboBox<String> pathComboBox;
     private TextField filename;
     private ButtonType create;
@@ -66,8 +66,8 @@ public class CreateFileDialog extends Dialog<Pair<String, String>> {
     }
 
     private void createOkCancelOptions() {
-        create = new ButtonType(i18n.getString("create"), ButtonBar.ButtonData.OK_DONE);
-        ButtonType cancel = new ButtonType(i18n.getString("cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        create = new ButtonType(getString("create-file"), ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType(getString("cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
 
         super.getDialogPane().getButtonTypes().addAll(create, cancel);
         super.setResultConverter(createResultConverter());
@@ -87,8 +87,8 @@ public class CreateFileDialog extends Dialog<Pair<String, String>> {
 
     protected void createDialogContent() {
         filename = new TextField();
-        filename.setPromptText(i18n.getString("filename"));
-        Label pathLabel = new Label(i18n.getString("path") + ":");
+        filename.setPromptText(getString("filename"));
+        Label pathLabel = new Label(getString("path") + ":");
         pathComboBox = new ComboBox<>();
         if (right == null) {
             pathComboBox.getItems().setAll(left.getRootPath());
@@ -100,7 +100,7 @@ public class CreateFileDialog extends Dialog<Pair<String, String>> {
         }
         pathComboBox.getSelectionModel().select(0);
 
-        grid.add(new Label(i18n.getString("filename") + ":"), 0, 0);
+        grid.add(new Label(getString("filename") + ":"), 0, 0);
         grid.add(filename, 1, 0);
 
         filename.setMinWidth(400);
@@ -108,9 +108,8 @@ public class CreateFileDialog extends Dialog<Pair<String, String>> {
     }
 
     protected void createHeaderAndTitle() {
-        i18n.setBundle("create-file-dialog");
-        super.setTitle(i18n.getString(template.getName()));
-        super.setHeaderText(i18n.getString("header"));
+        super.setTitle(getString("create-file-" + template.getName()));
+        super.setHeaderText(getString("create-file-header"));
     }
 
     private Callback<ButtonType, Pair<String, String>> createResultConverter() {

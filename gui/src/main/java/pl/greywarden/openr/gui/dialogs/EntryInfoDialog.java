@@ -15,22 +15,21 @@ import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.FileEntry;
 import pl.greywarden.openr.gui.IconManager;
-import pl.greywarden.openr.i18n.I18nManager;
 
 import java.io.File;
+
+import static pl.greywarden.openr.i18n.I18nManager.getString;
 
 public class EntryInfoDialog extends Dialog {
 
     private final File selectedEntry;
-    private final I18nManager i18n = I18nManager.getInstance();
 
     public EntryInfoDialog(String pathToEntry) {
         super();
-        i18n.setBundle("entry-info");
         selectedEntry = new File(pathToEntry);
 
         createInfo();
-        super.getDialogPane().getButtonTypes().add(new ButtonType(i18n.getString("ok"), ButtonBar.ButtonData.OK_DONE));
+        super.getDialogPane().getButtonTypes().add(new ButtonType(getString("ok"), ButtonBar.ButtonData.OK_DONE));
         super.setGraphic(new ImageView(IconManager.getFileIcon(pathToEntry)));
         super.setTitle(selectedEntry.getName());
         super.getDialogPane().minWidthProperty().setValue(600);
@@ -46,11 +45,11 @@ public class EntryInfoDialog extends Dialog {
         grid.setHgap(5);
         grid.setVgap(5);
 
-        Label nameLabel = new Label(i18n.getString("name") + ":");
-        Label absolutePathLabel = new Label(i18n.getString("absolute-path") + ":");
-        Label typeLabel = new Label(i18n.getString("type") + ":");
-        Label privilegesLabel = new Label(i18n.getString("privileges") + ":");
-        Label sizeLabel = new Label(i18n.getString("size") + ":");
+        Label nameLabel = new Label(getString("name") + ":");
+        Label absolutePathLabel = new Label(getString("absolute-path") + ":");
+        Label typeLabel = new Label(getString("type") + ":");
+        Label privilegesLabel = new Label(getString("privileges") + ":");
+        Label sizeLabel = new Label(getString("size") + ":");
 
         TextField name = new TextField();
             name.setEditable(false);

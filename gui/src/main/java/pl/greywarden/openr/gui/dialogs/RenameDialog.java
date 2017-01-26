@@ -9,28 +9,27 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.i18n.I18nManager;
 
 import java.io.File;
+
+import static pl.greywarden.openr.i18n.I18nManager.getString;
 
 public class RenameDialog extends Dialog <ButtonType> {
 
     public RenameDialog(DirectoryView directoryView) {
-        I18nManager i18n = I18nManager.getInstance();
-        i18n.setBundle("rename-dialog");
         GridPane layout = new GridPane();
         layout.setHgap(5);
 
-        ButtonType ok = new ButtonType(i18n.getString("ok"), ButtonBar.ButtonData.OK_DONE);
-        ButtonType cancel = new ButtonType(i18n.getString("cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType ok = new ButtonType(getString("ok"), ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType(getString("cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        Label newNameLabel = new Label(i18n.getString("new-name") + ":");
+        Label newNameLabel = new Label(getString("new-name") + ":");
         TextField newName = new TextField();
 
         AbstractEntry selectedItem = directoryView.getSelectionModel().getSelectedItem().getEntry();
 
         layout.addRow(0, newNameLabel, newName);
-        super.setTitle(i18n.getString("rename"));
+        super.setTitle(getString("rename-dialog-title"));
         super.getDialogPane().getButtonTypes().setAll(ok, cancel);
         super.getDialogPane().setContent(layout);
         Node buttonOk = super.getDialogPane().lookupButton(ok);

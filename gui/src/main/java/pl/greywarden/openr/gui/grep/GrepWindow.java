@@ -22,8 +22,8 @@ import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.io.FileUtils;
 import org.unix4j.Unix4j;
+import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.i18n.I18nManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +35,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static pl.greywarden.openr.i18n.I18nManager.getString;
+
 @Log4j
 public class GrepWindow extends Stage {
 
@@ -43,8 +45,6 @@ public class GrepWindow extends Stage {
     private final VBox layout;
     private CheckBox recursive;
     private ComboBox<String> pathComboBox;
-
-    private final I18nManager i18n;
 
     private final DirectoryView left;
     private final DirectoryView right;
@@ -55,9 +55,7 @@ public class GrepWindow extends Stage {
         this.left = left;
         this.right = right;
 
-        i18n = I18nManager.getInstance();
-        i18n.setBundle("grep-window");
-        setTitle(i18n.getString("title"));
+        setTitle(getString("grep-window-title"));
 
         layout = new VBox(5);
         layout.setPadding(new Insets(5));
@@ -74,13 +72,13 @@ public class GrepWindow extends Stage {
     private void createPathSelection() {
         HBox wrapper = new HBox(10);
         wrapper.setAlignment(Pos.CENTER_LEFT);
-        Label pathLabel = new Label(i18n.getString("path") + ":");
+        Label pathLabel = new Label(getString("path") + ":");
         pathComboBox = new ComboBox<>();
         pathComboBox.getItems().addAll(left.getRootPath(), right.getRootPath());
         pathComboBox.getSelectionModel().select(0);
         pathComboBox.setMinWidth(500);
         recursive = new CheckBox();
-        Label recursiveLabel = new Label(i18n.getString("recursive"));
+        Label recursiveLabel = new Label(getString("recursive-label") + "?");
         HBox.setHgrow(wrapper, Priority.ALWAYS);
 
         wrapper.getChildren().addAll(pathLabel, pathComboBox, recursiveLabel, recursive);
@@ -91,7 +89,8 @@ public class GrepWindow extends Stage {
         HBox wrapper = new HBox(5);
 
         regexInput = new TextField();
-        Button doGrep = new Button("->");
+        Button doGrep = new Button();
+        doGrep.setGraphic(IconManager.getIcon("go"));
         doGrep.setOnAction(handleGrep());
 
         regexInput.setOnKeyPressed(event -> {
@@ -112,8 +111,8 @@ public class GrepWindow extends Stage {
         resultTableView = new TableView<>();
         resultTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         resultTableView.setPlaceholder(new Label(""));
-        TableColumn <GrepResult, String> text = new TableColumn(i18n.getString("text"));
-        TableColumn <GrepResult, String> pathToFile = new TableColumn(i18n.getString("path"));
+        TableColumn <GrepResult, String> text = new TableColumn(getString("grep-result-text"));
+        TableColumn <GrepResult, String> pathToFile = new TableColumn(getString("grep-result-path"));
         text.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getText()));
         pathToFile.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getFile().getAbsolutePath()));
         resultTableView.getColumns().addAll(text, pathToFile);

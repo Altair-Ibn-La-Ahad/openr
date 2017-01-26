@@ -6,20 +6,19 @@ import javafx.scene.control.ButtonType;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.i18n.I18nManager;
+
+import static pl.greywarden.openr.i18n.I18nManager.getString;
 
 public class ConfirmDeleteDialog extends Alert {
 
     public ConfirmDeleteDialog(DirectoryView directoryView) {
         super(AlertType.CONFIRMATION);
-        I18nManager i18n = I18nManager.getInstance();
-        i18n.setBundle("confirm-delete");
-        ButtonType yes = new ButtonType(i18n.getString("yes"), ButtonBar.ButtonData.YES);
-        ButtonType no = new ButtonType(i18n.getString("no"), ButtonBar.ButtonData.NO);
+        ButtonType yes = new ButtonType(getString("yes"), ButtonBar.ButtonData.YES);
+        ButtonType no = new ButtonType(getString("no"), ButtonBar.ButtonData.NO);
 
-        super.setTitle(i18n.getString("delete"));
+        super.setTitle(getString("confirm-delete-dialog-title"));
         AbstractEntry selectedItem = directoryView.getSelectionModel().getSelectedItem().getEntry();
-        super.setHeaderText(i18n.getString("warning"));
+        super.setHeaderText(getString("confirm-delete-dialog-warning"));
 
         super.setGraphic(IconManager.getIcon("delete-permanent"));
 

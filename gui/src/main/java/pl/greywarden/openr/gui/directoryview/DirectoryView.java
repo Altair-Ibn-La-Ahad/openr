@@ -13,7 +13,6 @@ import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.EntryWrapper;
 import pl.greywarden.openr.filesystem.ParentDirectoryEntry;
-import pl.greywarden.openr.i18n.I18nManager;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -23,12 +22,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static pl.greywarden.openr.i18n.I18nManager.getString;
+
 @Log4j
 public class DirectoryView extends TableView <EntryWrapper> {
 
     private DirectoryEntry rootEntry;
-
-    private final I18nManager i18n = I18nManager.getInstance();
 
     @Getter
     private String rootPath;
@@ -51,7 +50,6 @@ public class DirectoryView extends TableView <EntryWrapper> {
 
     private void build(String rootPath) {
         changePath(rootPath);
-        i18n.setBundle("directory-view");
         createColumns();
     }
 
@@ -89,11 +87,11 @@ public class DirectoryView extends TableView <EntryWrapper> {
     @SuppressWarnings("unchecked")
     private void createColumns() {
         final TableColumn
-                name = new TableColumn(i18n.getString("name")),
-                extension = new TableColumn(i18n.getString("extension")),
-                size = new TableColumn(i18n.getString("size")),
-                modificationDate = new TableColumn(i18n.getString("modification-date")),
-                privileges = new TableColumn(i18n.getString("privileges"));
+                name = new TableColumn(getString("directory-view-column-name")),
+                extension = new TableColumn(getString("directory-view-column-extension")),
+                size = new TableColumn(getString("directory-view-column-size")),
+                modificationDate = new TableColumn(getString("directory-view-column-modification-date")),
+                privileges = new TableColumn(getString("directory-view-column-privileges"));
 
         name.setCellValueFactory(new PropertyValueFactory<>("entry"));
         name.setCellFactory(param -> new DirectoryViewEntryNameCell());

@@ -14,28 +14,27 @@ import pl.greywarden.openr.gui.dialogs.NewDirectoryDialog;
 import pl.greywarden.openr.gui.dialogs.RenameDialog;
 import pl.greywarden.openr.gui.scenes.NewDocumentMenu;
 import pl.greywarden.openr.gui.scenes.NewFileMenu;
-import pl.greywarden.openr.i18n.I18nManager;
 
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
+import static pl.greywarden.openr.i18n.I18nManager.getString;
+
 @Log4j
 public class EntryContextMenu extends ContextMenu {
 
-    private final I18nManager i18n = I18nManager.getInstance();
     private final AbstractEntry entry;
     private final DirectoryView directoryView;
 
     public EntryContextMenu(DirectoryView directoryView, AbstractEntry entry) {
         this.entry = entry;
         this.directoryView = directoryView;
-        i18n.setBundle("entry-context-menu");
         buildOptions();
     }
 
     private void buildOptions() {
-        MenuItem open = new MenuItem(i18n.getString("open"));
+        MenuItem open = new MenuItem(getString("open"));
         open.setStyle("-fx-font-weight: bold");
         open.setOnAction(event -> {
             File target = new File(entry.getEntryProperties().getAbsolutePath());
@@ -52,18 +51,18 @@ public class EntryContextMenu extends ContextMenu {
             }
         });
 
-        MenuItem rename = new MenuItem(i18n.getString("rename"));
+        MenuItem rename = new MenuItem(getString("rename"));
         rename.setOnAction(event -> new RenameDialog(directoryView));
 
         Menu newFile = new NewFileMenu(directoryView, null);
         Menu newDocument = new NewDocumentMenu(directoryView, null);
 
-        MenuItem createDirectory = new MenuItem(i18n.getString("create-directory"));
+        MenuItem createDirectory = new MenuItem(getString("create-directory"));
         createDirectory.setOnAction(event -> new NewDirectoryDialog(directoryView));
 
-        MenuItem cut = new MenuItem(i18n.getString("cut"));
-        MenuItem copy = new MenuItem(i18n.getString("copy"));
-        MenuItem paste = new MenuItem(i18n.getString("paste"));
+        MenuItem cut = new MenuItem(getString("cut"));
+        MenuItem copy = new MenuItem(getString("copy"));
+        MenuItem paste = new MenuItem(getString("paste"));
 
         cut.setGraphic(IconManager.getIcon("cut"));
         cut.setOnAction(event -> entry.cut());
@@ -85,18 +84,18 @@ public class EntryContextMenu extends ContextMenu {
 
         paste.disableProperty().bind(AbstractEntry.clipboardEmptyBinding());
 
-        MenuItem moveToTrash = new MenuItem(i18n.getString("move-to-trash"));
+        MenuItem moveToTrash = new MenuItem(getString("move-to-trash"));
         moveToTrash.setGraphic(IconManager.getIcon("trash"));
         moveToTrash.setOnAction(event -> {
             entry.moveToTrash();
             directoryView.reload();
         });
 
-        MenuItem deletePermanently = new MenuItem(i18n.getString("delete-permanently"));
+        MenuItem deletePermanently = new MenuItem(getString("delete-permanently-menu-item"));
         deletePermanently.setGraphic(IconManager.getIcon("delete-permanent-small"));
         deletePermanently.setOnAction(event -> new ConfirmDeleteDialog(directoryView));
 
-        MenuItem properties = new MenuItem(i18n.getString("properties"));
+        MenuItem properties = new MenuItem(getString("properties"));
         properties.setOnAction(event -> new EntryInfoDialog(entry.getEntryProperties().getAbsolutePath()).show());
 
         super.getItems().addAll(

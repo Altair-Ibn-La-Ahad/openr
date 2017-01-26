@@ -26,14 +26,13 @@ import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;
 import pl.greywarden.openr.gui.dialogs.NewFileDialog;
 import pl.greywarden.openr.gui.find.FindWindow;
 import pl.greywarden.openr.gui.grep.GrepWindow;
-import pl.greywarden.openr.i18n.I18nManager;
 
 import java.util.Optional;
 
+import static pl.greywarden.openr.i18n.I18nManager.getString;
+
 @Log4j
 public class MainWindow extends Stage {
-
-    private final I18nManager i18n = I18nManager.getInstance();
 
     private CentralContainter centralContainter;
     private MainWindowStatusBar statusBar;
@@ -67,7 +66,6 @@ public class MainWindow extends Stage {
     }
 
     private void createMenuBar() {
-        i18n.setBundle("menu-bar");
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(
                 createFileMenu(),
@@ -78,7 +76,7 @@ public class MainWindow extends Stage {
     }
 
     private Menu createFileMenu() {
-        Menu file = new Menu(i18n.getString("file"));
+        Menu file = new Menu(getString("file-menu"));
         file.getItems().add(new NewFileMenu(
                 centralContainter.getLeftView().getDirectoryView(),
                 centralContainter.getRightView().getDirectoryView()));
@@ -93,7 +91,7 @@ public class MainWindow extends Stage {
     }
 
     private MenuItem createSettingsMenuItem() {
-        MenuItem settings = new MenuItem(i18n.getString("settings"));
+        MenuItem settings = new MenuItem(getString("settings-menu-item"));
         settings.setGraphic(IconManager.getIcon("settings"));
         settings.setOnAction(event -> System.err.println("Settings window placeholder"));
         settings.setAccelerator(new KeyCodeCombination(
@@ -102,7 +100,7 @@ public class MainWindow extends Stage {
     }
 
     private MenuItem createExitMenuItem() {
-        MenuItem exit = new MenuItem(i18n.getString("exit"));
+        MenuItem exit = new MenuItem(getString("exit-menu-item"));
         exit.setGraphic(IconManager.getIcon("exit"));
         exit.setOnAction(event -> super.fireEvent(
                 new WindowEvent(this.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
@@ -122,9 +120,9 @@ public class MainWindow extends Stage {
     }
 
     private Menu createViewMenu() {
-        Menu view = new Menu(i18n.getString("view"));
+        Menu view = new Menu(getString("view-menu"));
 
-        CheckMenuItem statusBarVisibility = new CheckMenuItem(i18n.getString("status-bar"));
+        CheckMenuItem statusBarVisibility = new CheckMenuItem(getString("status-bar-visibility-check"));
         statusBarVisibility.setSelected(true);
         statusBarVisibility.selectedProperty().addListener((observable, oldValue, newValue) -> {
             statusBar.managedProperty().setValue(newValue);
@@ -135,9 +133,9 @@ public class MainWindow extends Stage {
     }
 
     private Menu createHelpMenu() {
-        Menu help = new Menu(i18n.getString("help"));
+        Menu help = new Menu(getString("help-menu"));
 
-        MenuItem about = new MenuItem(i18n.getString("about"));
+        MenuItem about = new MenuItem(getString("about-menu-item"));
         about.setOnAction(event -> new AboutDialog().show());
 
         help.getItems().addAll(about);
@@ -145,7 +143,6 @@ public class MainWindow extends Stage {
     }
 
     private void createToolBar() {
-        i18n.setBundle("tool-bar");
         ToolBar toolBar = new ToolBar();
 
         Button newFile = new Button();

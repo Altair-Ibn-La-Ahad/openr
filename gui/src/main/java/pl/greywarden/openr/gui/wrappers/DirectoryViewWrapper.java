@@ -13,19 +13,16 @@ import lombok.Getter;
 import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.gui.directoryview.PathTextField;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.i18n.I18nManager;
+
+import static pl.greywarden.openr.i18n.I18nManager.getString;
 
 public class DirectoryViewWrapper extends VBox {
 
     @Getter
     private final DirectoryView directoryView;
 
-    private final I18nManager i18n = I18nManager.getInstance();
-
-    @SuppressWarnings("unchecked")
     public DirectoryViewWrapper(String pathToRoot) {
         super();
-        i18n.setBundle("directory-view");
 
         directoryView = new DirectoryView(pathToRoot);
         BorderPane borderPane = new BorderPane(directoryView);
@@ -52,7 +49,7 @@ public class DirectoryViewWrapper extends VBox {
         HBox pathTextFieldWrapper = new HBox(5);
 
         PathTextField pathTextField = new PathTextField(directoryView);
-        Label pathTextFieldLabel = new Label(i18n.getString("path"));
+        Label pathTextFieldLabel = new Label(getString("path"));
         Button go = new Button();
         Button refresh = new Button();
 

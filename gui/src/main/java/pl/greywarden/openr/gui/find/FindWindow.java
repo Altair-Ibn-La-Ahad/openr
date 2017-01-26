@@ -23,7 +23,6 @@ import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.FileEntry;
 import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.i18n.I18nManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,11 +33,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static pl.greywarden.openr.i18n.I18nManager.getString;
+
 @Log4j
 public class FindWindow extends Stage {
 
     private final VBox layout = new VBox(5);
-    private final I18nManager i18n = I18nManager.getInstance();
     private ListView<AbstractEntry> result;
     private TextField input;
     private ComboBox<String> pathComboBox;
@@ -51,7 +51,6 @@ public class FindWindow extends Stage {
         super();
         this.left = left;
         this.right = right;
-        i18n.setBundle("find-window");
         layout.setPadding(new Insets(5));
 
         createSearchBar();
@@ -108,13 +107,13 @@ public class FindWindow extends Stage {
     private void createPathSelection() {
         HBox wrapper = new HBox(10);
         wrapper.setAlignment(Pos.CENTER_LEFT);
-        Label pathLabel = new Label(i18n.getString("path") + ":");
+        Label pathLabel = new Label(getString("path") + ":");
         pathComboBox = new ComboBox<>();
         pathComboBox.getItems().addAll(left.getRootPath(), right.getRootPath());
         pathComboBox.getSelectionModel().select(0);
         pathComboBox.setMinWidth(500);
         recursive = new CheckBox();
-        Label recursiveLabel = new Label(i18n.getString("recursive"));
+        Label recursiveLabel = new Label(getString("recursive-label") + "?");
         HBox.setHgrow(wrapper, Priority.ALWAYS);
 
         wrapper.getChildren().addAll(pathLabel, pathComboBox, recursiveLabel, recursive);

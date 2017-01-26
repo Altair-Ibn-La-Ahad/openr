@@ -8,7 +8,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import lombok.Getter;
 import org.controlsfx.control.StatusBar;
-import pl.greywarden.openr.i18n.I18nManager;
+
+import static pl.greywarden.openr.i18n.I18nManager.getString;
 
 public class MainWindowStatusBar extends StatusBar {
 
@@ -17,10 +18,8 @@ public class MainWindowStatusBar extends StatusBar {
 
     public MainWindowStatusBar() {
         super();
-        I18nManager i18n = I18nManager.getInstance();
-        i18n.setBundle("menu-bar");
 
-        Label label = new Label(i18n.getString("chosen-file"));
+        Label label = new Label(getString("status-bar-selected-file"));
         pathTextField = new TextField();
 
         label.setPadding(new Insets(0, 5, 0, 5));

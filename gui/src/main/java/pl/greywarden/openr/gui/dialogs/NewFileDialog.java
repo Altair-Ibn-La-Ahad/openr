@@ -10,6 +10,8 @@ import pl.greywarden.openr.templates.Template;
 import java.io.File;
 import java.util.function.Consumer;
 
+import static pl.greywarden.openr.i18n.I18nManager.getString;
+
 public class NewFileDialog extends CreateFileDialog {
 
     private ComboBox<Template> templates;
@@ -23,36 +25,30 @@ public class NewFileDialog extends CreateFileDialog {
     protected void createDialogContent() {
         super.createDialogContent();
         createTemplatesComboBox();
-        getGrid().addRow(2, new Label(i18n.getString("file-type") + ":"), templates);
+        getGrid().addRow(2, new Label(getString("type") + ":"), templates);
     }
 
     private void createTemplatesComboBox() {
         templates = new ComboBox<>();
         templates.getItems().addAll(Template.getAvailableTemplates());
-        templates.setButtonCell(new ListCell<Template>() {
-            @Override
-            protected void updateItem(Template t, boolean empty) {
-                super.updateItem(t, empty);
-                if (empty) {
-                    setText("");
-                } else {
-                    setText(i18n.getString(t.getName()));
-                }
-            }
-        });
-        templates.setCellFactory(param -> new ListCell<Template>() {
-            @Override
-            protected void updateItem(Template t, boolean empty) {
-                super.updateItem(t, empty);
-                if (empty) {
-                    setText("");
-                } else {
-                    setText(i18n.getString(t.getName()));
-                }
-            }
-        });
+        templates.setButtonCell(createButtonCell());
+        templates.setCellFactory(param -> createButtonCell());
         templates.getSelectionModel().select(0);
         templates.setMinWidth(400);
+    }
+
+    private ListCell<Template> createButtonCell() {
+        return new ListCell<Template>() {
+            @Override
+            protected void updateItem(Template t, boolean empty) {
+                super.updateItem(t, empty);
+                if (empty) {
+                    setText("");
+                } else {
+                    setText(getString(t.getName() + "-menu-item"));
+                }
+            }
+        };
     }
 
     @Override
@@ -71,8 +67,7 @@ public class NewFileDialog extends CreateFileDialog {
 
     @Override
     protected void createHeaderAndTitle() {
-        i18n.setBundle("new-file-dialog");
-        super.setTitle(i18n.getString("title"));
-        super.setHeaderText(i18n.getString("header"));
+        super.setTitle(getString("new-file-dialog-title"));
+        super.setHeaderText(getString("new-file-dialog-header"));
     }
 }

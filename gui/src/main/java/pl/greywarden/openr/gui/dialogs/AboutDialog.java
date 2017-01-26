@@ -1,20 +1,18 @@
 package pl.greywarden.openr.gui.dialogs;
 
 import javafx.scene.control.Alert;
-import pl.greywarden.openr.i18n.I18nManager;
-
 import java.io.IOException;
 import java.util.Properties;
+
+import static pl.greywarden.openr.i18n.I18nManager.getString;
 
 public class AboutDialog extends Alert {
 
     public AboutDialog() {
         super(AlertType.INFORMATION);
-        I18nManager i18n = I18nManager.getInstance();
-        i18n.setBundle("about");
-        super.setTitle(i18n.getString("title"));
+        super.setTitle(getString("about-title"));
         super.setHeaderText("OpenR");
-        super.setContentText(i18n.getString("content").replace("$ver", getVersion()));
+        super.setContentText(getString("about-content").replace("$ver", getVersion()));
     }
 
     public static String getVersion() {

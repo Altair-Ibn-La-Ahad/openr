@@ -20,12 +20,15 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lombok.extern.log4j.Log4j;
+import pl.greywarden.openr.configuration.ConfigManager;
+import pl.greywarden.openr.configuration.Settings;
 import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.gui.dialogs.AboutDialog;
 import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;
 import pl.greywarden.openr.gui.dialogs.NewFileDialog;
 import pl.greywarden.openr.gui.find.FindWindow;
 import pl.greywarden.openr.gui.grep.GrepWindow;
+import pl.greywarden.openr.i18n.I18nManager;
 
 import java.util.Optional;
 
@@ -40,6 +43,7 @@ public class MainWindow extends Stage {
     private final VBox layout = new VBox();
 
     public MainWindow() {
+        I18nManager.setLocale(ConfigManager.getSetting(Settings.LANGUAGE.CODE));
         Scene scene = new Scene(layout);
         buildScene();
 
@@ -51,6 +55,13 @@ public class MainWindow extends Stage {
             Optional<ButtonType> confirm = new ConfirmExitDialog().showAndWait();
             if (confirm.isPresent()) {
                 if (ButtonBar.ButtonData.YES.equals(confirm.get().getButtonData())) {
+                    ConfigManager.setProperty(Settings.LEFT_DIR.CODE,
+                            centralContainter.getLeftView().getDirectoryView().getRootPath());
+                    ConfigManager.setProperty(Settings.RIGHT_DIR.CODE,
+                            centralContainter.getRightView().getDirectoryView().getRootPath());
+                    ConfigManager.setProperty(Settings.LANGUAGE.CODE,
+                            I18nManager.getActualLocale().getLanguage());
+                    ConfigManager.storeSettings();
                     Platform.exit();
                 }
             }

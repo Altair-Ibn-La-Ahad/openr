@@ -43,7 +43,7 @@ public class I18nManager {
         actualLocale = supportedLocales.getOrDefault(languageCode, Locale.forLanguageTag("en"));
     }
 
-    private static Locale getActualLocale() {
+    public static Locale getActualLocale() {
         return supportedLocales.containsKey(actualLocale.getLanguage())
                 ? actualLocale : Locale.forLanguageTag("en");
     }

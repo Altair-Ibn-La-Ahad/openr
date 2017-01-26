@@ -3,6 +3,8 @@ package pl.greywarden.openr.gui.scenes;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import lombok.Getter;
+import pl.greywarden.openr.configuration.ConfigManager;
+import pl.greywarden.openr.configuration.Settings;
 import pl.greywarden.openr.gui.wrappers.DirectoryViewWrapper;
 
 public class CentralContainter extends HBox {
@@ -13,8 +15,8 @@ public class CentralContainter extends HBox {
     private final DirectoryViewWrapper rightView;
 
     public CentralContainter() {
-        leftView = new DirectoryViewWrapper(System.getProperty("user.dir"));
-        rightView = new DirectoryViewWrapper(System.getProperty("user.dir"));
+        leftView = new DirectoryViewWrapper(ConfigManager.getSetting(Settings.LEFT_DIR.CODE));
+        rightView = new DirectoryViewWrapper(ConfigManager.getSetting(Settings.RIGHT_DIR.CODE));
 
         leftView.maxWidthProperty().bind(super.widthProperty().multiply(0.5));
         rightView.maxWidthProperty().bind(super.widthProperty().multiply(0.5));

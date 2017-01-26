@@ -19,6 +19,11 @@ dependencies {
 task install {}
 install.dependsOn (build, installDist)
 
+task copyDist(type: Copy) {
+     from 'build/distributions'
+     into 'dist'
+ }
+
 subprojects {
     apply plugin: 'java'
 

@@ -1,5 +1,6 @@
 package pl.greywarden.openr.gui.directoryview;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -45,7 +46,7 @@ public class DirectoryView extends TableView <EntryWrapper> {
     public void changePath(String rootPath) {
         this.rootPath = rootPath;
         rootEntry = new DirectoryEntry(rootPath);
-        loadData();
+        Platform.runLater(this::loadData);
     }
 
     private void build(String rootPath) {

@@ -41,6 +41,17 @@ public class DirectoryViewDataBuilder {
             result.add(createParentDirectoryEntryWrapper());
         }
         abstractEntries.parallelStream().forEach(entry -> result.add(new EntryWrapper(entry)));
+        result.sort((o1, o2) -> {
+            AbstractEntry a1 = o1.getEntry();
+            AbstractEntry a2 = o2.getEntry();
+            if ("..".equals(a1.getEntryProperties().getBaseName())) {
+                return -1;
+            }
+            if ("..".equals(a2.getEntryProperties().getBaseName())) {
+                return 1;
+            }
+            return o1.getName().compareToIgnoreCase(o2.getName());
+        });
         return result;
     }
 

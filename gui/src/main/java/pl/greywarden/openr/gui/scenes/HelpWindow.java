@@ -29,7 +29,7 @@ import static pl.greywarden.openr.i18n.I18nManager.getString;
 
 public class HelpWindow extends Stage {
 
-    private List<HelpTopicWrapper> topicWrappers;
+    private final List<HelpTopicWrapper> topicWrappers;
 
     public HelpWindow() {
         super();

@@ -17,7 +17,7 @@ import java.util.Properties;
 public class ConfigManager {
 
     private static Properties savedProperties;
-    private static Properties defaultProperties;
+    private static final Properties defaultProperties;
 
     static {
         savedProperties = new Properties();
@@ -46,7 +46,7 @@ public class ConfigManager {
         return savedProperties.get(key).toString();
     }
 
-    private static File getConfigFile() throws IOException, URISyntaxException {
+    private static File getConfigFile() throws URISyntaxException {
         URL configFileUrl = ConfigManager.class.getProtectionDomain().getCodeSource().getLocation();
         File parentDir = new File(configFileUrl.toURI()).getParentFile();
         return new File(parentDir, "settings.properties");

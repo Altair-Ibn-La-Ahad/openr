@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 @Log4j
 public class I18nManager {
 
-    private static Map<String, Locale> supportedLocales;
+    private static final Map<String, Locale> supportedLocales;
     private static Locale actualLocale;
     static {
         supportedLocales = new HashMap<>();

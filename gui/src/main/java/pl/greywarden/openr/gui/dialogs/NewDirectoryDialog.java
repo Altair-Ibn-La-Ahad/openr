@@ -41,6 +41,7 @@ public class NewDirectoryDialog extends Dialog <ButtonType> {
             buttonOk.setDisable(newValue.trim().isEmpty() || target.exists());
         });
         buttonOk.setDisable(true);
+        super.getDialogPane().setMinWidth(300);
         directoryName.requestFocus();
         super.showAndWait().ifPresent(buttonType -> {
             if (buttonType.getButtonData().equals(ButtonBar.ButtonData.OK_DONE)) {

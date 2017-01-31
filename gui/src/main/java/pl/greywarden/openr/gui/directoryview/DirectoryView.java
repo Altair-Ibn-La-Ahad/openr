@@ -169,35 +169,37 @@ public class DirectoryView extends TableView <EntryWrapper> {
             if (row.isEmpty()) {
                 super.getSelectionModel().clearSelection();
             }
-            if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                EntryWrapper rowData = row.getItem();
-                if (rowData.getEntry().getEntryProperties().isDirectory()) {
-                    TableViewSelectionModel model = super.getSelectionModel();
-                    model.setSelectionMode(null);
-                    changePath(rowData.getEntry().getEntryProperties().getAbsolutePath());
-                } else {
-                    if (Desktop.isDesktopSupported()) {
-                        File target = new File(rowData.getEntry().getEntryProperties().getAbsolutePath());
-                        new Thread(() -> {
-                            try {
-                                Desktop.getDesktop().browse(target.toURI());
-                            } catch (IOException exception) {
-                                log.error("Unable to open selected file", exception);
-                            }
-                        }).start();
+            if (MouseButton.PRIMARY.equals(event.getButton())) {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    EntryWrapper rowData = row.getItem();
+                    if (rowData.getEntry().getEntryProperties().isDirectory()) {
+                        TableViewSelectionModel model = super.getSelectionModel();
+                        model.setSelectionMode(null);
+                        changePath(rowData.getEntry().getEntryProperties().getAbsolutePath());
+                    } else {
+                        if (Desktop.isDesktopSupported()) {
+                            File target = new File(rowData.getEntry().getEntryProperties().getAbsolutePath());
+                            new Thread(() -> {
+                                try {
+                                    Desktop.getDesktop().browse(target.toURI());
+                                } catch (IOException exception) {
+                                    log.error("Unable to open selected file", exception);
+                                }
+                            }).start();
+                        }
                     }
                 }
-            }
-            if (event.getButton().equals(MouseButton.SECONDARY) && (!row.isEmpty())) {
-                EntryWrapper rowData = row.getItem();
-                AbstractEntry target = rowData.getEntry();
-                if (!(target instanceof ParentDirectoryEntry)) {
-                    new EntryContextMenu(this, target)
-                            .show(row, event.getScreenX(), event.getScreenY());
+            } else if (MouseButton.SECONDARY.equals(event.getButton())) {
+                if (row.isEmpty()) {
+                    new CreateNewEntryContextMenu(this).show(row, event.getScreenX(), event.getScreenY());
+                } else {
+                    EntryWrapper rowData = row.getItem();
+                    AbstractEntry target = rowData.getEntry();
+                    if (!(target instanceof ParentDirectoryEntry)) {
+                        new EntryContextMenu(this, target)
+                                .show(row, event.getScreenX(), event.getScreenY());
+                    }
                 }
-            }
-            if (event.getButton().equals(MouseButton.SECONDARY) && row.isEmpty()) {
-                new CreateNewEntryContextMenu(this).show(row, event.getScreenX(), event.getScreenY());
             }
         });
         return row;

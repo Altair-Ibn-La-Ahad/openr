@@ -151,7 +151,8 @@ public class GrepWindow extends Stage {
                 if (filesToGrep == null) {
                     filesToGrep = FileUtils.EMPTY_FILE_ARRAY;
                 }
-                files.addAll(Arrays.asList(filesToGrep).parallelStream().filter(File::isFile).collect(Collectors.toList()));
+                files.addAll(Arrays.asList(filesToGrep).parallelStream()
+                        .filter(File::isFile).collect(Collectors.toList()));
             }
             return files;
         } catch (IOException exception) {

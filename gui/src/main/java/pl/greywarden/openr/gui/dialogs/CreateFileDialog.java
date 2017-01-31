@@ -14,7 +14,6 @@ import javafx.util.Callback;
 import javafx.util.Pair;
 import lombok.Getter;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.i18n.I18nManager;
 import pl.greywarden.openr.templates.Template;
 
 import java.io.File;

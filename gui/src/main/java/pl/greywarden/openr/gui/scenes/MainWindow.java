@@ -1,7 +1,6 @@
 package pl.greywarden.openr.gui.scenes;
 
 import javafx.application.Platform;
-import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;

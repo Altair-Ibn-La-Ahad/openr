@@ -12,6 +12,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -24,6 +25,7 @@ import pl.greywarden.openr.filesystem.FileEntry;
 import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -101,6 +103,23 @@ public class FindWindow extends Stage {
             }
         });
         VBox.setVgrow(result, Priority.ALWAYS);
+        result.setOnMouseClicked(event -> {
+            if (MouseButton.PRIMARY.equals(event.getButton())) {
+                AbstractEntry selectedItem = result.getSelectionModel().getSelectedItem();
+                if (event.getClickCount() == 2 && selectedItem != null) {
+                    if (Desktop.isDesktopSupported()) {
+                        File target = selectedItem.getFilesystemEntry();
+                        new Thread(() -> {
+                            try {
+                                Desktop.getDesktop().browse(target.toURI());
+                            } catch (IOException exception) {
+                                log.error("Unable to open selected file", exception);
+                            }
+                        }).start();
+                    }
+                }
+            }
+        });
         layout.getChildren().add(result);
     }
 

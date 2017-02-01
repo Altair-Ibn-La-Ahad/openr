@@ -7,11 +7,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.util.Callback;
-import javafx.util.Pair;
 import lombok.Getter;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
 import pl.greywarden.openr.templates.Template;
@@ -22,17 +21,19 @@ import java.util.function.Consumer;
 
 import static pl.greywarden.openr.i18n.I18nManager.getString;
 
-public class CreateFileDialog extends Dialog<Pair<String, String>> {
+public class CreateFileDialog extends Dialog<ButtonType> {
 
     @Getter
     private GridPane grid;
-    protected ComboBox<String> pathComboBox;
+    private ComboBox<DirectoryView> pathComboBox;
     private TextField filename;
     private ButtonType create;
+    private ComboBox<Template> templates;
 
-    protected final DirectoryView left;
-    protected final DirectoryView right;
+    private final DirectoryView left;
+    private final DirectoryView right;
     private final Template template;
+    private Consumer<ButtonType> confirmHandler;
 
     @SuppressWarnings("unchecked")
     public CreateFileDialog(Template template, DirectoryView left, DirectoryView right) {
@@ -40,7 +41,11 @@ public class CreateFileDialog extends Dialog<Pair<String, String>> {
         this.right = right;
         this.template = template;
 
-        createHeaderAndTitle();
+        if (template != null) {
+            super.setTitle(getString("create-file-" + template.getName()));
+            super.setHeaderText(getString("create-file-header"));
+        }
+
         createGridPane();
         createDialogContent();
         createOkCancelOptions();
@@ -49,12 +54,23 @@ public class CreateFileDialog extends Dialog<Pair<String, String>> {
         super.getDialogPane().setContent(grid);
 
         filename.requestFocus();
-        showDialog();
+        confirmHandler = createFileFromTemplateConfirmHandler();
+        pathComboBox.setCellFactory(param -> createButtonCellForDirectoryViewComboBox());
+        pathComboBox.setButtonCell(createButtonCellForDirectoryViewComboBox());
     }
 
-    private void showDialog() {
-        Optional<Pair<String, String>> result = showAndWait();
-        result.ifPresent(confirmHandler());
+    public CreateFileDialog(DirectoryView left, DirectoryView right) {
+        this(null, left, right);
+        createTemplatesComboBox();
+        super.setTitle(getString("new-file-dialog-title"));
+        super.setHeaderText(getString("new-file-dialog-header"));
+        getGrid().addRow(2, new Label(getString("type") + ":"), templates);
+        confirmHandler = createNewFileConfirmHandler();
+    }
+
+    public void showDialog() {
+        Optional<ButtonType> result = showAndWait();
+        result.ifPresent(buttonType -> confirmHandler.accept(buttonType));
     }
 
     private void createGridPane() {
@@ -65,11 +81,10 @@ public class CreateFileDialog extends Dialog<Pair<String, String>> {
     }
 
     private void createOkCancelOptions() {
-        create = new ButtonType(getString("create-file"), ButtonBar.ButtonData.OK_DONE);
+        create = new ButtonType(getString("ok"), ButtonBar.ButtonData.OK_DONE);
         ButtonType cancel = new ButtonType(getString("cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
 
         super.getDialogPane().getButtonTypes().addAll(create, cancel);
-        super.setResultConverter(createResultConverter());
 
         Node createButton = super.getDialogPane().lookupButton(create);
         filename.textProperty().addListener((observable, oldValue, newValue) ->
@@ -84,16 +99,17 @@ public class CreateFileDialog extends Dialog<Pair<String, String>> {
         grid.getColumnConstraints().addAll(stretch, stretch);
     }
 
-    protected void createDialogContent() {
+    private void createDialogContent() {
         filename = new TextField();
         filename.setPromptText(getString("filename"));
         Label pathLabel = new Label(getString("path") + ":");
         pathComboBox = new ComboBox<>();
-        if (right == null) {
-            pathComboBox.getItems().setAll(left.getRootPath());
+        if (right == null || !right.isVisible()) {
+            pathComboBox.getItems().setAll(left);
             pathComboBox.setVisible(false);
+            pathComboBox.managedProperty().setValue(false);
         } else {
-            pathComboBox.getItems().setAll(left.getRootPath(), right.getRootPath());
+            pathComboBox.getItems().setAll(left, right);
             grid.add(pathLabel, 0, 1);
             grid.add(pathComboBox, 1, 1);
         }
@@ -106,36 +122,64 @@ public class CreateFileDialog extends Dialog<Pair<String, String>> {
         pathComboBox.setMinWidth(400);
     }
 
-    protected void createHeaderAndTitle() {
-        super.setTitle(getString("create-file-" + template.getName()));
-        super.setHeaderText(getString("create-file-header"));
+    private void createTemplatesComboBox() {
+        templates = new ComboBox<>();
+        templates.getItems().addAll(Template.getAvailableTemplates());
+        templates.setButtonCell(createButtonCellForTemplatesComboBox());
+        templates.setCellFactory(param -> createButtonCellForTemplatesComboBox());
+        templates.getSelectionModel().select(0);
+        templates.setMinWidth(400);
     }
 
-    private Callback<ButtonType, Pair<String, String>> createResultConverter() {
-        return param -> {
-            if (param == create) {
-                File target = new File(
-                        pathComboBox.getSelectionModel().getSelectedItem(),
-                        filename.getText());
-                if (target.exists()) {
-                    return null;
+    private ListCell<Template> createButtonCellForTemplatesComboBox() {
+        return new ListCell<Template>() {
+            @Override
+            protected void updateItem(Template t, boolean empty) {
+                super.updateItem(t, empty);
+                if (empty) {
+                    setText("");
+                } else {
+                    setText(getString(t.getName() + "-menu-item"));
                 }
-                return new Pair<>(pathComboBox.getSelectionModel().getSelectedItem(), filename.getText());
             }
-            return null;
         };
     }
 
-    protected Consumer<Pair<String, String>> confirmHandler() {
-        return o -> {
-            File target = new File(o.getKey(), o.getValue());
-            template.build(target.getAbsolutePath());
-            if (pathComboBox.getSelectionModel().getSelectedIndex() == 0) {
-                left.reload();
-            } else {
-                right.reload();
+    private ListCell<DirectoryView> createButtonCellForDirectoryViewComboBox() {
+        return new ListCell<DirectoryView>() {
+            @Override
+            protected void updateItem(DirectoryView dv, boolean empty) {
+                super.updateItem(dv, empty);
+                if (!empty) {
+                    setText(dv.getRootPath());
+                }
             }
-            super.close();
+        };
+    }
+
+    private Consumer<ButtonType> createFileFromTemplateConfirmHandler() {
+        return o -> {
+            if (ButtonBar.ButtonData.OK_DONE.equals(o.getButtonData())) {
+                File target = new File(
+                        pathComboBox.getSelectionModel().getSelectedItem().getRootPath(),
+                        filename.getText());
+                template.build(target.getAbsolutePath());
+                pathComboBox.getSelectionModel().getSelectedItem().reload();
+                super.close();
+            }
+        };
+    }
+
+    private Consumer<ButtonType> createNewFileConfirmHandler() {
+        return o -> {
+            if (ButtonBar.ButtonData.OK_DONE.equals(o.getButtonData())) {
+                File target = new File(
+                        pathComboBox.getSelectionModel().getSelectedItem().getRootPath(),
+                        filename.getText());
+                templates.getSelectionModel().getSelectedItem().build(target.getAbsolutePath());
+                pathComboBox.getSelectionModel().getSelectedItem().reload();
+                super.close();
+            }
         };
     }
 }

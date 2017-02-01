@@ -25,7 +25,7 @@ import pl.greywarden.openr.configuration.Settings;
 import pl.greywarden.openr.gui.IconManager;
 import pl.greywarden.openr.gui.dialogs.AboutDialog;
 import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;
-import pl.greywarden.openr.gui.dialogs.NewFileDialog;
+import pl.greywarden.openr.gui.dialogs.CreateFileDialog;
 import pl.greywarden.openr.gui.find.FindWindow;
 import pl.greywarden.openr.gui.grep.GrepWindow;
 import pl.greywarden.openr.i18n.I18nManager;
@@ -162,9 +162,9 @@ public class MainWindow extends Stage {
 
         Button newFile = new Button();
         newFile.setGraphic(IconManager.getIcon("new-file"));
-        newFile.setOnAction(event -> new NewFileDialog(
+        newFile.setOnAction(event -> new CreateFileDialog(
                 centralContainter.getLeftView().getDirectoryView(),
-                centralContainter.getRightView().getDirectoryView()));
+                centralContainter.getRightView().getDirectoryView()).showDialog());
 
         Button grep = new Button();
         grep.setGraphic(IconManager.getIcon("grep"));

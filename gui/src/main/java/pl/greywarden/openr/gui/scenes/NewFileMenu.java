@@ -21,7 +21,7 @@ public class NewFileMenu extends Menu {
                     MenuItem item = new MenuItem(getString(template.getName() + "-menu-item"));
                     item.setOnAction(event ->
                             new CreateFileDialog(template,
-                                    left, right));
+                                    left, right).showDialog());
                     items.add(item);
                 });
         super.getItems().addAll(items);

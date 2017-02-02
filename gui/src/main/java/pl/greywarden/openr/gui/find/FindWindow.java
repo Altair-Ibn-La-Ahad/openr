@@ -1,7 +1,9 @@
 package pl.greywarden.openr.gui.find;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -58,6 +60,7 @@ public class FindWindow extends Stage {
         createPathSelection();
         createResultList();
 
+        super.setTitle(getString("find-file"));
         super.setScene(new Scene(layout));
         show();
     }
@@ -68,11 +71,11 @@ public class FindWindow extends Stage {
         input = new TextField();
         Button doSearch = new Button();
         doSearch.setGraphic(IconManager.getIcon("go"));
-        doSearch.setOnAction(event -> search());
+        doSearch.setOnAction(event -> Platform.runLater(this::search));
 
         input.setOnKeyPressed(event -> {
             if (input.textProperty().isNotEmpty().get() && event.getCode().equals(KeyCode.ENTER)) {
-                search();
+                Platform.runLater(this::search);
             }
         });
 
@@ -140,6 +143,7 @@ public class FindWindow extends Stage {
 
 
     private void search() {
+        layout.setCursor(Cursor.WAIT);
         final List<AbstractEntry> files = Collections.synchronizedList(new ArrayList<>());
         try {
             if (recursive.isSelected()) {
@@ -166,6 +170,7 @@ public class FindWindow extends Stage {
         } catch (IOException exception) {
             log.error("Exception during search file", exception);
         }
+        layout.setCursor(Cursor.DEFAULT);
     }
 
 }

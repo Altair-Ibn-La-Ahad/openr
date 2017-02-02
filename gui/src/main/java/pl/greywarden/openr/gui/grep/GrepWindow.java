@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -15,6 +16,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -30,9 +32,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,7 +54,6 @@ public class GrepWindow extends Stage {
 
     public GrepWindow() {
         super();
-
         setTitle(getString("grep-window-title"));
 
         layout = new VBox(5);
@@ -62,13 +63,25 @@ public class GrepWindow extends Stage {
         createPathSelection();
         createResultListView();
 
+        layout.setOnKeyPressed(event -> {
+            if (KeyCode.ESCAPE.equals(event.getCode())) {
+                super.close();
+            }
+        });
+        resultTableView.setOnKeyPressed(event -> {
+            if (KeyCode.ESCAPE.equals(event.getCode())) {
+                super.close();
+            }
+        });
+
         super.setScene(new Scene(layout));
         super.centerOnScreen();
         super.show();
     }
 
     private void createPathSelection() {
-        HBox wrapper = new HBox(10);
+        GridPane wrapper = new GridPane();
+        wrapper.setHgap(10);
         wrapper.setAlignment(Pos.CENTER_LEFT);
         Label pathLabel = new Label(getString("path") + ":");
         pathComboBox = new ComboBox<>();
@@ -77,9 +90,7 @@ public class GrepWindow extends Stage {
         pathComboBox.setMinWidth(500);
         recursive = new CheckBox();
         Label recursiveLabel = new Label(getString("recursive-label") + "?");
-        HBox.setHgrow(wrapper, Priority.ALWAYS);
-
-        wrapper.getChildren().addAll(pathLabel, pathComboBox, recursiveLabel, recursive);
+        wrapper.addRow(0, pathLabel, pathComboBox, recursiveLabel, recursive);
         layout.getChildren().add(wrapper);
     }
 
@@ -92,8 +103,9 @@ public class GrepWindow extends Stage {
         doGrep.setOnAction(handleGrep());
 
         regexInput.setOnKeyPressed(event -> {
-            if (regexInput.textProperty().isNotEmpty().get() && event.getCode().equals(KeyCode.ENTER)) {
-                grep();
+            if (regexInput.textProperty().isNotEmpty().get()
+                    && event.getCode().equals(KeyCode.ENTER)) {
+                new Thread(this::grep).start();
             }
         });
 
@@ -109,8 +121,8 @@ public class GrepWindow extends Stage {
         resultTableView = new TableView<>();
         resultTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         resultTableView.setPlaceholder(new Label(""));
-        TableColumn <GrepResult, String> text = new TableColumn(getString("grep-result-text"));
-        TableColumn <GrepResult, String> pathToFile = new TableColumn(getString("grep-result-path"));
+        TableColumn<GrepResult, String> text = new TableColumn(getString("grep-result-text"));
+        TableColumn<GrepResult, String> pathToFile = new TableColumn(getString("grep-result-path"));
         text.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getText()));
         pathToFile.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getFile().getAbsolutePath()));
         resultTableView.getColumns().addAll(text, pathToFile);
@@ -120,23 +132,26 @@ public class GrepWindow extends Stage {
     }
 
     private EventHandler<ActionEvent> handleGrep() {
-        return event -> grep();
+        return event -> new Thread(this::grep).start();
     }
 
     private void grep() {
-        String regex = regexInput.getText();
-        List<File> files = getFilesToGrep();
-        resultTableView.getItems().clear();
-        files.parallelStream().forEach(file -> {
+        layout.setCursor(Cursor.WAIT);
+        final String regex = regexInput.getText();
+        List<File> filesToGrep = Collections.synchronizedList(getFilesToGrep());
+        List<GrepResult> grepResults = Collections.synchronizedList(new LinkedList<>());
+        filesToGrep.parallelStream().forEach(file -> {
             String result = Unix4j.grep(regex, file).toStringResult();
             if (!result.isEmpty()) {
-                resultTableView.getItems().add(new GrepResult(file, result));
+                grepResults.add(new GrepResult(file, result));
             }
         });
+        resultTableView.getItems().setAll(grepResults);
+        layout.setCursor(Cursor.DEFAULT);
     }
 
     private List<File> getFilesToGrep() {
-        final List<File> files = new ArrayList<>();
+        final List<File> files = new LinkedList<>();
         try {
             if (recursive.isSelected()) {
                 Files.find(Paths.get(pathComboBox.getSelectionModel().getSelectedItem()),
@@ -152,7 +167,7 @@ public class GrepWindow extends Stage {
                 files.addAll(Arrays.asList(filesToGrep).parallelStream()
                         .filter(File::isFile).collect(Collectors.toList()));
             }
-            return files;
+            return Collections.synchronizedList(files);
         } catch (IOException exception) {
             log.error("Error during fetching files for grep", exception);
             return Collections.emptyList();

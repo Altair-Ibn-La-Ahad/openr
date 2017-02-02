@@ -7,19 +7,19 @@ import javafx.scene.control.SeparatorMenuItem;
 import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
-import pl.greywarden.openr.gui.IconManager;
+import pl.greywarden.openr.commons.IconManager;
 import pl.greywarden.openr.gui.dialogs.ConfirmDeleteDialog;
 import pl.greywarden.openr.gui.dialogs.EntryInfoDialog;
 import pl.greywarden.openr.gui.dialogs.NewDirectoryDialog;
 import pl.greywarden.openr.gui.dialogs.RenameDialog;
-import pl.greywarden.openr.gui.scenes.NewDocumentMenu;
-import pl.greywarden.openr.gui.scenes.NewFileMenu;
+import pl.greywarden.openr.gui.scenes.main_window.menu.NewDocumentMenu;
+import pl.greywarden.openr.gui.scenes.main_window.menu.NewFileMenu;
 
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
-import static pl.greywarden.openr.i18n.I18nManager.getString;
+import static pl.greywarden.openr.commons.I18nManager.getString;
 
 @Log4j
 public class EntryContextMenu extends ContextMenu {
@@ -54,8 +54,8 @@ public class EntryContextMenu extends ContextMenu {
         MenuItem rename = new MenuItem(getString("rename"));
         rename.setOnAction(event -> new RenameDialog(directoryView));
 
-        Menu newFile = new NewFileMenu(directoryView, null);
-        Menu newDocument = new NewDocumentMenu(directoryView, null);
+        Menu newFile = new NewFileMenu(directoryView);
+        Menu newDocument = new NewDocumentMenu();
 
         MenuItem createDirectory = new MenuItem(getString("create-directory"));
         createDirectory.setOnAction(event -> new NewDirectoryDialog(directoryView));

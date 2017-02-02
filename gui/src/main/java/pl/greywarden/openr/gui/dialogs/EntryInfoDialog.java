@@ -14,11 +14,11 @@ import org.apache.commons.lang3.SystemUtils;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.FileEntry;
-import pl.greywarden.openr.gui.IconManager;
+import pl.greywarden.openr.commons.IconManager;
 
 import java.io.File;
 
-import static pl.greywarden.openr.i18n.I18nManager.getString;
+import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class EntryInfoDialog extends Dialog {
 

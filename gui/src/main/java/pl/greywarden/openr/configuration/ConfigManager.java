@@ -1,8 +1,10 @@
 package pl.greywarden.openr.configuration;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.SystemUtils;
-import pl.greywarden.openr.i18n.I18nManager;
+import pl.greywarden.openr.commons.I18nManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +16,7 @@ import java.net.URL;
 import java.util.Properties;
 
 @Log4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConfigManager {
 
     private static Properties savedProperties;
@@ -30,10 +33,6 @@ public class ConfigManager {
             log.warn("Exception during loading saved prefs, using defaults");
             savedProperties = defaultProperties;
         }
-    }
-
-    private ConfigManager() {
-
     }
 
     private static void createDefaults() {

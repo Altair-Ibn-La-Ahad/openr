@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static pl.greywarden.openr.i18n.I18nManager.getString;
+import static pl.greywarden.openr.commons.I18nManager.getString;
 
 @Log4j
 public class DirectoryView extends TableView <EntryWrapper> {

@@ -4,7 +4,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 
-import static pl.greywarden.openr.i18n.I18nManager.getString;
+import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class ConfirmExitDialog extends Alert {
 

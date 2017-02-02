@@ -3,7 +3,7 @@ package pl.greywarden.openr.app;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import pl.greywarden.openr.gui.scenes.MainWindow;
+import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 
 public class Main extends Application {
 
@@ -14,6 +14,6 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Platform.setImplicitExit(false);
-        Platform.runLater(() -> new MainWindow().show());
+        Platform.runLater(() -> MainWindow.getInstance().show());
     }
 }

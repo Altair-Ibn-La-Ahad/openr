@@ -4,7 +4,7 @@ import javafx.scene.control.Alert;
 import java.io.IOException;
 import java.util.Properties;
 
-import static pl.greywarden.openr.i18n.I18nManager.getString;
+import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class AboutDialog extends Alert {
 

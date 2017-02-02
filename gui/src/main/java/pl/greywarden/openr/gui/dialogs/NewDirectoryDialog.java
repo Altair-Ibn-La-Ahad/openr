@@ -15,7 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import static pl.greywarden.openr.i18n.I18nManager.getString;
+import static pl.greywarden.openr.commons.I18nManager.getString;
 
 @Log4j
 public class NewDirectoryDialog extends Dialog <ButtonType> {

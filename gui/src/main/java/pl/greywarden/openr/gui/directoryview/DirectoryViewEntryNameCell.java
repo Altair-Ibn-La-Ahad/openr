@@ -9,7 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.ParentDirectoryEntry;
-import pl.greywarden.openr.gui.IconManager;
+import pl.greywarden.openr.commons.IconManager;
 
 public class DirectoryViewEntryNameCell extends TableCell <AbstractEntry, AbstractEntry> {
 

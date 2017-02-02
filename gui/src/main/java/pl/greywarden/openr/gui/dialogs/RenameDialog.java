@@ -13,7 +13,7 @@ import pl.greywarden.openr.gui.directoryview.DirectoryView;
 
 import java.io.File;
 
-import static pl.greywarden.openr.i18n.I18nManager.getString;
+import static pl.greywarden.openr.commons.I18nManager.getString;
 
 @Log4j
 public class RenameDialog extends Dialog <ButtonType> {

@@ -22,8 +22,9 @@ import org.apache.commons.io.FileUtils;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.FileEntry;
-import pl.greywarden.openr.gui.IconManager;
+import pl.greywarden.openr.commons.IconManager;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
+import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -35,7 +36,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static pl.greywarden.openr.i18n.I18nManager.getString;
+import static pl.greywarden.openr.commons.I18nManager.getString;
 
 @Log4j
 public class FindWindow extends Stage {
@@ -46,13 +47,11 @@ public class FindWindow extends Stage {
     private ComboBox<String> pathComboBox;
     private CheckBox recursive;
 
-    private final DirectoryView left;
-    private final DirectoryView right;
+    private final DirectoryView left = MainWindow.getLeftDirectoryView();
+    private final DirectoryView right = MainWindow.getRightDirectoryView();
 
-    public FindWindow(DirectoryView left, DirectoryView right) {
+    public FindWindow() {
         super();
-        this.left = left;
-        this.right = right;
         layout.setPadding(new Insets(5));
 
         createSearchBar();

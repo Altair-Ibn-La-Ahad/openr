@@ -22,8 +22,9 @@ import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.io.FileUtils;
 import org.unix4j.Unix4j;
-import pl.greywarden.openr.gui.IconManager;
+import pl.greywarden.openr.commons.IconManager;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
+import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pl.greywarden.openr.i18n.I18nManager.getString;
+import static pl.greywarden.openr.commons.I18nManager.getString;
 
 @Log4j
 public class GrepWindow extends Stage {
@@ -46,14 +47,11 @@ public class GrepWindow extends Stage {
     private CheckBox recursive;
     private ComboBox<String> pathComboBox;
 
-    private final DirectoryView left;
-    private final DirectoryView right;
+    private final DirectoryView left = MainWindow.getLeftDirectoryView();
+    private final DirectoryView right = MainWindow.getRightDirectoryView();
 
-    public GrepWindow(DirectoryView left, DirectoryView right) {
+    public GrepWindow() {
         super();
-
-        this.left = left;
-        this.right = right;
 
         setTitle(getString("grep-window-title"));
 

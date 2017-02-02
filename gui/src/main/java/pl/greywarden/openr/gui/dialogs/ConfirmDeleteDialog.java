@@ -4,10 +4,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import pl.greywarden.openr.filesystem.AbstractEntry;
-import pl.greywarden.openr.gui.IconManager;
+import pl.greywarden.openr.commons.IconManager;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
 
-import static pl.greywarden.openr.i18n.I18nManager.getString;
+import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class ConfirmDeleteDialog extends Alert {
 

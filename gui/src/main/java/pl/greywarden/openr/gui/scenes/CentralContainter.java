@@ -2,10 +2,11 @@ package pl.greywarden.openr.gui.scenes;
 
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import lombok.Getter;
 import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Settings;
-import pl.greywarden.openr.gui.wrappers.DirectoryViewWrapper;
+import pl.greywarden.openr.gui.directoryview.DirectoryViewWrapper;
 
 public class CentralContainter extends HBox {
 
@@ -29,6 +30,7 @@ public class CentralContainter extends HBox {
         super.getChildren().addAll(leftView, rightView);
         leftView.getDirectoryView().setId("left-view");
         rightView.getDirectoryView().setId("right-view");
+        VBox.setVgrow(this, Priority.ALWAYS);
     }
 
 }

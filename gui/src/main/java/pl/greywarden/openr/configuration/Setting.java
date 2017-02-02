@@ -1,13 +1,15 @@
 package pl.greywarden.openr.configuration;
 
-public enum Settings {
+public enum Setting {
     LEFT_DIR("LEFT_DIR"),
     RIGHT_DIR("RIGHT_DIR"),
-    LANGUAGE("LANGUAGE");
+    LANGUAGE("LANGUAGE"),
+    KEEP_CLIPBOARD("KEEP_CLIPBOARD"),
+    CONFIRM_CLOSE("CONFIRM_CLOSE");
 
     public final String CODE;
 
-    Settings(String code) {
+    Setting(String code) {
         this.CODE = code;
     }
 }

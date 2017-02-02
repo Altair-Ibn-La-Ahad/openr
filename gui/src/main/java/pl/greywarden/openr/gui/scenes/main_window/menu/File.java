@@ -8,6 +8,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.WindowEvent;
 import pl.greywarden.openr.commons.IconManager;
+import pl.greywarden.openr.gui.dialogs.Settings;
 import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
@@ -27,7 +28,7 @@ public class File extends Menu {
     private MenuItem createSettingsMenuItem() {
         MenuItem settings = new MenuItem(getString("settings-menu-item"));
         settings.setGraphic(IconManager.getIcon("settings"));
-        settings.setOnAction(event -> System.err.println("Settings window placeholder"));
+        settings.setOnAction(event -> new Settings().showDialog());
         settings.setAccelerator(new KeyCodeCombination(
                 KeyCode.S, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
         return settings;

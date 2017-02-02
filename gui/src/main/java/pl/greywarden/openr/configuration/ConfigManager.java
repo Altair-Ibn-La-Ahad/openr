@@ -36,9 +36,11 @@ public class ConfigManager {
     }
 
     private static void createDefaults() {
-        defaultProperties.put(Settings.LEFT_DIR.CODE, SystemUtils.getUserDir().getAbsolutePath());
-        defaultProperties.put(Settings.RIGHT_DIR.CODE, SystemUtils.getUserDir().getAbsolutePath());
-        defaultProperties.put(Settings.LANGUAGE.CODE, I18nManager.getActualLocale().getLanguage());
+        defaultProperties.put(Setting.LEFT_DIR.CODE, SystemUtils.getUserDir().getAbsolutePath());
+        defaultProperties.put(Setting.RIGHT_DIR.CODE, SystemUtils.getUserDir().getAbsolutePath());
+        defaultProperties.put(Setting.LANGUAGE.CODE, I18nManager.getActualLocale().getLanguage());
+        defaultProperties.put(Setting.CONFIRM_CLOSE.CODE, Boolean.toString(true));
+        defaultProperties.put(Setting.KEEP_CLIPBOARD.CODE, Boolean.toString(false));
     }
 
     public static String getSetting(String key) {

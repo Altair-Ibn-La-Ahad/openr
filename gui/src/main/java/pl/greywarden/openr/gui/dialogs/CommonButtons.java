@@ -9,5 +9,6 @@ public class CommonButtons {
 
     public static final ButtonType OK = new ButtonType(getString("ok"), ButtonBar.ButtonData.OK_DONE);
     public static final ButtonType CANCEL = new ButtonType(getString("cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
+    public static final ButtonType APPLY = new ButtonType(getString("apply"), ButtonBar.ButtonData.APPLY);
 
 }

@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.configuration.ConfigManager;
-import pl.greywarden.openr.configuration.Settings;
+import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.gui.dialogs.AboutDialog;
 import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
@@ -24,7 +24,7 @@ public class MainWindow extends Stage {
     @Getter
     private static final MainWindowStatusBar statusBar = new MainWindowStatusBar();
     private static final CentralContainter centralContainter = new CentralContainter();
-    private final VBox layout = new VBox();
+    private VBox layout;
 
     private static MainWindow instance;
 
@@ -33,7 +33,18 @@ public class MainWindow extends Stage {
     }
 
     private MainWindow() {
-        I18nManager.setLocale(ConfigManager.getSetting(Settings.LANGUAGE.CODE));
+        createWindow();
+    }
+
+    public void reload() {
+        super.close();
+        createWindow();
+        super.show();
+    }
+
+    private void createWindow() {
+        I18nManager.setLocale(ConfigManager.getSetting(Setting.LANGUAGE.CODE));
+        layout = new VBox();
         Scene scene = new Scene(layout);
         buildScene();
 
@@ -42,21 +53,27 @@ public class MainWindow extends Stage {
         super.setMaximized(true);
 
         super.setOnCloseRequest(event -> {
-            Optional<ButtonType> confirm = new ConfirmExitDialog().showAndWait();
-            if (confirm.isPresent()) {
-                if (ButtonBar.ButtonData.YES.equals(confirm.get().getButtonData())) {
-                    ConfigManager.setProperty(Settings.LEFT_DIR.CODE,
-                            getLeftDirectoryView().getRootPath());
-                    ConfigManager.setProperty(Settings.RIGHT_DIR.CODE,
-                            getRightDirectoryView().getRootPath());
-                    ConfigManager.setProperty(Settings.LANGUAGE.CODE,
-                            I18nManager.getActualLocale().getLanguage());
-                    ConfigManager.storeSettings();
-                    Platform.exit();
+            if (Boolean.valueOf(ConfigManager.getSetting(Setting.CONFIRM_CLOSE.CODE))) {
+                Optional<ButtonType> confirm = new ConfirmExitDialog().showAndWait();
+                if (confirm.isPresent()) {
+                    if (ButtonBar.ButtonData.YES.equals(confirm.get().getButtonData())) {
+                        storeSettingsAndExit();
+                    }
                 }
+                event.consume();
+            } else {
+                storeSettingsAndExit();
             }
-            event.consume();
         });
+    }
+
+    private void storeSettingsAndExit() {
+        ConfigManager.setProperty(Setting.LEFT_DIR.CODE,
+                getLeftDirectoryView().getRootPath());
+        ConfigManager.setProperty(Setting.RIGHT_DIR.CODE,
+                getRightDirectoryView().getRootPath());
+        ConfigManager.storeSettings();
+        Platform.exit();
     }
 
     private void buildScene() {

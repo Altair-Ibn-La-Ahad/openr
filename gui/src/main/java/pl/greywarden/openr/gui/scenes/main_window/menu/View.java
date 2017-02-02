@@ -13,10 +13,27 @@ public class View extends Menu {
         CheckMenuItem statusBarVisibility = new CheckMenuItem(getString("status-bar-visibility-check"));
         statusBarVisibility.setSelected(true);
         statusBarVisibility.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            MainWindow.getInstance();
             MainWindow.getStatusBar().managedProperty().setValue(newValue);
             MainWindow.getStatusBar().setVisible(newValue);
         });
-        super.getItems().addAll(statusBarVisibility);
+
+        CheckMenuItem leftPanelVisibility = new CheckMenuItem(getString("left-panel"));
+        leftPanelVisibility.setSelected(true);
+        leftPanelVisibility.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.getLeftWrapper().visibleProperty().setValue(newValue);
+            MainWindow.getLeftWrapper().managedProperty().setValue(newValue);
+        });
+
+        CheckMenuItem rightPanelVisibility = new CheckMenuItem(getString("right-panel"));
+        rightPanelVisibility.setSelected(true);
+        rightPanelVisibility.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.getRightWrapper().visibleProperty().setValue(newValue);
+            MainWindow.getRightWrapper().managedProperty().setValue(newValue);
+        });
+
+        leftPanelVisibility.disableProperty().bind(rightPanelVisibility.selectedProperty().not());
+        rightPanelVisibility.disableProperty().bind(leftPanelVisibility.selectedProperty().not());
+
+        super.getItems().addAll(statusBarVisibility, leftPanelVisibility, rightPanelVisibility);
     }
 }

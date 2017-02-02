@@ -19,8 +19,8 @@ public class CentralContainter extends HBox {
         leftView = new DirectoryViewWrapper(ConfigManager.getSetting(Setting.LEFT_DIR.CODE));
         rightView = new DirectoryViewWrapper(ConfigManager.getSetting(Setting.RIGHT_DIR.CODE));
 
-        leftView.maxWidthProperty().bind(super.widthProperty().multiply(0.5));
-        rightView.maxWidthProperty().bind(super.widthProperty().multiply(0.5));
+        leftView.minWidthProperty().bind(super.widthProperty().multiply(0.5));
+        rightView.minWidthProperty().bind(super.widthProperty().multiply(0.5));
 
         HBox.setHgrow(leftView, Priority.ALWAYS);
         HBox.setHgrow(rightView, Priority.ALWAYS);

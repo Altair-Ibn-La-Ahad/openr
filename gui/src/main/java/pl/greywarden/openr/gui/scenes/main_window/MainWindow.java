@@ -13,6 +13,7 @@ import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.gui.dialogs.AboutDialog;
 import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
+import pl.greywarden.openr.gui.directoryview.DirectoryViewWrapper;
 import pl.greywarden.openr.gui.scenes.CentralContainter;
 import pl.greywarden.openr.commons.I18nManager;
 
@@ -91,4 +92,13 @@ public class MainWindow extends Stage {
     public static DirectoryView getRightDirectoryView() {
         return centralContainter.getRightView().getDirectoryView();
     }
+
+    public static DirectoryViewWrapper getLeftWrapper() {
+        return centralContainter.getLeftView();
+    }
+
+    public static DirectoryViewWrapper getRightWrapper() {
+        return centralContainter.getRightView();
+    }
+
 }

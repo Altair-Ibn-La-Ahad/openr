@@ -21,7 +21,7 @@ public class CreateNewEntryContextMenu extends ContextMenu {
 
     private void buildOptions() {
         Menu newFile = new NewFileMenu(view);
-        Menu newDocument = new NewDocumentMenu();
+        Menu newDocument = new NewDocumentMenu(view);
         MenuItem newDirectory = new MenuItem(getString("create-directory-menu-item"));
         newDirectory.setOnAction(event -> new NewDirectoryDialog(view));
         super.getItems().setAll(newFile, newDocument, newDirectory);

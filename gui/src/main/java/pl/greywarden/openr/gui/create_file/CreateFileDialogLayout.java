@@ -7,6 +7,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import lombok.Getter;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
 import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
@@ -16,8 +17,8 @@ import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public abstract class CreateFileDialogLayout extends GridPane {
 
-    protected static final ComboBox<DirectoryView> pathComboBox = new ComboBox<>();
-    protected static final ComboBox<Template> templates = new ComboBox<>();
+    protected static ComboBox<DirectoryView> pathComboBox;
+    protected static ComboBox<Template> templates;
 
     @Getter
     protected static final TextField fileNameTextField = new TextField();
@@ -28,7 +29,14 @@ public abstract class CreateFileDialogLayout extends GridPane {
     private static final DirectoryView rightDirectoryView = MainWindow.getRightDirectoryView();
 
     static {
-        templates.getItems().addAll(Template.getAvailableTemplates());
+        fileNameTextField.setPromptText(getString("filename"));
+    }
+
+    public CreateFileDialogLayout() {
+        super();
+
+        pathComboBox = new ComboBox<>();
+        templates = new ComboBox<>();
 
         templates.setButtonCell(templateComboBoxButtonCell());
         templates.setCellFactory(param -> templateComboBoxButtonCell());
@@ -36,19 +44,11 @@ public abstract class CreateFileDialogLayout extends GridPane {
         pathComboBox.setButtonCell(directoryViewPathButtonCell());
         pathComboBox.setCellFactory(param -> directoryViewPathButtonCell());
 
-        fileNameTextField.setPromptText(getString("filename"));
-    }
-
-    public CreateFileDialogLayout() {
-        super();
+        templates.getItems().addAll(Template.getAvailableTemplates());
 
         super.setHgap(10);
         super.setVgap(10);
         super.setPadding(new Insets(20, 10, 10, 10));
-
-        ColumnConstraints stretch = new ColumnConstraints();
-        stretch.setFillWidth(true);
-        super.getColumnConstraints().addAll(stretch, stretch);
 
         if (leftDirectoryView.isVisible()) {
             if (rightDirectoryView.isVisible()) {
@@ -96,6 +96,9 @@ public abstract class CreateFileDialogLayout extends GridPane {
     }
 
     protected void createGridLayout() {
+        GridPane.setHgrow(fileNameTextField, Priority.ALWAYS);
+        pathComboBox.minWidthProperty().bind(fileNameTextField.widthProperty());
+        templates.minWidthProperty().bind(fileNameTextField.widthProperty());
         int rows = 0;
         super.addRow(0, filenameLabel, fileNameTextField);
         if (pathComboBox.managedProperty().get()) {

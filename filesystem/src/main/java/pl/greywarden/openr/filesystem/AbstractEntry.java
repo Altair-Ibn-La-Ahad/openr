@@ -38,8 +38,6 @@ public abstract class AbstractEntry implements EntryOperations {
     @Override
     public void paste(AbstractEntry target) {
         try {
-            System.err.println("PASTE");
-            System.err.println(clipboard.getEntryProperties().getAbsolutePath());
             if (clipboard.getEntryProperties().isDirectory()) {
                 FileUtils.copyDirectoryToDirectory(clipboard.filesystemEntry, target.filesystemEntry);
             } else {

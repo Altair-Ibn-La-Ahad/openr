@@ -7,6 +7,9 @@ import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.commons.IconManager;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class ConfirmDeleteDialog extends Alert {
@@ -17,15 +20,15 @@ public class ConfirmDeleteDialog extends Alert {
         ButtonType no = new ButtonType(getString("no"), ButtonBar.ButtonData.NO);
 
         super.setTitle(getString("confirm-delete-dialog-title"));
-        AbstractEntry selectedItem = directoryView.getSelectionModel().getSelectedItem().getEntry();
         super.setHeaderText(getString("confirm-delete-dialog-warning"));
-
         super.setGraphic(IconManager.getIcon("delete-permanent"));
-
+        List<AbstractEntry> items = new LinkedList<>();
+        directoryView.getSelectionModel().getSelectedItems()
+                .forEach(entryWrapper -> items.add(entryWrapper.getEntry()));
         super.getDialogPane().getButtonTypes().setAll(yes, no);
         super.showAndWait().ifPresent(buttonType -> {
             if (buttonType.getButtonData().equals(ButtonBar.ButtonData.YES)) {
-                selectedItem.delete();
+                items.forEach(AbstractEntry::delete);
                 directoryView.reload();
             }
         });

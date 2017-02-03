@@ -208,6 +208,13 @@ public class DirectoryView extends TableView<EntryWrapper> {
                             new SingleSelectionContextMenu(this, target)
                                     .show(row, event.getScreenX(), event.getScreenY());
                         }
+                    } else {
+                        EntryWrapper rowData = row.getItem();
+                        AbstractEntry target = rowData.getEntry();
+                        if (!(target instanceof ParentDirectoryEntry)) {
+                            new MultipleSelectionContextMenu(this)
+                                    .show(row, event.getScreenX(), event.getScreenY());
+                        }
                     }
                 }
             }

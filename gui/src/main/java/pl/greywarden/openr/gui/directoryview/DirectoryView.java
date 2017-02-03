@@ -6,18 +6,24 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 
+import javafx.scene.input.TransferMode;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.EntryWrapper;
+import pl.greywarden.openr.filesystem.FileEntry;
 import pl.greywarden.openr.filesystem.ParentDirectoryEntry;
+import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +32,7 @@ import java.util.Objects;
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
 @Log4j
-public class DirectoryView extends TableView <EntryWrapper> {
+public class DirectoryView extends TableView<EntryWrapper> {
 
     private DirectoryEntry rootEntry;
 
@@ -73,16 +79,16 @@ public class DirectoryView extends TableView <EntryWrapper> {
 
     private Comparator<EntryWrapper> getWrapperComparator(TableView<EntryWrapper> param) {
         return (r1, r2) -> {
-                    if (Objects.equals(r1.getName(), "..")) {
-                        return -1;
-                    } else if (Objects.equals(r2.getName(), "..")) {
-                        return 1;
-                    } else if (param.getComparator() == null) {
-                        return 0;
-                    } else {
-                        return param.getComparator().compare(r1, r2);
-                    }
-                };
+            if (Objects.equals(r1.getName(), "..")) {
+                return -1;
+            } else if (Objects.equals(r2.getName(), "..")) {
+                return 1;
+            } else if (param.getComparator() == null) {
+                return 0;
+            } else {
+                return param.getComparator().compare(r1, r2);
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")
@@ -131,7 +137,7 @@ public class DirectoryView extends TableView <EntryWrapper> {
         };
     }
 
-    private Comparator<String> stringComparator(){
+    private Comparator<String> stringComparator() {
         return (o1, o2) -> {
             if ("..".equals(o1) || "..".equals(o2)) {
                 return -1;
@@ -160,7 +166,7 @@ public class DirectoryView extends TableView <EntryWrapper> {
 
     @SuppressWarnings("unchecked")
     private void setRowFactory() {
-        super.setRowFactory((TableView <EntryWrapper> tv) -> (TableRow<EntryWrapper>) createTableRow());
+        super.setRowFactory((TableView<EntryWrapper> tv) -> (TableRow<EntryWrapper>) createTableRow());
     }
 
     private Object createTableRow() {
@@ -201,6 +207,63 @@ public class DirectoryView extends TableView <EntryWrapper> {
                     }
                 }
             }
+        });
+        row.setOnDragDetected(event -> {
+            if (!row.isEmpty()) {
+                EntryWrapper entry = row.getItem();
+                List<File> files = Collections.singletonList(entry.getEntry().getFilesystemEntry());
+                Dragboard db = row.startDragAndDrop(TransferMode.MOVE);
+                db.setDragView(row.snapshot(null, null));
+                ClipboardContent cc = new ClipboardContent();
+                cc.putFiles(files);
+                db.setContent(cc);
+                event.consume();
+            }
+        });
+        row.setOnDragEntered(event -> {
+            if (!row.isEmpty()) {
+                if (row.getItem().getEntry().getEntryProperties().isDirectory()) {
+                    super.getFocusModel().focus(row.getIndex());
+                }
+            }
+            event.consume();
+        });
+        row.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            if (db.hasFiles()) {
+                File fileToMove = db.getFiles().get(0);
+                AbstractEntry fileToMoveEntry = fileToMove.isFile()
+                        ? new FileEntry(fileToMove.getAbsolutePath())
+                        : new DirectoryEntry(fileToMove.getAbsolutePath());
+                if (!row.isEmpty()) {
+                    DirectoryEntry targetEntry;
+                    if (row.getItem().getEntry().getEntryProperties().isDirectory()) {
+                        File target = row.getItem().getEntry().getFilesystemEntry();
+                        targetEntry = new DirectoryEntry(target.getAbsolutePath());
+                    } else {
+                        File target = new File(this.getRootPath());
+                        targetEntry = new DirectoryEntry(target.getAbsolutePath());
+                    }
+                    fileToMoveEntry.move(targetEntry);
+                    event.consume();
+                    MainWindow.getLeftDirectoryView().reload();
+                    MainWindow.getRightDirectoryView().reload();
+                } else {
+                    File target = new File(this.getRootPath());
+                    DirectoryEntry targetEntry = new DirectoryEntry(target.getAbsolutePath());
+                    fileToMoveEntry.move(targetEntry);
+                    event.consume();
+                    MainWindow.getLeftDirectoryView().reload();
+                    MainWindow.getRightDirectoryView().reload();
+                }
+            }
+        });
+        row.setOnDragOver(event -> {
+            Dragboard db = event.getDragboard();
+            if (db.hasFiles()) {
+                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+            event.consume();
         });
         return row;
     }

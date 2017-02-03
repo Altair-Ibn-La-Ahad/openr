@@ -10,17 +10,21 @@ public class CreateFileFromTemplateDialogLayout extends CreateFileDialogLayout {
     public CreateFileFromTemplateDialogLayout(Template template) {
         super();
         templates.getItems().setAll(template);
-        templates.managedProperty().set(false);
+        templates.getSelectionModel().select(0);
         createGridLayout();
     }
 
     public CreateFileFromTemplateDialogLayout(Template template, DirectoryView selectedView) {
         super();
         templates.getItems().setAll(template);
+        templates.getSelectionModel().select(0);
+
         pathComboBox.getItems().setAll(selectedView);
         pathComboBox.getSelectionModel().select(0);
-        templates.managedProperty().set(false);
-        pathComboBox.managedProperty().set(false);
+
+        pathComboBox.managedProperty().setValue(false);
+        templates.managedProperty().setValue(false);
+
         createGridLayout();
     }
 

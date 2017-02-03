@@ -15,8 +15,11 @@ public class DirectoryEntry extends AbstractEntry {
     @Override
     public void move(AbstractEntry target) {
         try {
-            FileUtils.deleteQuietly(target.getFilesystemEntry());
-            FileUtils.moveDirectory(getFilesystemEntry(), target.getFilesystemEntry());
+            if (target.getEntryProperties().isDirectory()){
+                FileUtils.moveDirectoryToDirectory(getFilesystemEntry(), target.getFilesystemEntry(), false);
+            } else {
+                FileUtils.moveDirectory(this.filesystemEntry, target.filesystemEntry);
+            }
         } catch (IOException exception) {
             log.error("Move directory exception", exception);
         }

@@ -15,7 +15,11 @@ public class FileEntry extends AbstractEntry {
     @Override
     public void move(AbstractEntry target) {
         try{
-            FileUtils.moveFile(getFilesystemEntry(), target.getFilesystemEntry());
+            if (target.getEntryProperties().isDirectory()) {
+                FileUtils.moveFileToDirectory(this.filesystemEntry, target.filesystemEntry, false);
+            } else {
+                FileUtils.moveFile(getFilesystemEntry(), target.getFilesystemEntry());
+            }
         } catch (IOException exception) {
             log.error("Rename file exception", exception);
         }

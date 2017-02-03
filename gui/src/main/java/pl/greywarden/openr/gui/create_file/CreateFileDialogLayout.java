@@ -1,6 +1,5 @@
 package pl.greywarden.openr.gui.create_file;
 
-import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -63,21 +62,10 @@ public abstract class CreateFileDialogLayout extends GridPane {
             }
         }
 
-        pathComboBox.managedProperty().bind(pathComboBoxManagedPropertyBinding());
-
         pathComboBox.getSelectionModel().select(0);
         templates.getSelectionModel().select(0);
 
         fileNameTextField.setText("");
-    }
-
-    private BooleanBinding pathComboBoxManagedPropertyBinding() {
-        return new BooleanBinding() {
-            @Override
-            protected boolean computeValue() {
-                return pathComboBox.getItems().size() > 1;
-            }
-        };
     }
 
     private static ListCell<Template> templateComboBoxButtonCell() {

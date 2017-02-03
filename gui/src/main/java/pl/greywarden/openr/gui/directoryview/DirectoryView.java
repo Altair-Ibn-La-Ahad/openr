@@ -199,13 +199,15 @@ public class DirectoryView extends TableView<EntryWrapper> {
                 }
             } else if (MouseButton.SECONDARY.equals(event.getButton())) {
                 if (row.isEmpty()) {
-                    new CreateNewEntryContextMenu(this).show(row, event.getScreenX(), event.getScreenY());
+                    new NoSelectionContextMenu(this).show(row, event.getScreenX(), event.getScreenY());
                 } else {
-                    EntryWrapper rowData = row.getItem();
-                    AbstractEntry target = rowData.getEntry();
-                    if (!(target instanceof ParentDirectoryEntry)) {
-                        new EntryContextMenu(this, target)
-                                .show(row, event.getScreenX(), event.getScreenY());
+                    if (super.getSelectionModel().getSelectedItems().size() == 1) {
+                        EntryWrapper rowData = row.getItem();
+                        AbstractEntry target = rowData.getEntry();
+                        if (!(target instanceof ParentDirectoryEntry)) {
+                            new SingleSelectionContextMenu(this, target)
+                                    .show(row, event.getScreenX(), event.getScreenY());
+                        }
                     }
                 }
             }

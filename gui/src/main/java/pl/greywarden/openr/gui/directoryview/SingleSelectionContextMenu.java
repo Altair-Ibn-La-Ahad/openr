@@ -5,6 +5,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import lombok.extern.log4j.Log4j;
+import pl.greywarden.openr.configuration.ConfigManager;
+import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.commons.IconManager;
@@ -22,12 +24,12 @@ import java.io.IOException;
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
 @Log4j
-public class EntryContextMenu extends ContextMenu {
+public class SingleSelectionContextMenu extends ContextMenu {
 
     private final AbstractEntry entry;
     private final DirectoryView directoryView;
 
-    public EntryContextMenu(DirectoryView directoryView, AbstractEntry entry) {
+    public SingleSelectionContextMenu(DirectoryView directoryView, AbstractEntry entry) {
         this.entry = entry;
         this.directoryView = directoryView;
         buildOptions();
@@ -80,6 +82,9 @@ public class EntryContextMenu extends ContextMenu {
                 entry.paste(root);
             }
             directoryView.reload();
+            if (!Boolean.valueOf(ConfigManager.getSetting(Setting.KEEP_CLIPBOARD.CODE))) {
+                AbstractEntry.clearClipboard();
+            }
         });
 
         paste.disableProperty().bind(AbstractEntry.clipboardEmptyBinding());

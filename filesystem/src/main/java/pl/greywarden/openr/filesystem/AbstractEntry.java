@@ -28,7 +28,7 @@ public abstract class AbstractEntry implements EntryOperations {
     protected static AbstractEntry clipboard;
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    protected boolean cut;
+    protected static boolean cut;
 
     protected AbstractEntry(String path) {
         filesystemEntry = new File(path);
@@ -44,9 +44,8 @@ public abstract class AbstractEntry implements EntryOperations {
                 FileUtils.copyFileToDirectory(clipboard.filesystemEntry, target.filesystemEntry);
             }
             if (cut) {
-                clipboard.delete();
+                FileUtils.deleteQuietly(clipboard.filesystemEntry);
             }
-            clipboard = null;
         } catch (IOException exception) {
             log.error("Exception during paste", exception);
         }
@@ -58,7 +57,7 @@ public abstract class AbstractEntry implements EntryOperations {
     }
 
     public void cut() {
-        copy();
+        clipboard = this;
         cut = true;
     }
 
@@ -119,4 +118,7 @@ public abstract class AbstractEntry implements EntryOperations {
         return new File(root, filename).exists();
     }
 
+    public static void clearClipboard() {
+        clipboard = null;
+    }
 }

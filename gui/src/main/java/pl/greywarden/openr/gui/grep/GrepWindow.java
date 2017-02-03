@@ -1,16 +1,17 @@
 package pl.greywarden.openr.gui.grep;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -23,6 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.io.FileUtils;
+import org.controlsfx.control.StatusBar;
 import org.unix4j.Unix4j;
 import pl.greywarden.openr.commons.IconManager;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
@@ -36,6 +38,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
@@ -48,6 +51,7 @@ public class GrepWindow extends Stage {
     private final VBox layout;
     private CheckBox recursive;
     private ComboBox<String> pathComboBox;
+    private ProgressBar progressBar = new ProgressBar(0.0);
 
     private final DirectoryView left = MainWindow.getLeftDirectoryView();
     private final DirectoryView right = MainWindow.getRightDirectoryView();
@@ -59,9 +63,14 @@ public class GrepWindow extends Stage {
         layout = new VBox(5);
         layout.setPadding(new Insets(5));
 
+        StatusBar statusBar = new StatusBar();
+        statusBar.setText(getString("grep-window-title"));
+        statusBar.getRightItems().setAll(progressBar);
+
         createSearchBar();
         createPathSelection();
         createResultListView();
+        layout.getChildren().add(statusBar);
 
         layout.setOnKeyPressed(event -> {
             if (KeyCode.ESCAPE.equals(event.getCode())) {
@@ -105,7 +114,11 @@ public class GrepWindow extends Stage {
         regexInput.setOnKeyPressed(event -> {
             if (regexInput.textProperty().isNotEmpty().get()
                     && event.getCode().equals(KeyCode.ENTER)) {
-                new Thread(this::grep).start();
+                Task<Double> grep = grep();
+                progressBar.progressProperty().bind(grep.progressProperty());
+                Thread thread = new Thread(grep);
+                thread.setDaemon(true);
+                thread.start();
             }
         });
 
@@ -135,19 +148,25 @@ public class GrepWindow extends Stage {
         return event -> new Thread(this::grep).start();
     }
 
-    private void grep() {
-        layout.setCursor(Cursor.WAIT);
-        final String regex = regexInput.getText();
-        List<File> filesToGrep = Collections.synchronizedList(getFilesToGrep());
-        List<GrepResult> grepResults = Collections.synchronizedList(new LinkedList<>());
-        filesToGrep.parallelStream().forEach(file -> {
-            String result = Unix4j.grep(regex, file).toStringResult();
-            if (!result.isEmpty()) {
-                grepResults.add(new GrepResult(file, result));
+    private Task<Double> grep() {
+        return new Task<Double>() {
+            @Override
+            protected Double call() throws Exception {
+                final String regex = regexInput.getText();
+                List<File> filesToGrep = Collections.synchronizedList(getFilesToGrep());
+                List<GrepResult> grepResults = Collections.synchronizedList(new LinkedList<>());
+                final AtomicInteger steps = new AtomicInteger(0);
+                filesToGrep.parallelStream().forEach(file -> {
+                    String result = Unix4j.grep(regex, file).toStringResult();
+                    if (!result.isEmpty()) {
+                        grepResults.add(new GrepResult(file, result));
+                    }
+                    updateProgress(steps.incrementAndGet(), filesToGrep.size());
+                });
+                resultTableView.getItems().setAll(grepResults);
+                return getProgress();
             }
-        });
-        resultTableView.getItems().setAll(grepResults);
-        layout.setCursor(Cursor.DEFAULT);
+        };
     }
 
     private List<File> getFilesToGrep() {

@@ -100,10 +100,10 @@ public abstract class CreateFileDialogLayout extends GridPane {
         templates.minWidthProperty().bind(fileNameTextField.widthProperty());
         int rows = 0;
         super.addRow(0, filenameLabel, fileNameTextField);
-        if (pathComboBox.managedProperty().get()) {
+        if (pathComboBox.getItems().size() > 1) {
             super.addRow(++rows, pathLabel, pathComboBox);
         }
-        if (templates.managedProperty().get()) {
+        if (templates.getItems().size() > 1) {
             super.addRow(++rows, templateLabel, templates);
         }
     }

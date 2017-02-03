@@ -2,6 +2,7 @@ package pl.greywarden.openr.gui.directoryview;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -23,9 +24,9 @@ import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,6 +48,7 @@ public class DirectoryView extends TableView<EntryWrapper> {
                 super.getSelectionModel().clearSelection();
             }
         });
+        super.selectionModelProperty().get().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     public void changePath(String rootPath) {
@@ -210,8 +212,9 @@ public class DirectoryView extends TableView<EntryWrapper> {
         });
         row.setOnDragDetected(event -> {
             if (!row.isEmpty()) {
-                EntryWrapper entry = row.getItem();
-                List<File> files = Collections.singletonList(entry.getEntry().getFilesystemEntry());
+                List<EntryWrapper> selectedEntries = super.getSelectionModel().getSelectedItems();
+                List<File> files = new LinkedList<>();
+                selectedEntries.forEach(entryWrapper -> files.add(entryWrapper.getEntry().getFilesystemEntry()));
                 Dragboard db = row.startDragAndDrop(TransferMode.MOVE);
                 db.setDragView(row.snapshot(null, null));
                 ClipboardContent cc = new ClipboardContent();
@@ -231,31 +234,35 @@ public class DirectoryView extends TableView<EntryWrapper> {
         row.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             if (db.hasFiles()) {
-                File fileToMove = db.getFiles().get(0);
-                AbstractEntry fileToMoveEntry = fileToMove.isFile()
-                        ? new FileEntry(fileToMove.getAbsolutePath())
-                        : new DirectoryEntry(fileToMove.getAbsolutePath());
-                if (!row.isEmpty()) {
-                    DirectoryEntry targetEntry;
-                    if (row.getItem().getEntry().getEntryProperties().isDirectory()) {
-                        File target = row.getItem().getEntry().getFilesystemEntry();
-                        targetEntry = new DirectoryEntry(target.getAbsolutePath());
+                List<File> files = db.getFiles();
+                files.forEach(fileToMove -> {
+                    AbstractEntry fileToMoveEntry = fileToMove.isFile()
+                            ? new FileEntry(fileToMove.getAbsolutePath())
+                            : new DirectoryEntry(fileToMove.getAbsolutePath());
+                    if (!row.isEmpty()) {
+                        DirectoryEntry targetEntry;
+                        if (row.getItem().getEntry().getEntryProperties().isDirectory()) {
+                            File target = row.getItem().getEntry().getFilesystemEntry();
+                            targetEntry = new DirectoryEntry(target.getAbsolutePath());
+                        } else {
+                            File target = new File(this.getRootPath());
+                            targetEntry = new DirectoryEntry(target.getAbsolutePath());
+                        }
+                        if (!fileToMoveEntry.existsInTargetDirectory(targetEntry)) {
+                            fileToMoveEntry.move(targetEntry);
+                        }
+                        event.consume();
+                        MainWindow.getLeftDirectoryView().reload();
+                        MainWindow.getRightDirectoryView().reload();
                     } else {
                         File target = new File(this.getRootPath());
-                        targetEntry = new DirectoryEntry(target.getAbsolutePath());
+                        DirectoryEntry targetEntry = new DirectoryEntry(target.getAbsolutePath());
+                        fileToMoveEntry.move(targetEntry);
+                        event.consume();
+                        MainWindow.getLeftDirectoryView().reload();
+                        MainWindow.getRightDirectoryView().reload();
                     }
-                    fileToMoveEntry.move(targetEntry);
-                    event.consume();
-                    MainWindow.getLeftDirectoryView().reload();
-                    MainWindow.getRightDirectoryView().reload();
-                } else {
-                    File target = new File(this.getRootPath());
-                    DirectoryEntry targetEntry = new DirectoryEntry(target.getAbsolutePath());
-                    fileToMoveEntry.move(targetEntry);
-                    event.consume();
-                    MainWindow.getLeftDirectoryView().reload();
-                    MainWindow.getRightDirectoryView().reload();
-                }
+                });
             }
         });
         row.setOnDragOver(event -> {

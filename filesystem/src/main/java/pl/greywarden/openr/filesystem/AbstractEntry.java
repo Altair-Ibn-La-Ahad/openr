@@ -113,4 +113,10 @@ public abstract class AbstractEntry implements EntryOperations {
         }
     }
 
+    public boolean existsInTargetDirectory(DirectoryEntry target) {
+        String filename = this.getFilesystemEntry().getName();
+        String root = target.getEntryProperties().getAbsolutePath();
+        return new File(root, filename).exists();
+    }
+
 }

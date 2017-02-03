@@ -22,12 +22,12 @@ import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class Settings extends Dialog<ButtonType> {
 
-    private ButtonType ok = CommonButtons.OK;
+    private final ButtonType ok = CommonButtons.OK;
 
-    private ComboBox<Locale> selectLocale;
+    private final ComboBox<Locale> selectLocale;
 
-    private CheckBox keepClipboard;
-    private CheckBox confirmClose;
+    private final CheckBox keepClipboard;
+    private final CheckBox confirmClose;
 
     private boolean reloadRequired;
 

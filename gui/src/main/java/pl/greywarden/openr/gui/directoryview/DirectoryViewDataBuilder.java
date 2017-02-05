@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DirectoryViewDataBuilder {
 
@@ -26,10 +27,9 @@ public class DirectoryViewDataBuilder {
 
     private List<File> getFiles() {
         File[] filesArray = rootEntry.getFilesystemEntry().listFiles();
-        return Arrays.asList(filesArray == null ? FileUtils.EMPTY_FILE_ARRAY : filesArray)
-                .parallelStream()
-                .filter(file -> !file.isHidden())
-                .collect(Collectors.toList());
+        List<File> files = Arrays.asList(filesArray == null ? FileUtils.EMPTY_FILE_ARRAY : filesArray);
+        Stream<File> stream = files.size() > 10 ? files.parallelStream() : files.stream();
+        return stream.filter(file -> !file.isHidden()).collect(Collectors.toList());
     }
 
     private List<EntryWrapper> createEntryWrappers() {
@@ -46,7 +46,10 @@ public class DirectoryViewDataBuilder {
     }
 
     private void convertEntriesToWrappers(List<AbstractEntry> abstractEntries, List<EntryWrapper> result) {
-        abstractEntries.parallelStream().forEach(entry -> result.add(new EntryWrapper(entry)));
+        Stream<AbstractEntry> stream = abstractEntries.size() > 10
+                ? abstractEntries.parallelStream()
+                : abstractEntries.stream();
+        stream.forEach(entry -> result.add(new EntryWrapper(entry)));
     }
 
     private void createParentDirectoryWrapper(List<EntryWrapper> result) {
@@ -56,10 +59,12 @@ public class DirectoryViewDataBuilder {
     }
 
     private void createAbstractEntries(List<AbstractEntry> abstractEntries, List<File> synchronizedFiles) {
-        synchronizedFiles.parallelStream().forEach(file ->
-                abstractEntries.add(file.isDirectory()
-                ? new DirectoryEntry(file.getAbsolutePath())
-                : new FileEntry(file.getAbsolutePath())));
+        Stream<File> stream = synchronizedFiles.size() > 10
+                ? synchronizedFiles.parallelStream()
+                : synchronizedFiles.stream();
+        stream.forEachOrdered(file -> abstractEntries.add(file.isDirectory()
+                        ? new DirectoryEntry(file.getAbsolutePath())
+                        : new FileEntry(file.getAbsolutePath())));
     }
 
     private ParentDirectoryEntry createParentDirectoryEntry() {

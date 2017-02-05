@@ -1,5 +1,6 @@
 package pl.greywarden.openr.gui.create_file;
 
+import pl.greywarden.openr.gui.dialogs.PathComboBox;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
 import pl.greywarden.openr.templates.Template;
 
@@ -19,10 +20,8 @@ public class CreateFileFromTemplateDialogLayout extends CreateFileDialogLayout {
         templates.getItems().setAll(template);
         templates.getSelectionModel().select(0);
 
-        pathComboBox.getItems().setAll(selectedView);
-        pathComboBox.getSelectionModel().select(0);
+        pathComboBox = new PathComboBox(selectedView);
 
-        pathComboBox.managedProperty().setValue(false);
         templates.managedProperty().setValue(false);
 
         createGridLayout();
@@ -32,9 +31,9 @@ public class CreateFileFromTemplateDialogLayout extends CreateFileDialogLayout {
     public void handleConfirm() {
         Template template = templates.getSelectionModel().getSelectedItem();
         File targetFile = new File(
-                pathComboBox.getSelectionModel().getSelectedItem().getRootPath(),
+                pathComboBox.getSelectedPath(),
                 fileNameTextField.getText());
         template.build(targetFile.getAbsolutePath());
-        pathComboBox.getSelectionModel().getSelectedItem().reload();
+        pathComboBox.reloadSelected();
     }
 }

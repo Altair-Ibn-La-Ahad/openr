@@ -8,40 +8,32 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import lombok.Getter;
-import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
+import pl.greywarden.openr.gui.dialogs.PathComboBox;
 import pl.greywarden.openr.templates.Template;
+
+import java.io.File;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public abstract class CreateFileDialogLayout extends GridPane {
 
-    protected static ComboBox<DirectoryView> pathComboBox;
+    protected PathComboBox pathComboBox;
     protected static ComboBox<Template> templates;
 
     @Getter
-    protected static final TextField fileNameTextField = new TextField();
+    protected final static TextField fileNameTextField = new TextField();
     private static final Label filenameLabel = new Label(getString("filename") + ":");
     private static final Label templateLabel = new Label(getString("type") + ":");
     private static final Label pathLabel = new Label(getString("path") + ":");
-    private static final DirectoryView leftDirectoryView = MainWindow.getLeftDirectoryView();
-    private static final DirectoryView rightDirectoryView = MainWindow.getRightDirectoryView();
-
-    static {
-        fileNameTextField.setPromptText(getString("filename"));
-    }
 
     protected CreateFileDialogLayout() {
         super();
 
-        pathComboBox = new ComboBox<>();
+        pathComboBox = new PathComboBox();
         templates = new ComboBox<>();
 
         templates.setButtonCell(templateComboBoxButtonCell());
         templates.setCellFactory(param -> templateComboBoxButtonCell());
-
-        pathComboBox.setButtonCell(directoryViewPathButtonCell());
-        pathComboBox.setCellFactory(param -> directoryViewPathButtonCell());
 
         templates.getItems().setAll(Template.getAvailableTemplates());
 
@@ -49,22 +41,9 @@ public abstract class CreateFileDialogLayout extends GridPane {
         super.setVgap(10);
         super.setPadding(new Insets(20, 10, 10, 10));
 
-        if (MainWindow.getLeftWrapper().isVisible()) {
-            if (MainWindow.getRightWrapper().isVisible()) {
-                pathComboBox.getItems().setAll(leftDirectoryView, rightDirectoryView);
-            } else {
-                pathComboBox.getItems().setAll(leftDirectoryView);
-            }
-        }
-        if (MainWindow.getRightWrapper().isVisible()) {
-            if (!MainWindow.getLeftWrapper().isVisible()) {
-                pathComboBox.getItems().setAll(rightDirectoryView);
-            }
-        }
-
-        pathComboBox.getSelectionModel().select(0);
         templates.getSelectionModel().select(0);
 
+        fileNameTextField.setPromptText(getString("filename"));
         fileNameTextField.setText("");
     }
 
@@ -82,25 +61,13 @@ public abstract class CreateFileDialogLayout extends GridPane {
         };
     }
 
-    private static ListCell<DirectoryView> directoryViewPathButtonCell() {
-        return new ListCell<DirectoryView>() {
-            @Override
-            protected void updateItem(DirectoryView dv, boolean empty) {
-                super.updateItem(dv, empty);
-                if (!empty) {
-                    setText(dv.getRootPath());
-                }
-            }
-        };
-    }
-
     protected void createGridLayout() {
         GridPane.setHgrow(fileNameTextField, Priority.ALWAYS);
         pathComboBox.minWidthProperty().bind(fileNameTextField.widthProperty());
         templates.minWidthProperty().bind(fileNameTextField.widthProperty());
         int rows = 0;
         super.addRow(0, filenameLabel, fileNameTextField);
-        if (pathComboBox.getItems().size() > 1) {
+        if (pathComboBox.managedProperty().get()) {
             super.addRow(++rows, pathLabel, pathComboBox);
         }
         if (templates.getItems().size() > 1) {
@@ -109,4 +76,8 @@ public abstract class CreateFileDialogLayout extends GridPane {
     }
 
     public abstract void handleConfirm();
+
+    public File getTargetFile() {
+        return new File(pathComboBox.getSelectedPath(), fileNameTextField.getText());
+    }
 }

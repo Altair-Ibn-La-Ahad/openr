@@ -9,7 +9,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SelectionMode;
@@ -27,8 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.controlsfx.control.StatusBar;
 import org.unix4j.Unix4j;
 import pl.greywarden.openr.commons.IconManager;
-import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
+import pl.greywarden.openr.gui.dialogs.PathComboBox;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,11 +48,8 @@ public class GrepWindow extends Stage {
     private TableView<GrepResult> resultTableView;
     private final VBox layout;
     private CheckBox recursive;
-    private ComboBox<String> pathComboBox;
+    private PathComboBox pathComboBox;
     private ProgressBar progressBar = new ProgressBar(0.0);
-
-    private final DirectoryView left = MainWindow.getLeftDirectoryView();
-    private final DirectoryView right = MainWindow.getRightDirectoryView();
 
     public GrepWindow() {
         super();
@@ -93,9 +88,7 @@ public class GrepWindow extends Stage {
         wrapper.setHgap(10);
         wrapper.setAlignment(Pos.CENTER_LEFT);
         Label pathLabel = new Label(getString("path") + ":");
-        pathComboBox = new ComboBox<>();
-        pathComboBox.getItems().addAll(left.getRootPath(), right.getRootPath());
-        pathComboBox.getSelectionModel().select(0);
+        pathComboBox = new PathComboBox();
         pathComboBox.setMinWidth(500);
         recursive = new CheckBox();
         Label recursiveLabel = new Label(getString("recursive-label") + "?");
@@ -173,13 +166,13 @@ public class GrepWindow extends Stage {
         final List<File> files = new LinkedList<>();
         try {
             if (recursive.isSelected()) {
-                Files.find(Paths.get(pathComboBox.getSelectionModel().getSelectedItem()),
+                Files.find(Paths.get(pathComboBox.getSelectedPath()),
                         Integer.MAX_VALUE,
                         (filePath, fileAttr) -> fileAttr.isRegularFile())
                         .parallel()
                         .forEach(path -> files.add(path.toFile()));
             } else {
-                File[] filesToGrep = new File(pathComboBox.getSelectionModel().getSelectedItem()).listFiles();
+                File[] filesToGrep = new File(pathComboBox.getSelectedPath()).listFiles();
                 if (filesToGrep == null) {
                     filesToGrep = FileUtils.EMPTY_FILE_ARRAY;
                 }

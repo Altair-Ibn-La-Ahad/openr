@@ -7,7 +7,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -25,8 +24,7 @@ import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.FileEntry;
 import pl.greywarden.openr.commons.IconManager;
-import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
+import pl.greywarden.openr.gui.dialogs.PathComboBox;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -46,11 +44,8 @@ public class FindWindow extends Stage {
     private final VBox layout = new VBox(5);
     private ListView<AbstractEntry> result;
     private TextField input;
-    private ComboBox<String> pathComboBox;
+    private PathComboBox pathComboBox;
     private CheckBox recursive;
-
-    private final DirectoryView left = MainWindow.getLeftDirectoryView();
-    private final DirectoryView right = MainWindow.getRightDirectoryView();
 
     public FindWindow() {
         super();
@@ -129,9 +124,7 @@ public class FindWindow extends Stage {
         HBox wrapper = new HBox(10);
         wrapper.setAlignment(Pos.CENTER_LEFT);
         Label pathLabel = new Label(getString("path") + ":");
-        pathComboBox = new ComboBox<>();
-        pathComboBox.getItems().addAll(left.getRootPath(), right.getRootPath());
-        pathComboBox.getSelectionModel().select(0);
+        pathComboBox = new PathComboBox();
         pathComboBox.setMinWidth(500);
         recursive = new CheckBox();
         Label recursiveLabel = new Label(getString("recursive-label") + "?");
@@ -147,7 +140,7 @@ public class FindWindow extends Stage {
         final List<AbstractEntry> files = Collections.synchronizedList(new ArrayList<>());
         try {
             if (recursive.isSelected()) {
-                Files.find(Paths.get(pathComboBox.getSelectionModel().getSelectedItem()),
+                Files.find(Paths.get(pathComboBox.getSelectedPath()),
                         Integer.MAX_VALUE,
                         (filePath, fileAttr) ->
                                 filePath.toFile().getName().contains(input.getText()))
@@ -156,7 +149,7 @@ public class FindWindow extends Stage {
                                 ? new FileEntry(path.toFile().getAbsolutePath())
                                 : new DirectoryEntry(path.toFile().getAbsolutePath())));
             } else {
-                File[] filesArray = new File(pathComboBox.getSelectionModel().getSelectedItem()).listFiles();
+                File[] filesArray = new File(pathComboBox.getSelectedPath()).listFiles();
                 if (filesArray == null) {
                     filesArray = FileUtils.EMPTY_FILE_ARRAY;
                 }

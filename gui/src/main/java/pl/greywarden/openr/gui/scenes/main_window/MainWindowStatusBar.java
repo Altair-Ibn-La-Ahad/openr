@@ -25,8 +25,6 @@ public class MainWindowStatusBar extends StatusBar {
         label.setPadding(new Insets(0, 5, 0, 5));
         HBox.setHgrow(label, Priority.ALWAYS);
 
-        pathTextField.setId("statusbar-text-field");
-
         HBox wrapper = new HBox();
         HBox.setHgrow(pathTextField, Priority.ALWAYS);
         wrapper.prefWidthProperty().bind(super.widthProperty().divide(2));

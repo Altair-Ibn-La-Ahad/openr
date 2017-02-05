@@ -11,6 +11,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import pl.greywarden.openr.commons.IconManager;
+import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
@@ -34,7 +35,7 @@ public class DirectoryViewWrapper extends VBox {
 
         directoryView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
-                    TextField path = (TextField) super.getParent().getScene().lookup("#statusbar-text-field");
+                    TextField path = MainWindow.getStatusBar().getPathTextField();
                     if (newValue != null) {
                         path.setText(newValue.getEntry().getEntryProperties().getAbsolutePath());
                     } else {
@@ -46,7 +47,7 @@ public class DirectoryViewWrapper extends VBox {
     private void createPathTextFieldWrapper() {
         HBox pathTextFieldWrapper = new HBox(5);
 
-        PathTextField pathTextField = new PathTextField(directoryView);
+        DirectoryViewPathTextField pathTextField = new DirectoryViewPathTextField(directoryView);
         Label pathTextFieldLabel = new Label(getString("path"));
         Button go = new Button();
         Button refresh = new Button();

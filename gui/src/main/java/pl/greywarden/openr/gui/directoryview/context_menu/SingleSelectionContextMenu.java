@@ -1,4 +1,4 @@
-package pl.greywarden.openr.gui.directoryview;
+package pl.greywarden.openr.gui.directoryview.context_menu;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
@@ -14,6 +14,7 @@ import pl.greywarden.openr.gui.dialogs.ConfirmDeleteDialog;
 import pl.greywarden.openr.gui.dialogs.EntryInfoDialog;
 import pl.greywarden.openr.gui.dialogs.NewDirectoryDialog;
 import pl.greywarden.openr.gui.dialogs.RenameDialog;
+import pl.greywarden.openr.gui.directoryview.DirectoryView;
 import pl.greywarden.openr.gui.scenes.main_window.menu.NewDocumentMenu;
 import pl.greywarden.openr.gui.scenes.main_window.menu.NewFileMenu;
 

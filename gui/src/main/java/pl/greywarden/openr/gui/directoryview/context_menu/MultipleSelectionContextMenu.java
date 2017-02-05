@@ -1,9 +1,10 @@
-package pl.greywarden.openr.gui.directoryview;
+package pl.greywarden.openr.gui.directoryview.context_menu;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import pl.greywarden.openr.commons.IconManager;
 import pl.greywarden.openr.gui.dialogs.ConfirmDeleteDialog;
+import pl.greywarden.openr.gui.directoryview.DirectoryView;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 

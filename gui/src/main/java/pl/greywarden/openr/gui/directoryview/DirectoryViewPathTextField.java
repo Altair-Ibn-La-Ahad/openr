@@ -5,14 +5,14 @@ import javafx.scene.input.KeyCode;
 
 import java.io.File;
 
-public class PathTextField extends TextField {
+public class DirectoryViewPathTextField extends TextField {
 
     private final DirectoryView directoryView;
 
     private String lastPath;
 
     @SuppressWarnings("unchecked")
-    public PathTextField(DirectoryView directoryView) {
+    public DirectoryViewPathTextField(DirectoryView directoryView) {
         super();
         this.directoryView = directoryView;
         File root = new File(directoryView.getRootPath());

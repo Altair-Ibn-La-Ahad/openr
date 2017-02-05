@@ -5,10 +5,8 @@ import javafx.geometry.HPos;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
 import pl.greywarden.openr.commons.I18nManager;
 import pl.greywarden.openr.configuration.ConfigManager;
@@ -16,7 +14,6 @@ import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.gui.dialogs.CommonButtons;
 import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 
-import java.util.Locale;
 import java.util.Optional;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;

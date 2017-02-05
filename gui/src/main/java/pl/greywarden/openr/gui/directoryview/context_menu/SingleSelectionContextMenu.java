@@ -1,5 +1,6 @@
 package pl.greywarden.openr.gui.directoryview.context_menu;
 
+import javafx.application.Platform;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -13,6 +14,7 @@ import pl.greywarden.openr.commons.IconManager;
 import pl.greywarden.openr.gui.dialogs.ConfirmDeleteDialog;
 import pl.greywarden.openr.gui.dialogs.EntryInfoDialog;
 import pl.greywarden.openr.gui.dialogs.NewDirectoryDialog;
+import pl.greywarden.openr.gui.dialogs.PreviewImageDialog;
 import pl.greywarden.openr.gui.dialogs.RenameDialog;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
 import pl.greywarden.openr.gui.scenes.main_window.menu.NewDocumentMenu;
@@ -21,6 +23,7 @@ import pl.greywarden.openr.gui.scenes.main_window.menu.NewFileMenu;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
@@ -53,6 +56,16 @@ public class SingleSelectionContextMenu extends ContextMenu {
                 directoryView.changePath(entry.getEntryProperties().getAbsolutePath());
             }
         });
+
+        MenuItem preview = new MenuItem(getString("preview"));
+        File selectedFile = entry.getFilesystemEntry();
+        try {
+            String contentType = Files.probeContentType(selectedFile.toPath());
+            preview.setVisible(contentType.contains("image"));
+        } catch (IOException ignored) {
+            preview.setVisible(false);
+        }
+        preview.setOnAction(event -> Platform.runLater(() -> new PreviewImageDialog(selectedFile).show()));
 
         MenuItem rename = new MenuItem(getString("rename"));
         rename.setOnAction(event -> new RenameDialog(directoryView));
@@ -105,7 +118,7 @@ public class SingleSelectionContextMenu extends ContextMenu {
         properties.setOnAction(event -> new EntryInfoDialog(entry.getEntryProperties().getAbsolutePath()).show());
 
         super.getItems().addAll(
-                open, rename,
+                open, preview, rename,
                 new SeparatorMenuItem(),
                 newFile, newDocument, createDirectory,
                 new SeparatorMenuItem(),

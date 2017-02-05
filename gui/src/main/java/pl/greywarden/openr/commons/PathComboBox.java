@@ -1,4 +1,4 @@
-package pl.greywarden.openr.gui.dialogs;
+package pl.greywarden.openr.commons;
 
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.control.ComboBox;

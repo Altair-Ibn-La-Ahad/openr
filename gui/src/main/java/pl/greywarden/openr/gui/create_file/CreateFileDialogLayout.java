@@ -1,15 +1,13 @@
 package pl.greywarden.openr.gui.create_file;
 
 import javafx.geometry.Insets;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import lombok.Getter;
-import pl.greywarden.openr.gui.dialogs.PathComboBox;
-import pl.greywarden.openr.templates.Template;
+import pl.greywarden.openr.commons.PathComboBox;
+import pl.greywarden.openr.commons.TemplateComboBox;
 
 import java.io.File;
 
@@ -18,7 +16,7 @@ import static pl.greywarden.openr.commons.I18nManager.getString;
 public abstract class CreateFileDialogLayout extends GridPane {
 
     protected PathComboBox pathComboBox;
-    protected static ComboBox<Template> templates;
+    protected static TemplateComboBox templates;
 
     @Getter
     protected final static TextField fileNameTextField = new TextField();
@@ -30,35 +28,14 @@ public abstract class CreateFileDialogLayout extends GridPane {
         super();
 
         pathComboBox = new PathComboBox();
-        templates = new ComboBox<>();
-
-        templates.setButtonCell(templateComboBoxButtonCell());
-        templates.setCellFactory(param -> templateComboBoxButtonCell());
-
-        templates.getItems().setAll(Template.getAvailableTemplates());
+        templates = new TemplateComboBox();
 
         super.setHgap(10);
         super.setVgap(10);
         super.setPadding(new Insets(20, 10, 10, 10));
 
-        templates.getSelectionModel().select(0);
-
         fileNameTextField.setPromptText(getString("filename"));
         fileNameTextField.setText("");
-    }
-
-    private static ListCell<Template> templateComboBoxButtonCell() {
-        return new ListCell<Template>() {
-            @Override
-            protected void updateItem(Template t, boolean empty) {
-                super.updateItem(t, empty);
-                if (empty) {
-                    setText("");
-                } else {
-                    setText(getString(t.getName() + "-menu-item"));
-                }
-            }
-        };
     }
 
     protected void createGridLayout() {
@@ -70,7 +47,7 @@ public abstract class CreateFileDialogLayout extends GridPane {
         if (pathComboBox.managedProperty().get()) {
             super.addRow(++rows, pathLabel, pathComboBox);
         }
-        if (templates.getItems().size() > 1) {
+        if (templates.managedProperty().get()) {
             super.addRow(++rows, templateLabel, templates);
         }
     }

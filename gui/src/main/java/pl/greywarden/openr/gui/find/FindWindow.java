@@ -24,7 +24,7 @@ import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.filesystem.FileEntry;
 import pl.greywarden.openr.commons.IconManager;
-import pl.greywarden.openr.gui.dialogs.PathComboBox;
+import pl.greywarden.openr.commons.PathComboBox;
 
 import java.awt.Desktop;
 import java.io.File;

@@ -22,7 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.controlsfx.control.StatusBar;
 import org.unix4j.Unix4j;
 import pl.greywarden.openr.commons.IconManager;
-import pl.greywarden.openr.gui.dialogs.PathComboBox;
+import pl.greywarden.openr.commons.PathComboBox;
 
 import java.io.File;
 import java.io.IOException;

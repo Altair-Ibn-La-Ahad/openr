@@ -3,6 +3,8 @@ package pl.greywarden.openr.commons;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
@@ -11,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IconManager {
 
     public static ImageView getIcon(String name) {

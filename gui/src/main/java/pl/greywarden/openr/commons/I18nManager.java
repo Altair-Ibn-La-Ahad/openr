@@ -1,5 +1,7 @@
 package pl.greywarden.openr.commons;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j;
 
@@ -10,6 +12,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 @Log4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class I18nManager {
 
     private static final Map<String, Locale> supportedLocales;
@@ -20,9 +23,6 @@ public class I18nManager {
         supportedLocales.put("pl", Locale.forLanguageTag("pl"));
 
         actualLocale = Locale.getDefault();
-    }
-    private I18nManager() {
-
     }
 
     public static String getString(@NonNull String key) {

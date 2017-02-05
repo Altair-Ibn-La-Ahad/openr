@@ -8,7 +8,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.WindowEvent;
 import pl.greywarden.openr.commons.IconManager;
-import pl.greywarden.openr.gui.dialogs.Settings;
+import pl.greywarden.openr.gui.settings.Settings;
 import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;

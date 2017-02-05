@@ -1,4 +1,4 @@
-package pl.greywarden.openr.gui.dialogs;
+package pl.greywarden.openr.gui.settings;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -13,6 +13,7 @@ import javafx.scene.layout.GridPane;
 import pl.greywarden.openr.commons.I18nManager;
 import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Setting;
+import pl.greywarden.openr.gui.dialogs.CommonButtons;
 import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 
 import java.util.Locale;
@@ -24,7 +25,7 @@ public class Settings extends Dialog<ButtonType> {
 
     private final ButtonType ok = CommonButtons.OK;
 
-    private final ComboBox<Locale> selectLocale;
+    private final LocaleComboBox selectLocale;
 
     private final CheckBox keepClipboard;
     private final CheckBox confirmClose;
@@ -51,11 +52,7 @@ public class Settings extends Dialog<ButtonType> {
         layout.setVgap(10);
 
         Label languageLabel = new Label(getString("language") + ":");
-        selectLocale = new ComboBox<>();
-        selectLocale.setButtonCell(selectLocaleButtonCell());
-        selectLocale.setCellFactory(param -> selectLocaleButtonCell());
-        selectLocale.getItems().setAll(I18nManager.getSupportedLocales().values());
-        selectLocale.getSelectionModel().select(I18nManager.getActualLocale());
+        selectLocale = new LocaleComboBox();
         selectLocale.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     reloadRequired = true;
@@ -79,18 +76,6 @@ public class Settings extends Dialog<ButtonType> {
         layout.addRow(2, confirmCloseLabel, confirmClose);
 
         super.getDialogPane().setContent(layout);
-    }
-
-    private ListCell<Locale> selectLocaleButtonCell() {
-        return new ListCell<Locale>() {
-            @Override
-            protected void updateItem(Locale loc, boolean empty) {
-                super.updateItem(loc, empty);
-                if (!empty) {
-                    setText(loc.getDisplayLanguage(I18nManager.getActualLocale()));
-                }
-            }
-        };
     }
 
     public void showDialog() {

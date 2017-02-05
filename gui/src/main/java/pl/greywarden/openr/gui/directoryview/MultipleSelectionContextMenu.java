@@ -9,7 +9,7 @@ import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class MultipleSelectionContextMenu extends ContextMenu {
 
-    private DirectoryView directoryView;
+    private final DirectoryView directoryView;
 
     public MultipleSelectionContextMenu(DirectoryView directoryView) {
         super();

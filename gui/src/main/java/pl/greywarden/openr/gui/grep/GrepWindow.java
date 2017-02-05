@@ -1,6 +1,5 @@
 package pl.greywarden.openr.gui.grep;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -11,9 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
@@ -45,11 +41,11 @@ import static pl.greywarden.openr.commons.I18nManager.getString;
 public class GrepWindow extends Stage {
 
     private TextField regexInput;
-    private TableView<GrepResult> resultTableView;
+    private GrepResultTableView grepResultTableView;
     private final VBox layout;
     private CheckBox recursive;
     private PathComboBox pathComboBox;
-    private ProgressBar progressBar = new ProgressBar(0.0);
+    private final ProgressBar progressBar = new ProgressBar(0.0);
 
     public GrepWindow() {
         super();
@@ -64,7 +60,7 @@ public class GrepWindow extends Stage {
 
         createSearchBar();
         createPathSelection();
-        createResultListView();
+        createResultTableView();
         layout.getChildren().add(statusBar);
 
         layout.setOnKeyPressed(event -> {
@@ -72,7 +68,7 @@ public class GrepWindow extends Stage {
                 super.close();
             }
         });
-        resultTableView.setOnKeyPressed(event -> {
+        grepResultTableView.setOnKeyPressed(event -> {
             if (KeyCode.ESCAPE.equals(event.getCode())) {
                 super.close();
             }
@@ -123,18 +119,10 @@ public class GrepWindow extends Stage {
     }
 
     @SuppressWarnings("unchecked")
-    private void createResultListView() {
-        resultTableView = new TableView<>();
-        resultTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        resultTableView.setPlaceholder(new Label(""));
-        TableColumn<GrepResult, String> text = new TableColumn(getString("grep-result-text"));
-        TableColumn<GrepResult, String> pathToFile = new TableColumn(getString("grep-result-path"));
-        text.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getText()));
-        pathToFile.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getFile().getAbsolutePath()));
-        resultTableView.getColumns().addAll(text, pathToFile);
-        resultTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        VBox.setVgrow(resultTableView, Priority.ALWAYS);
-        layout.getChildren().add(resultTableView);
+    private void createResultTableView() {
+        grepResultTableView = new GrepResultTableView();
+        VBox.setVgrow(grepResultTableView, Priority.ALWAYS);
+        layout.getChildren().add(grepResultTableView);
     }
 
     private EventHandler<ActionEvent> handleGrep() {
@@ -156,14 +144,14 @@ public class GrepWindow extends Stage {
                     }
                     updateProgress(steps.incrementAndGet(), filesToGrep.size());
                 });
-                resultTableView.getItems().setAll(grepResults);
+                grepResultTableView.getItems().setAll(grepResults);
                 return getProgress();
             }
         };
     }
 
     private List<File> getFilesToGrep() {
-        final List<File> files = new LinkedList<>();
+        final List<File> files = Collections.synchronizedList(new LinkedList<>());
         try {
             if (recursive.isSelected()) {
                 Files.find(Paths.get(pathComboBox.getSelectedPath()),

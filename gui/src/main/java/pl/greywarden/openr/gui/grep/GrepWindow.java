@@ -74,6 +74,7 @@ public class GrepWindow extends Stage {
             }
         });
 
+        layout.setMinWidth(600);
         super.setScene(new Scene(layout));
         super.centerOnScreen();
         super.show();
@@ -85,9 +86,14 @@ public class GrepWindow extends Stage {
         wrapper.setAlignment(Pos.CENTER_LEFT);
         Label pathLabel = new Label(getString("path") + ":");
         pathComboBox = new PathComboBox();
+        pathLabel.managedProperty().bind(pathComboBox.managedProperty());
         pathComboBox.setMinWidth(500);
         recursive = new CheckBox();
         Label recursiveLabel = new Label(getString("recursive-label") + "?");
+        if (!pathLabel.managedProperty().get()) {
+            wrapper.setHgap(0);
+            GridPane.setMargin(recursive, new Insets(0, 0, 0, 10));
+        }
         wrapper.addRow(0, pathLabel, pathComboBox, recursiveLabel, recursive);
         layout.getChildren().add(wrapper);
     }

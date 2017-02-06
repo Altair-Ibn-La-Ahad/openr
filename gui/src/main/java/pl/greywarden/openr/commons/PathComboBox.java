@@ -1,10 +1,14 @@
 package pl.greywarden.openr.commons;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
+import javafx.util.StringConverter;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
 import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
+
+import java.io.File;
 
 public class PathComboBox extends ComboBox<DirectoryView> {
 
@@ -22,17 +26,47 @@ public class PathComboBox extends ComboBox<DirectoryView> {
                 super.getItems().setAll(MainWindow.getRightDirectoryView());
             }
         }
-        selectFirstItem();
-        super.managedProperty().bind(itemCountBinding());
+        createComponent();
+    }
+
+    private void createComponent() {
         setButtonCellAndCellFactory();
+        super.setConverter(new StringConverter<DirectoryView>() {
+            @Override
+            public String toString(DirectoryView object) {
+                return object == null ? "" : object.getRootPath();
+            }
+
+            @Override
+            public DirectoryView fromString(String string) {
+                if (string.equals(MainWindow.getLeftDirectoryView().getRootPath())) {
+                    return MainWindow.getLeftDirectoryView();
+                }
+                if (string.equals(MainWindow.getRightDirectoryView().getRootPath())) {
+                    return MainWindow.getRightDirectoryView();
+                }
+                return new DirectoryView(string);
+            }
+        });
+        super.setEditable(true);
+        super.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            File enteredDirectoryPath = new File(newValue);
+            if (enteredDirectoryPath.exists() && enteredDirectoryPath.isDirectory()) {
+                super.getEditor().setStyle(null);
+                pathValidBinding.invalidate();
+            } else {
+                super.getEditor().setStyle("-fx-text-fill: red");
+                pathValidBinding.invalidate();
+            }
+        });
+        selectFirstItem();
     }
 
     public PathComboBox(DirectoryView selectedView) {
         super();
         super.getItems().setAll(selectedView);
-        selectFirstItem();
-        super.managedProperty().bind(itemCountBinding());
-        setButtonCellAndCellFactory();
+        createComponent();
+        super.managedProperty().setValue(false);
     }
 
     public String getSelectedPath() {
@@ -43,16 +77,7 @@ public class PathComboBox extends ComboBox<DirectoryView> {
         super.getSelectionModel().select(0);
     }
 
-    private BooleanBinding itemCountBinding() {
-        return new BooleanBinding() {
-            @Override
-            protected boolean computeValue() {
-                return PathComboBox.super.getItems().size() > 1;
-            }
-        };
-    }
-
-    private static ListCell<DirectoryView> pathComboBoxButtonCell() {
+    private ListCell<DirectoryView> pathComboBoxButtonCell() {
         return new ListCell<DirectoryView>() {
             @Override
             protected void updateItem(DirectoryView dv, boolean empty) {
@@ -72,4 +97,13 @@ public class PathComboBox extends ComboBox<DirectoryView> {
     public void reloadSelected() {
         super.getSelectionModel().getSelectedItem().reload();
     }
+
+    public final BooleanBinding pathValidBinding = Bindings.createBooleanBinding(() -> {
+        String path = PathComboBox.super.getEditor().textProperty().get();
+        if (path.isEmpty()) {
+            path = PathComboBox.super.getSelectionModel().getSelectedItem().getRootPath();
+        }
+        File file = new File(path);
+        return !(file.exists() && file.isDirectory());
+    });
 }

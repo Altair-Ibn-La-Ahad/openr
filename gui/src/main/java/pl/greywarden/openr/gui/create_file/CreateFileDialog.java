@@ -1,5 +1,6 @@
 package pl.greywarden.openr.gui.create_file;
 
+import javafx.beans.binding.BooleanBinding;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -41,7 +42,8 @@ public class CreateFileDialog extends Dialog<ButtonType> {
     private void setButtonTypes() {
         super.getDialogPane().getButtonTypes().setAll(create, cancel);
         Node buttonOk = super.getDialogPane().lookupButton(create);
-        buttonOk.disableProperty().bind(CreateFileDialogLayout.getFileNameTextField().textProperty().isEmpty());
+        BooleanBinding binding = CreateFileDialogLayout.fileNameTextField.textProperty().isNotEmpty();
+        buttonOk.disableProperty().bind(binding.and(layout.pathComboBox.pathValidBinding.not()).not());
     }
 
     private void setLayoutAndButtonTypes(CreateFileDialogLayout layout) {

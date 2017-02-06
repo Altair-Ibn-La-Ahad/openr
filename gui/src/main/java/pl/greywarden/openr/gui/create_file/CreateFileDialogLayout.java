@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import lombok.AccessLevel;
 import lombok.Getter;
 import pl.greywarden.openr.commons.PathComboBox;
 import pl.greywarden.openr.commons.TemplateComboBox;
@@ -15,6 +16,7 @@ import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public abstract class CreateFileDialogLayout extends GridPane {
 
+    @Getter(AccessLevel.PUBLIC)
     protected PathComboBox pathComboBox;
     protected static TemplateComboBox templates;
 

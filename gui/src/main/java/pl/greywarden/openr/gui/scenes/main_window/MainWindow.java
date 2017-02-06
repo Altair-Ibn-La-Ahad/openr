@@ -4,12 +4,16 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Setting;
+import pl.greywarden.openr.gui.create_file.CreateFileDialog;
 import pl.greywarden.openr.gui.dialogs.AboutDialog;
 import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
@@ -47,6 +51,8 @@ public class MainWindow extends Stage {
         I18nManager.setLocale(ConfigManager.getSetting(Setting.LANGUAGE.CODE));
         layout = new VBox();
         Scene scene = new Scene(layout);
+        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_ANY),
+                () -> new CreateFileDialog().showDialog());
         buildScene();
 
         super.setTitle("OpenR " + AboutDialog.getVersion());

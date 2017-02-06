@@ -95,13 +95,17 @@ public class PathComboBox extends ComboBox<DirectoryView> {
     }
 
     public void reloadSelected() {
-        super.getSelectionModel().getSelectedItem().reload();
+        String path = getSelectedPath();
+        if (path.equals(MainWindow.getLeftDirectoryView().getRootPath())
+                || path.equals(MainWindow.getRightDirectoryView().getRootPath())) {
+            super.getSelectionModel().getSelectedItem().reload();
+        }
     }
 
     public final BooleanBinding pathValidBinding = Bindings.createBooleanBinding(() -> {
         String path = PathComboBox.super.getEditor().textProperty().get();
         if (path.isEmpty()) {
-            path = PathComboBox.super.getSelectionModel().getSelectedItem().getRootPath();
+            path = getSelectedPath();
         }
         File file = new File(path);
         return !(file.exists() && file.isDirectory());

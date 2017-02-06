@@ -1,6 +1,5 @@
 package pl.greywarden.openr.gui.directoryview;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.scene.control.SelectionMode;
@@ -49,7 +48,7 @@ public class DirectoryView extends TableView<EntryWrapper> {
     public void changePath(String rootPath) {
         this.rootPath = rootPath;
         rootEntry = new DirectoryEntry(rootPath);
-        Platform.runLater(this::loadData);
+        loadData();
     }
 
     private void build(String rootPath) {

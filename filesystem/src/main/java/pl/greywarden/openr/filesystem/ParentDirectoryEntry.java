@@ -12,9 +12,11 @@ public class ParentDirectoryEntry extends DirectoryEntry {
     }
 
     @Override
+    @SuppressWarnings("unused")
     public EntryProperties getEntryProperties() {
         File directory = new File(this.path);
         return new EntryProperties(directory) {
+            @SuppressWarnings("unused")
             @Override
             public String getBaseName() {
                 return "..";

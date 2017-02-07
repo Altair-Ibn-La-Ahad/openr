@@ -22,18 +22,18 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import pl.greywarden.openr.commons.IconManager;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class HelpWindow extends Stage {
 
-    private List<HelpTopicWrapper> topicWrappers;
-    private WebView webView;
-    private WebEngine webEngine;
-    private WebHistory history;
-    private ObservableList<WebHistory.Entry> historyEntries;
+    private final List<HelpTopicWrapper> topicWrappers = createTopicWrappers();
+    private final WebView webView = new WebView();
+    private final WebEngine webEngine = webView.getEngine();
+    private final WebHistory history = webEngine.getHistory();
+    private final ObservableList<WebHistory.Entry> historyEntries = history.getEntries();
     private BorderPane helpContentPane;
     private final ListView<HelpTopicWrapper> helpTopics = createTopicsListView();
     private final HBox wrapper = new HBox(3);
@@ -48,8 +48,6 @@ public class HelpWindow extends Stage {
         super();
         super.setTitle(getString("help-window-title"));
 
-        createTopicWrappers();
-        createWebView();
         createToolBar();
 
         createHelpContent();
@@ -139,21 +137,15 @@ public class HelpWindow extends Stage {
         return goBack;
     }
 
-    private void createWebView() {
-        webView = new WebView();
-        webEngine = webView.getEngine();
-        history = webEngine.getHistory();
-        historyEntries = history.getEntries();
-    }
-
-    private void createTopicWrappers() {
-        topicWrappers = new ArrayList<>();
-        topicWrappers.add(new HelpTopicWrapper("home"));
-        topicWrappers.add(new HelpTopicWrapper("main-view"));
-        topicWrappers.add(new HelpTopicWrapper("creating-entry"));
-        topicWrappers.add(new HelpTopicWrapper("grep"));
-        topicWrappers.add(new HelpTopicWrapper("find"));
-        topicWrappers.add(new HelpTopicWrapper("known-issues"));
+    private List<HelpTopicWrapper> createTopicWrappers() {
+        List<HelpTopicWrapper> result = new LinkedList<>();
+        result.add(new HelpTopicWrapper("home"));
+        result.add(new HelpTopicWrapper("main-view"));
+        result.add(new HelpTopicWrapper("creating-entry"));
+        result.add(new HelpTopicWrapper("grep"));
+        result.add(new HelpTopicWrapper("find"));
+        result.add(new HelpTopicWrapper("known-issues"));
+        return result;
     }
 
     private class HelpContent extends Region {

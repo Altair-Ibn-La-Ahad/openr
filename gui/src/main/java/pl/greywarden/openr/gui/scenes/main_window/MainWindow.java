@@ -32,6 +32,8 @@ public class MainWindow extends Stage {
     private final VBox layout = new VBox();
 
     private static MainWindow instance;
+    @Getter
+    private static MainWindowToolBar mainWindowToolBar;
 
     public static MainWindow getInstance() {
         return instance == null ? instance = new MainWindow() : instance;
@@ -83,9 +85,10 @@ public class MainWindow extends Stage {
     }
 
     private void buildScene() {
+        mainWindowToolBar = new MainWindowToolBar();
         layout.getChildren().addAll(
                 new MainWindowMenuBar(),
-                new MainWindowToolBar(),
+                mainWindowToolBar,
                 centralContainter,
                 statusBar);
     }

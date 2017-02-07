@@ -17,6 +17,7 @@ public class MainWindowToolBar extends ToolBar {
     public MainWindowToolBar() {
         super();
         createToolBar();
+        super.visibleProperty().bind(managedProperty());
     }
 
     private void createToolBar() {

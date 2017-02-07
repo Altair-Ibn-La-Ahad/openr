@@ -16,7 +16,8 @@ public class View extends Menu {
         super(getString("view-menu"));
         forceOnePanelAlwaysVisible();
         CheckMenuItem statusBarVisibility = createStatusBarVisibilityCheck();
-        super.getItems().addAll(statusBarVisibility, new SeparatorMenuItem(),
+        CheckMenuItem toolBarVisibility = createToolBarVisibilityCheck();
+        super.getItems().addAll(statusBarVisibility, toolBarVisibility, new SeparatorMenuItem(),
                 leftPanelVisibility, rightPanelVisibility);
     }
 
@@ -47,5 +48,14 @@ public class View extends Menu {
         statusBarVisibility.selectedProperty().addListener((observable, oldValue, newValue) ->
                 MainWindow.getStatusBar().managedProperty().setValue(newValue));
         return statusBarVisibility;
+    }
+
+    private CheckMenuItem createToolBarVisibilityCheck() {
+        CheckMenuItem toolBarVisibility = new CheckMenuItem(getString("tool-bar"));
+        toolBarVisibility.setSelected(true);
+        toolBarVisibility.selectedProperty().addListener((observable, oldValue, newValue) ->
+                MainWindow.getMainWindowToolBar().managedProperty().setValue(newValue)
+        );
+        return toolBarVisibility;
     }
 }

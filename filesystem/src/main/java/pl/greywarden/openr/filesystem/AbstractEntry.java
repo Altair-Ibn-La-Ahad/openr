@@ -18,7 +18,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Log4j
-public abstract class AbstractEntry implements EntryOperations {
+public abstract class AbstractEntry {
 
     protected final File filesystemEntry;
     private final EntryProperties entryProperties;
@@ -118,4 +118,6 @@ public abstract class AbstractEntry implements EntryOperations {
     public static void clearClipboard() {
         clipboard = null;
     }
+
+    public abstract void move(AbstractEntry target);
 }

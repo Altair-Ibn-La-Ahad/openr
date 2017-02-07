@@ -30,11 +30,7 @@ public class TemplateComboBox extends ComboBox<Template> {
             @Override
             protected void updateItem(Template t, boolean empty) {
                 super.updateItem(t, empty);
-                if (empty) {
-                    setText("");
-                } else {
-                    setText(getString(t.getName() + "-menu-item"));
-                }
+                setText(empty ? "" : getString(t.getName() + "-menu-item"));
             }
         };
     }

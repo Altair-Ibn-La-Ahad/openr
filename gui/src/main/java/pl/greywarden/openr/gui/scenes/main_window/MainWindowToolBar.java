@@ -16,28 +16,51 @@ public class MainWindowToolBar extends ToolBar {
 
     public MainWindowToolBar() {
         super();
+        createToolBar();
+    }
 
-        Button newFile = new Button();
-        newFile.setGraphic(IconManager.getIcon("new-file"));
-        newFile.tooltipProperty().setValue(new Tooltip(getString("create-file")));
-        newFile.setOnAction(event -> new CreateFileDialog().showDialog());
+    private void createToolBar() {
+        Button newFile = createNewFileButton();
+        Button grep = createGrepButton();
+        Button find = createFindButton();
+        Button exit = createExitButton();
 
-        Button grep = new Button();
-        grep.setGraphic(IconManager.getIcon("grep"));
-        grep.tooltipProperty().setValue(new Tooltip(getString("grep-window-title")));
-        grep.setOnAction(event -> new GrepWindow());
+        super.getItems().addAll(newFile, new Separator(), grep, find, new Separator(), exit);
+    }
 
+    private Button createExitButton() {
+        Button exit = new Button();
+        exit.setGraphic(IconManager.getIcon("exit"));
+        exit.tooltipProperty().setValue(new Tooltip(getString("exit-menu-item")));
+        exit.setOnAction(event -> fireClosingEvent());
+        return exit;
+    }
+
+    private void fireClosingEvent() {
+        super.fireEvent(new WindowEvent(this.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST));
+    }
+
+    private Button createFindButton() {
         Button find = new Button();
         find.setGraphic(IconManager.getIcon("find"));
         find.tooltipProperty().setValue(new Tooltip(getString("find-file")));
         find.setOnAction(event -> new FindWindow());
+        return find;
+    }
 
-        Button exit = new Button();
-        exit.setGraphic(IconManager.getIcon("exit"));
-        exit.tooltipProperty().setValue(new Tooltip(getString("exit-menu-item")));
-        exit.setOnAction(event -> super.fireEvent(
-                new WindowEvent(this.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
+    private Button createGrepButton() {
+        Button grep = new Button();
+        grep.setGraphic(IconManager.getIcon("grep"));
+        grep.tooltipProperty().setValue(new Tooltip(getString("grep-window-title")));
+        grep.setOnAction(event -> new GrepWindow());
+        return grep;
+    }
 
-        super.getItems().addAll(newFile, new Separator(), grep, find, new Separator(), exit);
+    private Button createNewFileButton() {
+        Button newFile = new Button();
+        newFile.setGraphic(IconManager.getIcon("new-file"));
+        newFile.tooltipProperty().setValue(new Tooltip(getString("create-file")));
+        newFile.setOnAction(event -> new CreateFileDialog().showDialog());
+        return newFile;
     }
 }

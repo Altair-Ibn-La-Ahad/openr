@@ -23,18 +23,31 @@ public class DirectoryViewPathTextField extends TextField {
                 goToEnteredDirectory();
             }
             if (event.getCode().equals(KeyCode.ESCAPE)) {
-                super.textProperty().setValue(lastPath);
+                restorePreviousPath();
             }
         });
+        updateTextInPathInput(directoryView);
+        markTextWhenEnteredPathNotValid();
+    }
+
+    private void restorePreviousPath() {
+        super.textProperty().setValue(lastPath);
+    }
+
+    private void updateTextInPathInput(DirectoryView directoryView) {
         this.directoryView.itemsProperty().addListener((observable, oldValue, newValue) -> {
             this.textProperty().setValue(directoryView.getRootPath());
             super.positionCaret(getText().length());
             lastPath = directoryView.getRootPath();
         });
+    }
+
+    private void markTextWhenEnteredPathNotValid() {
         super.textProperty().addListener((observable, oldValue, newValue) -> {
             File enteredDirectoryPath = getEnteredDirectory(newValue);
+            String RED_TEXT = "-fx-text-fill: red";
             super.setStyle(enteredDirectoryPath.exists() && enteredDirectoryPath.isDirectory()
-                    ? null : "-fx-text-fill: red");
+                    ? null : RED_TEXT);
         });
     }
 

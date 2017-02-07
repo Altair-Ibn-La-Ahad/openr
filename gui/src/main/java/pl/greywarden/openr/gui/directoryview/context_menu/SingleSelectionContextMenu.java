@@ -11,6 +11,7 @@ import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.commons.IconManager;
+import pl.greywarden.openr.filesystem.EntryWrapper;
 import pl.greywarden.openr.gui.dialogs.ConfirmDeleteDialog;
 import pl.greywarden.openr.gui.dialogs.EntryInfoDialog;
 import pl.greywarden.openr.gui.dialogs.NewDirectoryDialog;
@@ -40,82 +41,19 @@ public class SingleSelectionContextMenu extends ContextMenu {
     }
 
     private void buildOptions() {
-        MenuItem open = new MenuItem(getString("open"));
-        open.setStyle("-fx-font-weight: bold");
-        open.setOnAction(event -> {
-            File target = new File(entry.getEntryProperties().getAbsolutePath());
-            if (Desktop.isDesktopSupported() && target.isFile()) {
-                new Thread(() -> {
-                    try {
-                        Desktop.getDesktop().browse(target.toURI());
-                    } catch (IOException exception) {
-                        log.error("Unable to open selected file", exception);
-                    }
-                }).start();
-            } else {
-                directoryView.changePath(entry.getEntryProperties().getAbsolutePath());
-            }
-        });
-
-        MenuItem preview = new MenuItem(getString("preview"));
-        File selectedFile = entry.getFilesystemEntry();
-        try {
-            String contentType = Files.probeContentType(selectedFile.toPath());
-            preview.setVisible(contentType.contains("image"));
-        } catch (IOException ignored) {
-            preview.setVisible(false);
-        }
-        preview.setOnAction(event -> Platform.runLater(() -> new PreviewImageDialog(selectedFile).show()));
-
-        MenuItem rename = new MenuItem(getString("rename"));
-        rename.setOnAction(event -> new RenameDialog(directoryView));
+        MenuItem open = createOpenMenuItem();
+        MenuItem preview = createPreviewMenuItem();
+        MenuItem rename = createRenameMenuItem();
+        MenuItem cut = createCutMenuItem();
+        MenuItem copy = createCopyMenuItem();
+        MenuItem paste = createPasteMenuItem();
+        MenuItem createDirectory = createCreateDirectoryMenuItem();
+        MenuItem moveToTrash = createMoveToTrashMenuItem();
+        MenuItem deletePermanently = createDeletePermanentlyMenuItem();
+        MenuItem properties = createPropertiesMenuItem();
 
         Menu newFile = new NewFileMenu(directoryView);
         Menu newDocument = new NewDocumentMenu();
-
-        MenuItem createDirectory = new MenuItem(getString("create-directory"));
-        createDirectory.setOnAction(event -> new NewDirectoryDialog(directoryView));
-
-        MenuItem cut = new MenuItem(getString("cut"));
-        MenuItem copy = new MenuItem(getString("copy"));
-        MenuItem paste = new MenuItem(getString("paste"));
-
-        cut.setGraphic(IconManager.getIcon("cut"));
-        cut.setOnAction(event -> entry.cut());
-
-        copy.setGraphic(IconManager.getIcon("copy"));
-        copy.setOnAction(event -> entry.copy());
-
-        paste.setGraphic(IconManager.getIcon("paste"));
-        paste.setOnAction(event -> {
-            AbstractEntry target = directoryView.getSelectionModel().getSelectedItem().getEntry();
-            if (target.getEntryProperties().isDirectory()) {
-                entry.paste(target);
-            } else {
-                DirectoryEntry root = new DirectoryEntry(directoryView.getRootPath());
-                entry.paste(root);
-            }
-            directoryView.reload();
-            if (!Boolean.valueOf(ConfigManager.getSetting(Setting.KEEP_CLIPBOARD.CODE))) {
-                AbstractEntry.clearClipboard();
-            }
-        });
-
-        paste.disableProperty().bind(AbstractEntry.clipboardEmptyBinding());
-
-        MenuItem moveToTrash = new MenuItem(getString("move-to-trash"));
-        moveToTrash.setGraphic(IconManager.getIcon("trash"));
-        moveToTrash.setOnAction(event -> {
-            entry.moveToTrash();
-            directoryView.reload();
-        });
-
-        MenuItem deletePermanently = new MenuItem(getString("delete-permanently-menu-item"));
-        deletePermanently.setGraphic(IconManager.getIcon("delete-permanent-small"));
-        deletePermanently.setOnAction(event -> new ConfirmDeleteDialog(directoryView));
-
-        MenuItem properties = new MenuItem(getString("properties"));
-        properties.setOnAction(event -> new EntryInfoDialog(entry.getEntryProperties().getAbsolutePath()).show());
 
         super.getItems().addAll(
                 open, preview, rename,
@@ -131,4 +69,133 @@ public class SingleSelectionContextMenu extends ContextMenu {
 
     }
 
+    private MenuItem createPropertiesMenuItem() {
+        MenuItem properties = new MenuItem(getString("properties"));
+        properties.setOnAction(event -> new EntryInfoDialog(entry.getFilesystemEntry()).show());
+        return properties;
+    }
+
+    private MenuItem createDeletePermanentlyMenuItem() {
+        MenuItem deletePermanently = new MenuItem(getString("delete-permanently-menu-item"));
+        deletePermanently.setGraphic(IconManager.getIcon("delete-permanent-small"));
+        deletePermanently.setOnAction(event -> new ConfirmDeleteDialog(directoryView));
+        return deletePermanently;
+    }
+
+    private MenuItem createMoveToTrashMenuItem() {
+        MenuItem moveToTrash = new MenuItem(getString("move-to-trash"));
+        moveToTrash.setGraphic(IconManager.getIcon("trash"));
+        moveToTrash.setOnAction(event -> handleMoveToTrashAction());
+        return moveToTrash;
+    }
+
+    private void handleMoveToTrashAction() {
+        entry.moveToTrash();
+        directoryView.reload();
+    }
+
+    private MenuItem createCreateDirectoryMenuItem() {
+        MenuItem createDirectory = new MenuItem(getString("create-directory"));
+        createDirectory.setOnAction(event -> new NewDirectoryDialog(directoryView));
+        return createDirectory;
+    }
+
+    private MenuItem createPasteMenuItem() {
+        MenuItem paste = new MenuItem(getString("paste"));
+        paste.setGraphic(IconManager.getIcon("paste"));
+        paste.setOnAction(event -> handlePasteAction());
+        paste.disableProperty().bind(AbstractEntry.clipboardEmptyBinding());
+        return paste;
+    }
+
+    private void handlePasteAction() {
+        EntryWrapper selectedItem = directoryView.getSelectionModel().getSelectedItem();
+        AbstractEntry target = selectedItem.getEntry();
+        DirectoryEntry root = new DirectoryEntry(directoryView.getRootPath());
+        File targetFile = target.getFilesystemEntry();
+        entry.paste(targetFile.isDirectory() ? target : root);
+        directoryView.reload();
+        if (clearClipboard()) {
+            AbstractEntry.clearClipboard();
+        }
+    }
+
+    private boolean clearClipboard() {
+        return !Boolean.valueOf(ConfigManager.getSetting(Setting.KEEP_CLIPBOARD.CODE));
+    }
+
+    private MenuItem createCopyMenuItem() {
+        MenuItem copy = new MenuItem(getString("copy"));
+        copy.setGraphic(IconManager.getIcon("copy"));
+        copy.setOnAction(event -> entry.copy());
+        return copy;
+    }
+
+    private MenuItem createCutMenuItem() {
+        MenuItem cut = new MenuItem(getString("cut"));
+        cut.setGraphic(IconManager.getIcon("cut"));
+        cut.setOnAction(event -> entry.cut());
+        return cut;
+    }
+
+    private MenuItem createRenameMenuItem() {
+        MenuItem rename = new MenuItem(getString("rename"));
+        rename.setOnAction(event -> new RenameDialog(directoryView));
+        return rename;
+    }
+
+    private MenuItem createPreviewMenuItem() {
+        MenuItem preview = new MenuItem(getString("preview"));
+        preview.setVisible(isImage());
+        preview.setOnAction(event -> showPreviewImageDialog());
+        return preview;
+    }
+
+    private void showPreviewImageDialog() {
+        Platform.runLater(() -> new PreviewImageDialog(getSelectedFile()).show());
+    }
+
+    private MenuItem createOpenMenuItem() {
+        MenuItem open = new MenuItem(getString("open"));
+        String FONT_BOLD = "-fx-font-weight: bold";
+        open.setStyle(FONT_BOLD);
+        open.setOnAction(event -> handleOpenEvent());
+        return open;
+    }
+
+    private void handleOpenEvent() {
+        File selectedFile = getSelectedFile();
+        if (Desktop.isDesktopSupported() && selectedFile.isFile()) {
+            browseSelectedFile(selectedFile);
+        } else {
+            changePathToSelected();
+        }
+    }
+
+    private File getSelectedFile() {
+        return entry.getFilesystemEntry();
+    }
+
+    private void changePathToSelected() {
+        directoryView.changePath(entry.getEntryProperties().getAbsolutePath());
+    }
+
+    private void browseSelectedFile(File target) {
+        new Thread(() -> {
+            try {
+                Desktop.getDesktop().browse(target.toURI());
+            } catch (IOException exception) {
+                log.error("Unable to open selected file", exception);
+            }
+        }).start();
+    }
+
+    private boolean isImage() {
+        try {
+            String contentType = Files.probeContentType(getSelectedFile().toPath());
+            return contentType.contains("image");
+        } catch (IOException ignored) {
+            return false;
+        }
+    }
 }

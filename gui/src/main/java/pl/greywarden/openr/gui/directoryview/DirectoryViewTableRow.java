@@ -49,20 +49,28 @@ public class DirectoryViewTableRow extends TableRow<EntryWrapper> {
 
     private void handleDoubleClick() {
         EntryWrapper rowData = super.getItem();
-        if (rowData.getEntry().getEntryProperties().isDirectory()) {
+        if (isDirectory(rowData)) {
             parent.getSelectionModel().setSelectionMode(null);
             parent.changePath(rowData.getEntry().getEntryProperties().getAbsolutePath());
         } else {
-            if (Desktop.isDesktopSupported()) {
-                File target = new File(rowData.getEntry().getEntryProperties().getAbsolutePath());
-                new Thread(() -> {
-                    try {
-                        Desktop.getDesktop().browse(target.toURI());
-                    } catch (IOException exception) {
-                        log.error("Unable to open selected file", exception);
-                    }
-                }).start();
-            }
+            browseSelectedFile(rowData);
+        }
+    }
+
+    private boolean isDirectory(EntryWrapper rowData) {
+        return rowData.getEntry().getEntryProperties().isDirectory();
+    }
+
+    private void browseSelectedFile(EntryWrapper rowData) {
+        if (Desktop.isDesktopSupported()) {
+            File target = new File(rowData.getEntry().getEntryProperties().getAbsolutePath());
+            new Thread(() -> {
+                try {
+                    Desktop.getDesktop().browse(target.toURI());
+                } catch (IOException exception) {
+                    log.error("Unable to open selected file", exception);
+                }
+            }).start();
         }
     }
 
@@ -70,20 +78,28 @@ public class DirectoryViewTableRow extends TableRow<EntryWrapper> {
         if (super.isEmpty()) {
             new NoSelectionContextMenu(parent).show(this, event.getScreenX(), event.getScreenY());
         } else {
-                EntryWrapper rowData = super.getItem();
-                AbstractEntry target = rowData.getEntry();
-            if (parent.getSelectionModel().getSelectedItems().size() == 1) {
-                if (!(target instanceof ParentDirectoryEntry)) {
+            EntryWrapper rowData = super.getItem();
+            AbstractEntry target = rowData.getEntry();
+            if (isSelectionSingle()) {
+                if (notParentDirectory(target)) {
                     new SingleSelectionContextMenu(parent, target)
                             .show(this, event.getScreenX(), event.getScreenY());
                 }
             } else {
-                if (!(target instanceof ParentDirectoryEntry)) {
+                if (notParentDirectory(target)) {
                     new MultipleSelectionContextMenu(parent)
                             .show(this, event.getScreenX(), event.getScreenY());
                 }
             }
         }
+    }
+
+    private boolean isSelectionSingle() {
+        return parent.getSelectionModel().getSelectedItems().size() == 1;
+    }
+
+    private boolean notParentDirectory(AbstractEntry target) {
+        return !(target instanceof ParentDirectoryEntry);
     }
 
     private void setDragHandler() {
@@ -101,10 +117,8 @@ public class DirectoryViewTableRow extends TableRow<EntryWrapper> {
             }
         });
         super.setOnDragEntered(event -> {
-            if (!super.isEmpty()) {
-                if (super.getItem().getEntry().getEntryProperties().isDirectory()) {
-                    parent.getFocusModel().focus(super.getIndex());
-                }
+            if (!super.isEmpty() && isDirectory()) {
+                focusHoveredItem();
             }
             event.consume();
         });
@@ -113,12 +127,10 @@ public class DirectoryViewTableRow extends TableRow<EntryWrapper> {
             if (db.hasFiles()) {
                 List<File> files = db.getFiles();
                 files.forEach(fileToMove -> {
-                    AbstractEntry fileToMoveEntry = fileToMove.isFile()
-                            ? new FileEntry(fileToMove.getAbsolutePath())
-                            : new DirectoryEntry(fileToMove.getAbsolutePath());
+                    AbstractEntry fileToMoveEntry = getFileToMoveEntry(fileToMove);
                     if (!super.isEmpty()) {
                         DirectoryEntry targetEntry;
-                        if (super.getItem().getEntry().getEntryProperties().isDirectory()) {
+                        if (isDirectory()) {
                             File target = super.getItem().getEntry().getFilesystemEntry();
                             targetEntry = new DirectoryEntry(target.getAbsolutePath());
                         } else {
@@ -128,26 +140,44 @@ public class DirectoryViewTableRow extends TableRow<EntryWrapper> {
                         if (!fileToMoveEntry.existsInTargetDirectory(targetEntry)) {
                             fileToMoveEntry.move(targetEntry);
                         }
-                        event.consume();
-                        MainWindow.getLeftDirectoryView().reload();
-                        MainWindow.getRightDirectoryView().reload();
                     } else {
                         File target = new File(parent.getRootPath());
                         DirectoryEntry targetEntry = new DirectoryEntry(target.getAbsolutePath());
                         fileToMoveEntry.move(targetEntry);
-                        event.consume();
-                        MainWindow.getLeftDirectoryView().reload();
-                        MainWindow.getRightDirectoryView().reload();
                     }
+                    event.consume();
+                    reloadVisibleDirectoryViews();
                 });
             }
         });
         super.setOnDragOver(event -> {
-            Dragboard db = event.getDragboard();
-            if (db.hasFiles()) {
+            if (event.getDragboard().hasFiles()) {
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
             event.consume();
         });
+    }
+
+    private void focusHoveredItem() {
+        parent.getFocusModel().focus(super.getIndex());
+    }
+
+    private boolean isDirectory() {
+        return isDirectory(super.getItem());
+    }
+
+    private void reloadVisibleDirectoryViews() {
+        if (MainWindow.getLeftWrapper().isVisible()) {
+            MainWindow.getLeftDirectoryView().reload();
+        }
+        if (MainWindow.getRightWrapper().isVisible()) {
+            MainWindow.getRightDirectoryView().reload();
+        }
+    }
+
+    private AbstractEntry getFileToMoveEntry(File fileToMove) {
+        return fileToMove.isFile()
+                ? new FileEntry(fileToMove.getAbsolutePath())
+                : new DirectoryEntry(fileToMove.getAbsolutePath());
     }
 }

@@ -34,6 +34,7 @@ public class MainWindowStatusBar extends StatusBar {
         super.setText("OpenR");
         pathTextField.setEditable(false);
         super.getRightItems().add(wrapper);
+        super.visibleProperty().bind(managedProperty());
     }
 
 }

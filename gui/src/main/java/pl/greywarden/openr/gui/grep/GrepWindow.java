@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -42,86 +43,111 @@ public class GrepWindow extends Stage {
 
     private TextField regexInput;
     private GrepResultTableView grepResultTableView;
-    private final VBox layout;
+    private VBox layout;
     private CheckBox recursive;
     private PathComboBox pathComboBox;
     private final ProgressBar progressBar = new ProgressBar(0.0);
+    private Button doGrep;
+    private Label recursiveLabel;
+    private Label pathLabel;
 
     public GrepWindow() {
         super();
         setTitle(getString("grep-window-title"));
 
-        layout = new VBox(5);
-        layout.setPadding(new Insets(5));
-
-        StatusBar statusBar = new StatusBar();
-        statusBar.setText(getString("grep-window-title"));
-        statusBar.getRightItems().setAll(progressBar);
+        createWindowLayout();
 
         createSearchBar();
         createPathSelection();
         createResultTableView();
-        layout.getChildren().add(statusBar);
+        createStatusBar();
 
-        layout.setOnKeyPressed(event -> {
-            if (KeyCode.ESCAPE.equals(event.getCode())) {
-                super.close();
-            }
-        });
-        grepResultTableView.setOnKeyPressed(event -> {
-            if (KeyCode.ESCAPE.equals(event.getCode())) {
-                super.close();
-            }
-        });
+        grepResultTableView.setOnKeyPressed(this::closeWindowOnEscapeKey);
 
-        layout.setMinWidth(600);
         super.setScene(new Scene(layout));
         super.centerOnScreen();
         super.show();
     }
 
+    private void createWindowLayout() {
+        layout = new VBox(5);
+        layout.setPadding(new Insets(5));
+        layout.setOnKeyPressed(this::closeWindowOnEscapeKey);
+        layout.setMinWidth(600);
+    }
+
+    private void closeWindowOnEscapeKey(KeyEvent event) {
+        if (KeyCode.ESCAPE.equals(event.getCode())) {
+            super.close();
+        }
+    }
+
+    private void createStatusBar() {
+        StatusBar statusBar = new StatusBar();
+        statusBar.setText(getString("grep-window-title"));
+        statusBar.getRightItems().setAll(progressBar);
+        layout.getChildren().add(statusBar);
+    }
+
     private void createPathSelection() {
+        GridPane wrapper = createPathSelectionWrapper();
+        createPathLabelAndInput();
+        createRecursiveLabelAndCheck();
+        wrapper.addRow(0, pathLabel, pathComboBox, recursiveLabel, recursive);
+        layout.getChildren().add(wrapper);
+    }
+
+    private GridPane createPathSelectionWrapper() {
         GridPane wrapper = new GridPane();
         wrapper.setHgap(10);
         wrapper.setAlignment(Pos.CENTER_LEFT);
-        Label pathLabel = new Label(getString("path") + ":");
+        return wrapper;
+    }
+
+    private void createPathLabelAndInput() {
+        pathLabel = new Label(getString("path") + ":");
         pathComboBox = new PathComboBox();
-        pathLabel.managedProperty().bind(pathComboBox.managedProperty());
         pathComboBox.setMinWidth(500);
+    }
+
+    private void createRecursiveLabelAndCheck() {
         recursive = new CheckBox();
-        Label recursiveLabel = new Label(getString("recursive-label") + "?");
-        if (!pathLabel.managedProperty().get()) {
-            wrapper.setHgap(0);
-            GridPane.setMargin(recursive, new Insets(0, 0, 0, 10));
-        }
-        wrapper.addRow(0, pathLabel, pathComboBox, recursiveLabel, recursive);
-        layout.getChildren().add(wrapper);
+        recursiveLabel = new Label(getString("recursive-label") + "?");
     }
 
     private void createSearchBar() {
         HBox wrapper = new HBox(5);
 
-        regexInput = new TextField();
-        Button doGrep = new Button();
-        doGrep.setGraphic(IconManager.getIcon("go"));
-        doGrep.setOnAction(handleGrep());
-
-        regexInput.setOnKeyPressed(event -> {
-            if (regexInput.textProperty().isNotEmpty().get()
-                    && event.getCode().equals(KeyCode.ENTER)) {
-                Task<Double> grep = grep();
-                progressBar.progressProperty().bind(grep.progressProperty());
-                Thread thread = new Thread(grep);
-                thread.setDaemon(true);
-                thread.start();
-            }
-        });
+        createRegexInput();
+        createGrepButton();
 
         HBox.setHgrow(regexInput, Priority.ALWAYS);
         doGrep.disableProperty().bind(regexInput.textProperty().isEmpty());
 
         wrapper.getChildren().addAll(regexInput, doGrep);
         layout.getChildren().add(wrapper);
+    }
+
+    private void createRegexInput() {
+        regexInput = new TextField();
+        regexInput.setOnKeyPressed(this::handleRegexInputKeyEvent);
+    }
+
+    private void createGrepButton() {
+        doGrep = new Button();
+        doGrep.setGraphic(IconManager.getIcon("go"));
+        doGrep.setOnAction(handleGrep());
+    }
+
+    private void handleRegexInputKeyEvent(KeyEvent event) {
+        if (regexInput.textProperty().isNotEmpty().get()
+                && event.getCode().equals(KeyCode.ENTER)) {
+            Task<Double> grep = grep();
+            progressBar.progressProperty().bind(grep.progressProperty());
+            Thread thread = new Thread(grep);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @SuppressWarnings("unchecked")

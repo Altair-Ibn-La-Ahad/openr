@@ -42,6 +42,7 @@ public class DirectoryViewWrapper extends VBox {
                         path.setText("");
                     }
                 });
+        super.visibleProperty().bind(managedProperty());
     }
 
     private void createPathTextFieldWrapper() {

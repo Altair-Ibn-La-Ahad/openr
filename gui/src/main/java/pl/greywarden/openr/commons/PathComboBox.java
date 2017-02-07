@@ -14,19 +14,37 @@ public class PathComboBox extends ComboBox<DirectoryView> {
 
     public PathComboBox() {
         super();
-        if (MainWindow.getLeftWrapper().isVisible()) {
-            if (MainWindow.getRightWrapper().isVisible()) {
-                super.getItems().setAll(MainWindow.getLeftDirectoryView(), MainWindow.getRightDirectoryView());
+        if (leftViewVisible()) {
+            if (rightViewVisible()) {
+                addBothViews();
             } else {
-                super.getItems().setAll(MainWindow.getLeftDirectoryView());
+                addLeftView();
             }
         }
-        if (MainWindow.getRightWrapper().isVisible()) {
-            if (!MainWindow.getLeftWrapper().isVisible()) {
-                super.getItems().setAll(MainWindow.getRightDirectoryView());
-            }
+        if (rightViewVisible() && !leftViewVisible()) {
+            addRightView();
         }
         createComponent();
+    }
+
+    private boolean rightViewVisible() {
+        return MainWindow.getRightWrapper().isVisible();
+    }
+
+    private boolean leftViewVisible() {
+        return MainWindow.getLeftWrapper().isVisible();
+    }
+
+    private void addRightView() {
+        super.getItems().setAll(MainWindow.getRightDirectoryView());
+    }
+
+    private void addLeftView() {
+        super.getItems().setAll(MainWindow.getLeftDirectoryView());
+    }
+
+    private void addBothViews() {
+        super.getItems().setAll(MainWindow.getLeftDirectoryView(), MainWindow.getRightDirectoryView());
     }
 
     private void createComponent() {
@@ -39,13 +57,21 @@ public class PathComboBox extends ComboBox<DirectoryView> {
 
             @Override
             public DirectoryView fromString(String string) {
-                if (string.equals(MainWindow.getLeftDirectoryView().getRootPath())) {
+                if (isLeftRootPath(string)) {
                     return MainWindow.getLeftDirectoryView();
                 }
-                if (string.equals(MainWindow.getRightDirectoryView().getRootPath())) {
+                if (isRightRootPath(string)) {
                     return MainWindow.getRightDirectoryView();
                 }
                 return new DirectoryView(string);
+            }
+
+            private boolean isRightRootPath(String string) {
+                return string.equals(MainWindow.getRightDirectoryView().getRootPath());
+            }
+
+            private boolean isLeftRootPath(String string) {
+                return string.equals(MainWindow.getLeftDirectoryView().getRootPath());
             }
         });
         super.setEditable(true);
@@ -96,10 +122,14 @@ public class PathComboBox extends ComboBox<DirectoryView> {
 
     public void reloadSelected() {
         String path = getSelectedPath();
-        if (path.equals(MainWindow.getLeftDirectoryView().getRootPath())
-                || path.equals(MainWindow.getRightDirectoryView().getRootPath())) {
+        if (isSelectionDirectoryView(path)) {
             super.getSelectionModel().getSelectedItem().reload();
         }
+    }
+
+    private boolean isSelectionDirectoryView(String path) {
+        return path.equals(MainWindow.getLeftDirectoryView().getRootPath())
+                || path.equals(MainWindow.getRightDirectoryView().getRootPath());
     }
 
     public final BooleanBinding pathValidBinding = Bindings.createBooleanBinding(() -> {

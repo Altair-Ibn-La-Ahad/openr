@@ -29,7 +29,7 @@ public class MainWindow extends Stage {
     @Getter
     private static final MainWindowStatusBar statusBar = new MainWindowStatusBar();
     private static final CentralContainter centralContainter = new CentralContainter();
-    private VBox layout;
+    private final VBox layout = new VBox();
 
     private static MainWindow instance;
 
@@ -49,10 +49,9 @@ public class MainWindow extends Stage {
 
     private void createWindow() {
         I18nManager.setLocale(ConfigManager.getSetting(Setting.LANGUAGE.CODE));
-        layout = new VBox();
         Scene scene = new Scene(layout);
-        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_ANY),
-                () -> new CreateFileDialog().showDialog());
+        KeyCodeCombination NEW_FILE_SHORTCUT = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_ANY);
+        scene.getAccelerators().put(NEW_FILE_SHORTCUT, () -> new CreateFileDialog().showDialog());
         buildScene();
 
         super.setTitle("OpenR " + AboutDialog.getVersion());

@@ -27,25 +27,42 @@ public class NoSelectionContextMenu extends ContextMenu {
     }
 
     private void buildOptions() {
+        MenuItem newDirectory = createNewDirectoryMenuItem();
+        MenuItem paste = createPasteMenuItem();
+
         Menu newFile = new NewFileMenu(view);
         Menu newDocument = new NewDocumentMenu(view);
-        MenuItem newDirectory = new MenuItem(getString("create-directory-menu-item"));
-        newDirectory.setOnAction(event -> new NewDirectoryDialog(view));
-        MenuItem paste = new MenuItem(getString("paste"));
-        paste.setGraphic(IconManager.getIcon("paste"));
-        final DirectoryEntry target = new DirectoryEntry(view.getRootPath());
-        paste.setOnAction(event -> {
-            target.paste(target);
-            view.reload();
-            if (!Boolean.valueOf(ConfigManager.getSetting(Setting.KEEP_CLIPBOARD.CODE))) {
-                AbstractEntry.clearClipboard();
-            }
-        });
-        paste.disableProperty().bind(AbstractEntry.clipboardEmptyBinding());
         super.getItems().setAll(
                 newFile, newDocument, newDirectory,
                 new SeparatorMenuItem(),
                 paste);
+    }
+
+    private MenuItem createNewDirectoryMenuItem() {
+        MenuItem newDirectory = new MenuItem(getString("create-directory-menu-item"));
+        newDirectory.setOnAction(event -> new NewDirectoryDialog(view));
+        return newDirectory;
+    }
+
+    private MenuItem createPasteMenuItem() {
+        MenuItem paste = new MenuItem(getString("paste"));
+        paste.setGraphic(IconManager.getIcon("paste"));
+        paste.setOnAction(event -> handlePasteAction());
+        paste.disableProperty().bind(AbstractEntry.clipboardEmptyBinding());
+        return paste;
+    }
+
+    private void handlePasteAction() {
+        DirectoryEntry target = new DirectoryEntry(view.getRootPath());
+        target.paste(target);
+        view.reload();
+        if (cleanClipboard()) {
+            AbstractEntry.clearClipboard();
+        }
+    }
+
+    private boolean cleanClipboard() {
+        return !Boolean.valueOf(ConfigManager.getSetting(Setting.KEEP_CLIPBOARD.CODE));
     }
 
 }

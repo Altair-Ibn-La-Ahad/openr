@@ -56,7 +56,7 @@ public abstract class CreateFileDialogLayout extends GridPane {
 
     public abstract void handleConfirm();
 
-    public File getTargetFile() {
+    protected File getTargetFile() {
         return new File(pathComboBox.getSelectedPath(), fileNameTextField.getText());
     }
 }

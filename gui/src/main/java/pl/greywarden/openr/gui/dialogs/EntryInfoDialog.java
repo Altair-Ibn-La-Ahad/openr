@@ -1,7 +1,5 @@
 package pl.greywarden.openr.gui.dialogs;
 
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -24,13 +22,14 @@ public class EntryInfoDialog extends Dialog {
 
     private final File selectedEntry;
 
-    public EntryInfoDialog(String pathToEntry) {
+    public EntryInfoDialog(File selectedEntry) {
         super();
-        selectedEntry = new File(pathToEntry);
+
+        this.selectedEntry = selectedEntry;
 
         createInfo();
-        super.getDialogPane().getButtonTypes().add(new ButtonType(getString("ok"), ButtonBar.ButtonData.OK_DONE));
-        super.setGraphic(new ImageView(IconManager.getFileIcon(pathToEntry)));
+        super.getDialogPane().getButtonTypes().add(CommonButtons.OK);
+        super.setGraphic(new ImageView(IconManager.getFileIcon(selectedEntry.getAbsolutePath())));
         super.setTitle(selectedEntry.getName());
         super.getDialogPane().minWidthProperty().setValue(600);
     }

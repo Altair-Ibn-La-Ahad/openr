@@ -1,8 +1,6 @@
 package pl.greywarden.openr.gui.dialogs;
 
 import javafx.scene.Node;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -16,48 +14,89 @@ import java.io.File;
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
 @Log4j
-public class RenameDialog extends Dialog <ButtonType> {
+public class RenameDialog extends Dialog <Boolean> {
+
+    private final GridPane layout = new GridPane();
+    private final Label newNameLabel = new Label(getString("new-name") + ":");
+    private final TextField newName = new TextField();
 
     public RenameDialog(DirectoryView directoryView) {
-        GridPane layout = new GridPane();
+        super.setTitle(getString("rename-dialog-title"));
         layout.setHgap(5);
 
-        ButtonType ok = new ButtonType(getString("ok"), ButtonBar.ButtonData.OK_DONE);
-        ButtonType cancel = new ButtonType(getString("cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        AbstractEntry selectedItem = getSelectedItem(directoryView);
+        createNewNameLabelAndInput();
+        createDialog();
+        disableOkButtonWhenTargetExists(selectedItem);
+        disableOkByDefault();
+        newName.requestFocus();
+        super.showAndWait().ifPresent(confirm -> {
+            if (confirm) {
+                handleRename(directoryView, selectedItem);
+            }
+        });
+    }
 
-        Label newNameLabel = new Label(getString("new-name") + ":");
-        TextField newName = new TextField();
+    private AbstractEntry getSelectedItem(DirectoryView directoryView) {
+        return directoryView.getSelectionModel().getSelectedItem().getEntry();
+    }
 
-        AbstractEntry selectedItem = directoryView.getSelectionModel().getSelectedItem().getEntry();
+    private void disableOkByDefault() {
+        getOkButton().setDisable(true);
+    }
 
-        layout.addRow(0, newNameLabel, newName);
-        super.setTitle(getString("rename-dialog-title"));
-        super.getDialogPane().getButtonTypes().setAll(ok, cancel);
+    private void createDialog() {
+        super.getDialogPane().getButtonTypes().setAll(CommonButtons.OK, CommonButtons.CANCEL);
         super.getDialogPane().setContent(layout);
-        Node buttonOk = super.getDialogPane().lookupButton(ok);
+        super.setResultConverter(CommonButtons.OK::equals);
+    }
+
+    private void disableOkButtonWhenTargetExists(AbstractEntry selectedItem) {
         newName.textProperty().addListener((observable, oldValue, newValue) -> {
-            String extension = selectedItem.getEntryProperties().getExtension();
+            String extension = getEntryExtension(selectedItem);
             if (!extension.isEmpty()) {
                 extension = "." + extension;
             }
-            File targetFile = new File(selectedItem.getEntryProperties().getParentFile(),
-                    newValue + extension);
-            buttonOk.setDisable(
-                    newValue.trim().isEmpty() ||
-                            targetFile.exists());
+            File targetFile = getTargetFile(selectedItem, newValue, extension);
+            disableOkWhenTargetFileExists(newValue, targetFile);
         });
-        buttonOk.setDisable(true);
-        newName.requestFocus();
-        super.showAndWait().ifPresent(buttonType -> {
-            if (buttonType.getButtonData().equals(ButtonBar.ButtonData.OK_DONE)) {
-                File sourceDir = selectedItem.getFilesystemEntry();
-                File target = new File(selectedItem.getEntryProperties().getParentFile(), newName.getText());
-                if (!sourceDir.renameTo(target)) {
-                    log.error("Unable to rename file");
-                }
-                directoryView.reload();
-            }
-        });
+    }
+
+    private void handleRename(DirectoryView directoryView, AbstractEntry selectedItem) {
+        File source = selectedItem.getFilesystemEntry();
+        File target = getTargetFile(selectedItem);
+        rename(source, target);
+        directoryView.reload();
+    }
+
+    private void rename(File source, File target) {
+        if (!source.renameTo(target)) {
+            log.error("Unable to rename file");
+        }
+    }
+
+    private File getTargetFile(AbstractEntry selectedItem) {
+        return new File(selectedItem.getEntryProperties().getParentFile(), newName.getText());
+    }
+
+    private void disableOkWhenTargetFileExists(String newValue, File targetFile) {
+        getOkButton().setDisable(newValue.trim().isEmpty() || targetFile.exists());
+    }
+
+    private File getTargetFile(AbstractEntry selectedItem, String newValue, String extension) {
+        return new File(selectedItem.getEntryProperties().getParentFile(), newValue + extension);
+    }
+
+    private String getEntryExtension(AbstractEntry selectedItem) {
+        return selectedItem.getEntryProperties().getExtension();
+    }
+
+    private Node getOkButton() {
+        return super.getDialogPane().lookupButton(CommonButtons.OK);
+    }
+
+    private void createNewNameLabelAndInput() {
+        layout.addRow(0, newNameLabel, newName);
     }
 
 }

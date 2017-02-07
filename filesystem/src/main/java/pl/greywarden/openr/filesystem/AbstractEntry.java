@@ -35,7 +35,6 @@ public abstract class AbstractEntry implements EntryOperations {
         entryProperties = new EntryProperties(filesystemEntry);
     }
 
-    @Override
     public void paste(AbstractEntry target) {
         try {
             if (clipboard.getEntryProperties().isDirectory()) {
@@ -70,12 +69,10 @@ public abstract class AbstractEntry implements EntryOperations {
         };
     }
 
-    @Override
     public void delete() {
         FileUtils.deleteQuietly(getFilesystemEntry());
     }
 
-    @Override
     public void moveToTrash() {
         if (SystemUtils.IS_OS_LINUX) {
             moveToTrashLinux();

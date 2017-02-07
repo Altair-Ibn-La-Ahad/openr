@@ -29,56 +29,59 @@ import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class HelpWindow extends Stage {
 
-    private final List<HelpTopicWrapper> topicWrappers;
+    private List<HelpTopicWrapper> topicWrappers;
+    private WebView webView;
+    private WebEngine webEngine;
+    private WebHistory history;
+    private ObservableList<WebHistory.Entry> historyEntries;
+    private BorderPane helpContentPane;
+    private final ListView<HelpTopicWrapper> helpTopics = createTopicsListView();
+    private final HBox wrapper = new HBox(3);
+    private final Button goBack = createBackButton();
+    private final Button goForward = createForwardButton();
+    private final Button goHome = createHomeButton();
+    private final Button exit = createExitButton();
+    private final ToolBar toolBar = new ToolBar();
+
 
     public HelpWindow() {
         super();
-        VBox layout = new VBox(5);
-        super.setScene(new Scene(layout));
         super.setTitle(getString("help-window-title"));
 
-        topicWrappers = new ArrayList<>();
-        topicWrappers.add(new HelpTopicWrapper("home"));
-        topicWrappers.add(new HelpTopicWrapper("main-view"));
-        topicWrappers.add(new HelpTopicWrapper("creating-entry"));
-        topicWrappers.add(new HelpTopicWrapper("grep"));
-        topicWrappers.add(new HelpTopicWrapper("find"));
-        topicWrappers.add(new HelpTopicWrapper("known-issues"));
+        createTopicWrappers();
+        createWebView();
+        createToolBar();
 
-        WebView webView = new WebView();
-        WebEngine webEngine = webView.getEngine();
-        WebHistory history = webEngine.getHistory();
-        ObservableList<WebHistory.Entry> entries = history.getEntries();
-        Button goBack = new Button();
-        Button goForward = new Button();
-        Button goHome = new Button();
-        Button exit = new Button();
-        ToolBar toolBar = new ToolBar();
+        createHelpContent();
+        createWindowLayoutWrapper();
 
-        goBack.disableProperty().bind(history.currentIndexProperty().isEqualTo(0));
-        goForward.disableProperty().bind(history.currentIndexProperty().greaterThanOrEqualTo(entries.size() - 1));
+        VBox layout = new VBox(5);
+        layout.getChildren().addAll(toolBar, wrapper);
+        super.setScene(new Scene(layout));
+        helpContentPane.requestFocus();
+        setMaximized(true);
+        centerOnScreen();
+        show();
+    }
 
-        goBack.setOnAction(event -> {
-            history.go(-1);
-            webEngine.load(entries.get(history.getCurrentIndex()).getUrl());
-        });
-        goForward.setOnAction(event -> {
-            history.go(1);
-            webEngine.load(entries.get(history.getCurrentIndex()).getUrl());
-        });
-
-        goHome.setOnAction(event -> webEngine.load(topicWrappers.get(0).getUrlToContent()));
-        exit.setOnAction(event -> super.close());
-
-        goHome.setGraphic(IconManager.getIcon("home"));
-        goBack.setGraphic(IconManager.getIcon("back"));
-        goForward.setGraphic(IconManager.getIcon("forward"));
-        exit.setGraphic(IconManager.getIcon("exit"));
-
+    private void createToolBar() {
         toolBar.getItems().addAll(goBack, goForward, goHome, new Separator(), exit);
+    }
 
-        HBox wrapper = new HBox(3);
+    private void createWindowLayoutWrapper() {
         wrapper.setPadding(new Insets(5));
+        wrapper.getChildren().addAll(helpTopics, helpContentPane);
+        VBox.setVgrow(wrapper, Priority.ALWAYS);
+    }
+
+    private void createHelpContent() {
+        HelpContent helpContent = new HelpContent(webView);
+        helpContentPane = new BorderPane(helpContent);
+        helpContentPane.setStyle("-fx-border-color: -fx-text-box-border");
+        HBox.setHgrow(helpContentPane, Priority.ALWAYS);
+    }
+
+    private ListView<HelpTopicWrapper> createTopicsListView() {
         ListView<HelpTopicWrapper> topics = new ListView<>();
         topics.setCellFactory(param -> new ListCell<HelpTopicWrapper>() {
             @Override
@@ -97,20 +100,60 @@ public class HelpWindow extends Stage {
                 webEngine.load(topics.getSelectionModel().getSelectedItem().getUrlToContent());
             }
         });
+        return topics;
+    }
 
-        HelpContent helpContent = new HelpContent(webView);
-        BorderPane helpContentPane = new BorderPane(helpContent);
-        helpContentPane.setStyle("-fx-border-color: -fx-text-box-border");
-        HBox.setHgrow(helpContentPane, Priority.ALWAYS);
+    private Button createExitButton() {
+        Button exit = new Button();
+        exit.setOnAction(event -> super.close());
+        exit.setGraphic(IconManager.getIcon("exit"));
+        return exit;
+    }
 
-        wrapper.getChildren().addAll(topics, helpContentPane);
+    private Button createHomeButton() {
+        Button goHome = new Button();
+        goHome.setOnAction(event -> webEngine.load(topicWrappers.get(0).getUrlToContent()));
+        goHome.setGraphic(IconManager.getIcon("home"));
+        return goHome;
+    }
 
-        VBox.setVgrow(wrapper, Priority.ALWAYS);
-        layout.getChildren().addAll(toolBar, wrapper);
-        helpContentPane.requestFocus();
-        setMaximized(true);
-        centerOnScreen();
-        show();
+    private Button createForwardButton() {
+        Button goForward = new Button();
+        goForward.disableProperty().bind(history.currentIndexProperty().greaterThanOrEqualTo(historyEntries.size() - 1));
+        goForward.setOnAction(event -> {
+            history.go(1);
+            webEngine.load(historyEntries.get(history.getCurrentIndex()).getUrl());
+        });
+        goForward.setGraphic(IconManager.getIcon("forward"));
+        return goForward;
+    }
+
+    private Button createBackButton() {
+        Button goBack = new Button();
+        goBack.disableProperty().bind(history.currentIndexProperty().isEqualTo(0));
+        goBack.setOnAction(event -> {
+            history.go(-1);
+            webEngine.load(historyEntries.get(history.getCurrentIndex()).getUrl());
+        });
+        goBack.setGraphic(IconManager.getIcon("back"));
+        return goBack;
+    }
+
+    private void createWebView() {
+        webView = new WebView();
+        webEngine = webView.getEngine();
+        history = webEngine.getHistory();
+        historyEntries = history.getEntries();
+    }
+
+    private void createTopicWrappers() {
+        topicWrappers = new ArrayList<>();
+        topicWrappers.add(new HelpTopicWrapper("home"));
+        topicWrappers.add(new HelpTopicWrapper("main-view"));
+        topicWrappers.add(new HelpTopicWrapper("creating-entry"));
+        topicWrappers.add(new HelpTopicWrapper("grep"));
+        topicWrappers.add(new HelpTopicWrapper("find"));
+        topicWrappers.add(new HelpTopicWrapper("known-issues"));
     }
 
     private class HelpContent extends Region {

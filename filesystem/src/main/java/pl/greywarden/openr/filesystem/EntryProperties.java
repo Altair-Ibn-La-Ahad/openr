@@ -18,33 +18,12 @@ public class EntryProperties {
 
     private final File filesystemEntry;
 
-    public boolean isReadable() {
-        return filesystemEntry.canRead();
-    }
-
-    public boolean isWritable() {
-        return filesystemEntry.canWrite();
-    }
-
-    public boolean isExecutable() {
-        return filesystemEntry.canExecute();
-    }
-
     public String getName() {
         return filesystemEntry.getName();
     }
 
     public String getAbsolutePath() {
         return filesystemEntry.getAbsolutePath();
-    }
-
-    public String getOwner() {
-        try {
-            return Files.getOwner(filesystemEntry.toPath()).getName();
-        } catch (IOException exception) {
-            log.error("Get owner exception", exception);
-            return null;
-        }
     }
 
     public long getSizeInBytes() {

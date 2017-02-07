@@ -17,18 +17,33 @@ public class GrepResultTableView extends TableView<GrepResult> {
         super.setPlaceholder(new Label(""));
 
         createColumns();
-
     }
 
     @SuppressWarnings("unchecked")
     private void createColumns() {
-        TableColumn<GrepResult, String> text = new TableColumn<>(getString("grep-result-text"));
-        TableColumn<GrepResult, String> pathToFile = new TableColumn<>(getString("grep-result-path"));
+        TableColumn<GrepResult, String> text = createNameColumn();
+        TableColumn<GrepResult, String> pathToFile = createPathColumn();
 
-        text.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getText()));
-        pathToFile.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getFile().getAbsolutePath()));
+        text.setCellValueFactory(this::matchTextStringProperty);
+        pathToFile.setCellValueFactory(this::pathStringProperty);
 
-        super.getColumns().setAll(text, pathToFile);
+        getColumns().setAll(text, pathToFile);
+    }
+
+    private SimpleStringProperty matchTextStringProperty(TableColumn.CellDataFeatures<GrepResult, String> param) {
+        return new SimpleStringProperty(param.getValue().getText());
+    }
+
+    private SimpleStringProperty pathStringProperty(TableColumn.CellDataFeatures<GrepResult, String> param) {
+        return new SimpleStringProperty(param.getValue().getFile().getAbsolutePath());
+    }
+
+    private TableColumn<GrepResult, String> createPathColumn() {
+        return new TableColumn<>(getString("grep-result-path"));
+    }
+
+    private TableColumn<GrepResult, String> createNameColumn() {
+        return new TableColumn<>(getString("grep-result-text"));
     }
 
 }

@@ -20,65 +20,92 @@ import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class Settings extends Dialog<ButtonType> {
 
-    private final ButtonType ok = CommonButtons.OK;
+    private LocaleComboBox selectLocale;
 
-    private final LocaleComboBox selectLocale;
-
-    private final CheckBox keepClipboard;
-    private final CheckBox confirmClose;
+    private CheckBox keepClipboard;
+    private CheckBox confirmClose;
 
     private boolean reloadRequired;
+    private final GridPane layout = new GridPane();
+    private Label languageLabel;
+    private Label keepClipboardLabel;
+    private Label confirmCloseLabel = new Label(getString("confirm-close") + "?");
 
     public Settings() {
         super();
         super.setTitle(getString("settings"));
 
-        ButtonType cancel = CommonButtons.CANCEL;
-        ButtonType apply = CommonButtons.APPLY;
-        super.getDialogPane().getButtonTypes().setAll(ok, apply, cancel);
-        Node buttonApply = super.getDialogPane().lookupButton(apply);
-        buttonApply.setDisable(true);
-        buttonApply.addEventFilter(ActionEvent.ACTION, event -> {
-            saveSettings();
-            buttonApply.setDisable(true);
-            event.consume();
-        });
+        super.getDialogPane().getButtonTypes().setAll(CommonButtons.OK, CommonButtons.APPLY, CommonButtons.CANCEL);
+        getApplyButton().setDisable(true);
+        getApplyButton().addEventFilter(ActionEvent.ACTION, this::handleApplyEvent);
 
-        GridPane layout = new GridPane();
-        layout.setHgap(10);
-        layout.setVgap(10);
+        createLayout();
+        createSelectLangLabelAndCombo();
+        createKeepClipboardLabelAndCheck();
+        createConfirmCloseLabelAndCheck();
+        centerCheckBoxes();
+        createSettingsDialogLayout();
+        super.getDialogPane().setContent(layout);
+    }
 
-        Label languageLabel = new Label(getString("language") + ":");
+    private void createSettingsDialogLayout() {
+        layout.addRow(0, languageLabel, selectLocale);
+        layout.addRow(1, keepClipboardLabel, keepClipboard);
+        layout.addRow(2, confirmCloseLabel, confirmClose);
+    }
+
+    private void centerCheckBoxes() {
+        GridPane.setHalignment(keepClipboard, HPos.CENTER);
+        GridPane.setHalignment(confirmClose, HPos.CENTER);
+    }
+
+    private void createConfirmCloseLabelAndCheck() {
+        confirmCloseLabel = new Label(getString("confirm-close") + "?");
+        confirmClose = new CheckBox();
+        confirmClose.setSelected(Boolean.valueOf(ConfigManager.getSetting(Setting.CONFIRM_CLOSE.CODE)));
+        confirmClose.selectedProperty().addListener((observable, oldValue, newValue) -> enableApplyButton());
+    }
+
+    private void createKeepClipboardLabelAndCheck() {
+        keepClipboardLabel = new Label(getString("keep-clipboard") + "?");
+        keepClipboard = new CheckBox();
+        keepClipboard.setSelected(Boolean.valueOf(ConfigManager.getSetting(Setting.KEEP_CLIPBOARD.CODE)));
+        keepClipboard.selectedProperty().addListener((observable, oldValue, newValue) -> enableApplyButton());
+    }
+
+    private void createSelectLangLabelAndCombo() {
+        languageLabel = new Label(getString("language") + ":");
         selectLocale = new LocaleComboBox();
         selectLocale.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     reloadRequired = true;
-                    buttonApply.setDisable(false);
+                    enableApplyButton();
                 });
+    }
 
-        Label keepClipboardLabel = new Label(getString("keep-clipboard") + "?");
-        keepClipboard = new CheckBox();
-        keepClipboard.setSelected(Boolean.valueOf(ConfigManager.getSetting(Setting.KEEP_CLIPBOARD.CODE)));
-        keepClipboard.selectedProperty().addListener((observable, oldValue, newValue) -> buttonApply.setDisable(false));
+    private void createLayout() {
+        layout.setHgap(10);
+        layout.setVgap(10);
+    }
 
-        Label confirmCloseLabel = new Label(getString("confirm-close") + "?");
-        confirmClose = new CheckBox();
-        confirmClose.setSelected(Boolean.valueOf(ConfigManager.getSetting(Setting.CONFIRM_CLOSE.CODE)));
-        confirmClose.selectedProperty().addListener((observable, oldValue, newValue) -> buttonApply.setDisable(false));
+    private void enableApplyButton() {
+        getApplyButton().setDisable(false);
+    }
 
-        GridPane.setHalignment(keepClipboard, HPos.CENTER);
-        GridPane.setHalignment(confirmClose, HPos.CENTER);
-        layout.addRow(0, languageLabel, selectLocale);
-        layout.addRow(1, keepClipboardLabel, keepClipboard);
-        layout.addRow(2, confirmCloseLabel, confirmClose);
+    private Node getApplyButton() {
+        return super.getDialogPane().lookupButton(CommonButtons.APPLY);
+    }
 
-        super.getDialogPane().setContent(layout);
+    private void handleApplyEvent(ActionEvent event) {
+        saveSettings();
+        getApplyButton().setDisable(true);
+        event.consume();
     }
 
     public void showDialog() {
         Optional<ButtonType> result = showAndWait();
         result.ifPresent(buttonType -> {
-            if (ok.equals(buttonType)) {
+            if (CommonButtons.OK.equals(buttonType)) {
                 saveSettings();
                 super.close();
                 if (reloadRequired) {

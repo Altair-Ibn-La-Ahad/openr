@@ -2,20 +2,17 @@ package pl.greywarden.openr.gui.create_file;
 
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import pl.greywarden.openr.gui.dialogs.CommonButtons;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
 import pl.greywarden.openr.templates.Template;
 
-import java.util.Optional;
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class CreateFileDialog extends Dialog<ButtonType> {
 
     private final ButtonType create = CommonButtons.OK;
-    private final ButtonType cancel = CommonButtons.CANCEL;
     private CreateFileDialogLayout layout;
 
     public CreateFileDialog() {
@@ -23,6 +20,7 @@ public class CreateFileDialog extends Dialog<ButtonType> {
         super.setTitle(getString("new-file-dialog-title"));
         super.setHeaderText(getString("new-file-dialog-header"));
         setLayoutAndButtonTypes(new NewFileDialogLayout());
+        showDialog();
     }
 
     public CreateFileDialog(Template template) {
@@ -30,6 +28,7 @@ public class CreateFileDialog extends Dialog<ButtonType> {
         super.setTitle(getString("create-file"));
         super.setTitle(getString("create-file-" + template.getName()));
         setLayoutAndButtonTypes(new CreateFileFromTemplateDialogLayout(template));
+        showDialog();
     }
 
     public CreateFileDialog(Template template, DirectoryView selectedView) {
@@ -40,7 +39,7 @@ public class CreateFileDialog extends Dialog<ButtonType> {
     }
 
     private void setButtonTypes() {
-        super.getDialogPane().getButtonTypes().setAll(create, cancel);
+        super.getDialogPane().getButtonTypes().setAll(CommonButtons.OK, CommonButtons.CANCEL);
         Node buttonOk = super.getDialogPane().lookupButton(create);
         BooleanBinding binding = CreateFileDialogLayout.fileNameTextField.textProperty().isNotEmpty();
         buttonOk.disableProperty().bind(binding.and(layout.pathComboBox.pathValidBinding.not()).not());
@@ -55,11 +54,14 @@ public class CreateFileDialog extends Dialog<ButtonType> {
     }
 
     public void showDialog() {
-        Optional<ButtonType> result = super.showAndWait();
-        result.ifPresent(buttonType -> {
-            if (ButtonBar.ButtonData.OK_DONE.equals(buttonType.getButtonData())) {
+        super.showAndWait().ifPresent(buttonType -> {
+            if (okOptionSelected(buttonType)) {
                 layout.handleConfirm();
             }
         });
+    }
+
+    private boolean okOptionSelected(ButtonType buttonType) {
+        return CommonButtons.OK.equals(buttonType);
     }
 }

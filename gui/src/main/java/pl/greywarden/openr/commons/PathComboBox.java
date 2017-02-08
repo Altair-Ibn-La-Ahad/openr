@@ -4,6 +4,8 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
 import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
@@ -25,6 +27,25 @@ public class PathComboBox extends ComboBox<DirectoryView> {
             addRightView();
         }
         createComponent();
+        super.getEditor().setOnKeyPressed(this::handleKeyEvent);
+    }
+
+    private void handleKeyEvent(KeyEvent event) {
+        if (event.isControlDown() && KeyCode.TAB.equals(event.getCode())) {
+            selectNextItem();
+            super.getEditor().positionCaret(getSelectedPath().length());
+            event.consume();
+        }
+    }
+
+    private void selectNextItem() {
+        int curentIndex = super.getSelectionModel().getSelectedIndex();
+        int maxIndex = super.getItems().size();
+        if (curentIndex == maxIndex - 1) {
+            super.getSelectionModel().select(0);
+        } else {
+            super.getSelectionModel().select(maxIndex - 1);
+        }
     }
 
     private boolean rightViewVisible() {

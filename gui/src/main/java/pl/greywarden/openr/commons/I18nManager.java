@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j;
+import pl.greywarden.openr.gui.dialogs.CommonButtons;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -41,6 +42,7 @@ public class I18nManager {
 
     public static void setLocale(String languageCode) {
         actualLocale = supportedLocales.getOrDefault(languageCode, Locale.forLanguageTag("en"));
+        CommonButtons.reinitialize();
     }
 
     public static Locale getActualLocale() {

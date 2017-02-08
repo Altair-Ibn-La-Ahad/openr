@@ -61,7 +61,7 @@ public class MainWindowToolBar extends ToolBar {
         Button newFile = new Button();
         newFile.setGraphic(IconManager.getIcon("new-file"));
         newFile.tooltipProperty().setValue(new Tooltip(getString("create-file")));
-        newFile.setOnAction(event -> new CreateFileDialog().showDialog());
+        newFile.setOnAction(event -> new CreateFileDialog());
         return newFile;
     }
 }

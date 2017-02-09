@@ -6,6 +6,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.io.FilenameUtils;
 import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.filesystem.AbstractEntry;
@@ -18,6 +19,7 @@ import pl.greywarden.openr.gui.dialogs.NewDirectoryDialog;
 import pl.greywarden.openr.gui.dialogs.PreviewImageDialog;
 import pl.greywarden.openr.gui.dialogs.RenameDialog;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
+import pl.greywarden.openr.gui.property_editor.PropertyEditorDialog;
 import pl.greywarden.openr.gui.scenes.main_window.menu.NewDocumentMenu;
 import pl.greywarden.openr.gui.scenes.main_window.menu.NewFileMenu;
 
@@ -25,6 +27,8 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashSet;
+import java.util.Set;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
@@ -33,6 +37,13 @@ public class SingleSelectionContextMenu extends ContextMenu {
 
     private final AbstractEntry entry;
     private final DirectoryView directoryView;
+
+    private static final Set<String> editableFiles;
+
+    static {
+        editableFiles = new HashSet<>();
+        editableFiles.add("properties");
+    }
 
     public SingleSelectionContextMenu(DirectoryView directoryView, AbstractEntry entry) {
         this.entry = entry;
@@ -51,12 +62,13 @@ public class SingleSelectionContextMenu extends ContextMenu {
         MenuItem moveToTrash = createMoveToTrashMenuItem();
         MenuItem deletePermanently = createDeletePermanentlyMenuItem();
         MenuItem properties = createPropertiesMenuItem();
+        MenuItem edit = createEditMenuItem();
 
         Menu newFile = new NewFileMenu(directoryView);
         Menu newDocument = new NewDocumentMenu();
 
         super.getItems().addAll(
-                open, preview, rename,
+                open, edit, preview, rename,
                 new SeparatorMenuItem(),
                 newFile, newDocument, createDirectory,
                 new SeparatorMenuItem(),
@@ -67,6 +79,18 @@ public class SingleSelectionContextMenu extends ContextMenu {
                 new SeparatorMenuItem(),
                 properties);
 
+    }
+
+    private MenuItem createEditMenuItem() {
+        MenuItem edit = new MenuItem(getString("edit"));
+        String fileExtension = FilenameUtils.getExtension(getSelectedFile().getName());
+        edit.setVisible(editableFiles.contains(fileExtension));
+        edit.setOnAction(event -> {
+            if ("properties".equalsIgnoreCase(fileExtension)) {
+                new PropertyEditorDialog(getSelectedFile());
+            }
+        });
+        return edit;
     }
 
     private MenuItem createPropertiesMenuItem() {

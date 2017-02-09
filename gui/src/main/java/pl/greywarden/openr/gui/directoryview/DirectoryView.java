@@ -102,10 +102,10 @@ public class DirectoryView extends TableView<EntryWrapper> {
 
     @SuppressWarnings("unchecked")
     private void setRowFactory() {
-        super.setRowFactory((TableView<EntryWrapper> tv) -> (TableRow<EntryWrapper>) createTableRow());
+        super.setRowFactory((TableView<EntryWrapper> tv) -> createTableRow());
     }
 
-    private Object createTableRow() {
+    private TableRow<EntryWrapper> createTableRow() {
         return new DirectoryViewTableRow(this);
     }
 

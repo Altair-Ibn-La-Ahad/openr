@@ -6,6 +6,7 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.WindowEvent;
 import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Setting;
+import pl.greywarden.openr.gui.favourite_programs.FavouritePrograms;
 import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 
 import java.util.function.Predicate;
@@ -45,6 +46,9 @@ public class ConfirmExitDialog extends Alert {
         ConfigManager.setProperty(Setting.RIGHT_DIR.CODE,
                 MainWindow.getRightDirectoryView().getRootPath());
         ConfigManager.storeSettings();
+
+        FavouritePrograms.storeProgramsToFile();
+
         Platform.exit();
     }
 

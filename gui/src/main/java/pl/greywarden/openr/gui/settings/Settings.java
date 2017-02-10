@@ -14,8 +14,6 @@ import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.gui.dialogs.CommonButtons;
 import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 
-import java.util.Optional;
-
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class Settings extends Dialog<ButtonType> {
@@ -31,13 +29,11 @@ public class Settings extends Dialog<ButtonType> {
     private Label keepClipboardLabel;
     private Label confirmCloseLabel = new Label(getString("confirm-close") + "?");
 
+    private final ButtonType apply = CommonButtons.APPLY;
+
     public Settings() {
         super();
         super.setTitle(getString("settings"));
-
-        super.getDialogPane().getButtonTypes().setAll(CommonButtons.OK, CommonButtons.APPLY, CommonButtons.CANCEL);
-        getApplyButton().setDisable(true);
-        getApplyButton().addEventFilter(ActionEvent.ACTION, this::handleApplyEvent);
 
         createLayout();
         createSelectLangLabelAndCombo();
@@ -46,6 +42,12 @@ public class Settings extends Dialog<ButtonType> {
         centerCheckBoxes();
         createSettingsDialogLayout();
         super.getDialogPane().setContent(layout);
+        ButtonType ok = CommonButtons.OK;
+        ButtonType cancel = CommonButtons.CANCEL;
+        super.getDialogPane().getButtonTypes().setAll(ok, cancel, apply);
+        getApplyButton().setDisable(true);
+        getApplyButton().addEventFilter(ActionEvent.ACTION, this::handleApplyEvent);
+        showDialog();
     }
 
     private void createSettingsDialogLayout() {
@@ -92,19 +94,22 @@ public class Settings extends Dialog<ButtonType> {
         getApplyButton().setDisable(false);
     }
 
+    private void disableApplyButton() {
+        getApplyButton().setDisable(true);
+    }
+
     private Node getApplyButton() {
-        return super.getDialogPane().lookupButton(CommonButtons.APPLY);
+        return super.getDialogPane().lookupButton(apply);
     }
 
     private void handleApplyEvent(ActionEvent event) {
         saveSettings();
-        getApplyButton().setDisable(true);
+        disableApplyButton();
         event.consume();
     }
 
-    public void showDialog() {
-        Optional<ButtonType> result = showAndWait();
-        result.ifPresent(buttonType -> {
+    private void showDialog() {
+        showAndWait().ifPresent(buttonType -> {
             if (CommonButtons.OK.equals(buttonType)) {
                 saveSettings();
                 super.close();

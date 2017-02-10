@@ -1,4 +1,4 @@
-package pl.greywarden.openr.gui.scenes.help;
+package pl.greywarden.openr.gui.help;
 
 import pl.greywarden.openr.commons.I18nManager;
 

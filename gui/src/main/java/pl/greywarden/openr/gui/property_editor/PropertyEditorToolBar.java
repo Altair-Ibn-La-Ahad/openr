@@ -67,7 +67,7 @@ public class PropertyEditorToolBar extends ToolBar {
         PropertyWrapper selected = parent.getTableView().getSelectionModel().getSelectedItem();
         parent.getTableView().getItems().remove(selected);
         parent.getTableView().editedProperty.setValue(true);
-        parent.addAsteriskAfterTitle();
+        parent.setTitleWithoutAsterisk();
         parent.propertiesEdited.invalidate();
     }
 

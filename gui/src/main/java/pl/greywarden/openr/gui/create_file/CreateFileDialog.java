@@ -36,6 +36,7 @@ public class CreateFileDialog extends Dialog<ButtonType> {
         super.setTitle(getString("create-file"));
         super.setTitle(getString("create-file-" + template.getName()));
         setLayoutAndButtonTypes(new CreateFileFromTemplateDialogLayout(template, selectedView));
+        showDialog();
     }
 
     private void setButtonTypes() {

@@ -1,11 +1,11 @@
-package pl.greywarden.openr.gui.scenes.main_window.menu;
+package pl.greywarden.openr.gui.menu;
 
 import javafx.application.Platform;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import pl.greywarden.openr.commons.IconManager;
 import pl.greywarden.openr.gui.dialogs.AboutDialog;
-import pl.greywarden.openr.gui.scenes.help.HelpWindow;
+import pl.greywarden.openr.gui.help.HelpWindow;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 

@@ -1,4 +1,4 @@
-package pl.greywarden.openr.gui.scenes.main_window.menu;
+package pl.greywarden.openr.gui.menu;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;

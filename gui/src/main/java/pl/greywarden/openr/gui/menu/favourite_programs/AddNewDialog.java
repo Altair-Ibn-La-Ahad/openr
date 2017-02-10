@@ -1,4 +1,4 @@
-package pl.greywarden.openr.gui.scenes.main_window.menu.favourite_programs;
+package pl.greywarden.openr.gui.menu.favourite_programs;
 
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -99,10 +99,7 @@ public class AddNewDialog extends Dialog<Boolean> {
 
     private Button createImageChooserButton() {
         Button showIconChooser = new Button("...");
-        FileChooser.ExtensionFilter[] filters = new FileChooser.ExtensionFilter[] {
-                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png"),
-        };
+        FileChooser.ExtensionFilter[] filters = getImageExtensionFilters();
         showIconChooser.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().setAll(filters);
@@ -111,6 +108,13 @@ public class AddNewDialog extends Dialog<Boolean> {
         });
         HBox.setMargin(showIconChooser, new Insets(0, 0, 0, 5));
         return showIconChooser;
+    }
+
+    private FileChooser.ExtensionFilter[] getImageExtensionFilters() {
+        return new FileChooser.ExtensionFilter[] {
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+        };
     }
 
     private Button createProgramChooserButton() {

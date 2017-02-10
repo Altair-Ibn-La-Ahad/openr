@@ -1,4 +1,4 @@
-package pl.greywarden.openr.gui.scenes.main_window.menu.favourite_programs;
+package pl.greywarden.openr.gui.menu.favourite_programs;
 
 import javafx.scene.control.MenuItem;
 import lombok.Getter;
@@ -18,12 +18,14 @@ public class ProgramMenuItem extends MenuItem {
         super.setText(program.getName());
         this.program = program;
         super.setGraphic(IconManager.getIconFromPath(program.getIcon()));
-        super.setOnAction(event -> {
-            try {
-                new ProcessBuilder(program.getPath()).start();
-            } catch (IOException e) {
-                log.error("Exception during starting program", e);
-            }
-        });
+        super.setOnAction(event -> startProgram());
+    }
+
+    private void startProgram() {
+        try {
+            new ProcessBuilder(program.getPath()).start();
+        } catch (IOException e) {
+            log.error("Exception during starting program", e);
+        }
     }
 }

@@ -11,8 +11,8 @@ import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.gui.dialogs.NewDirectoryDialog;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.gui.scenes.main_window.menu.NewDocumentMenu;
-import pl.greywarden.openr.gui.scenes.main_window.menu.NewFileMenu;
+import pl.greywarden.openr.gui.menu.NewDocumentMenu;
+import pl.greywarden.openr.gui.menu.NewFileMenu;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 

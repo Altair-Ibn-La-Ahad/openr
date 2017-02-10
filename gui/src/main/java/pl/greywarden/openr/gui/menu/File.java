@@ -1,4 +1,4 @@
-package pl.greywarden.openr.gui.scenes.main_window.menu;
+package pl.greywarden.openr.gui.menu;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -28,7 +28,7 @@ public class File extends Menu {
     private MenuItem createSettingsMenuItem() {
         MenuItem settings = new MenuItem(getString("settings-menu-item"));
         settings.setGraphic(IconManager.getIcon("settings"));
-        settings.setOnAction(event -> new Settings().showDialog());
+        settings.setOnAction(event -> new Settings());
         settings.setAccelerator(new KeyCodeCombination(
                 KeyCode.S, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
         return settings;
@@ -37,9 +37,14 @@ public class File extends Menu {
     private MenuItem createExitMenuItem() {
         MenuItem exit = new MenuItem(getString("exit-menu-item"));
         exit.setGraphic(IconManager.getIcon("exit"));
-        exit.setOnAction(event -> MainWindow.getInstance().fireEvent(
-                new WindowEvent(MainWindow.getInstance().getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
+        exit.setOnAction(event -> fireClosingEvent());
         exit.setAccelerator(new KeyCodeCombination(KeyCode.F4, KeyCombination.ALT_DOWN));
         return exit;
+    }
+
+    private void fireClosingEvent() {
+        MainWindow.getInstance().fireEvent(
+                new WindowEvent(MainWindow.getInstance().getScene().getWindow(),
+                        WindowEvent.WINDOW_CLOSE_REQUEST));
     }
 }

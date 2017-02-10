@@ -82,16 +82,20 @@ public class PropertyEditorDialog extends Stage {
         try {
             StringBuilder builder = new StringBuilder();
             OutputStream outputStream = new FileOutputStream(file);
-            tableView.getItems().forEach(property -> builder
-                    .append(property.getEscapedKey())
-                    .append("=")
-                    .append(property.getEscapedValue())
-                    .append(System.lineSeparator()));
+            tableView.getItems().forEach(property -> appendProperty(builder, property));
             outputStream.write(builder.toString().getBytes());
-            removeAsteriskAfterTitle();
+            setTitleWithAsterisk();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private StringBuilder appendProperty(StringBuilder builder, PropertyWrapper property) {
+        return builder
+                .append(property.getEscapedKey())
+                .append("=")
+                .append(property.getEscapedValue())
+                .append(System.lineSeparator());
     }
 
     public void filter(String predicate) {
@@ -106,11 +110,11 @@ public class PropertyEditorDialog extends Stage {
         tableView.getItems().setAll(new SortedList<>(filteredProperties));
     }
 
-    public void addAsteriskAfterTitle() {
+    public void setTitleWithoutAsterisk() {
         super.setTitle(file.getAbsolutePath() + "*");
     }
 
-    private void removeAsteriskAfterTitle() {
+    private void setTitleWithAsterisk() {
         super.setTitle(file.getAbsolutePath());
     }
 }

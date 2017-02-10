@@ -16,21 +16,28 @@ public class CentralContainter extends HBox {
     private final DirectoryViewWrapper rightView;
 
     public CentralContainter() {
-        leftView = new DirectoryViewWrapper(ConfigManager.getSetting(Setting.LEFT_DIR.CODE));
-        rightView = new DirectoryViewWrapper(ConfigManager.getSetting(Setting.RIGHT_DIR.CODE));
+        leftView = createLeftView();
+        rightView = createRightView();
 
-        leftView.minWidthProperty().bind(super.widthProperty().multiply(0.5));
-        rightView.minWidthProperty().bind(super.widthProperty().multiply(0.5));
+        super.getChildren().addAll(leftView, rightView);
+        VBox.setVgrow(this, Priority.ALWAYS);
+    }
 
-        HBox.setHgrow(leftView, Priority.ALWAYS);
-        HBox.setHgrow(rightView, Priority.ALWAYS);
+    private DirectoryViewWrapper createRightView() {
+        DirectoryViewWrapper right = new DirectoryViewWrapper(ConfigManager.getSetting(Setting.RIGHT_DIR.CODE));
+        right.minWidthProperty().bind(super.widthProperty().multiply(0.5));
+        HBox.setHgrow(right, Priority.ALWAYS);
+        return right;
+    }
+
+    private DirectoryViewWrapper createLeftView() {
+        DirectoryViewWrapper left = new DirectoryViewWrapper(ConfigManager.getSetting(Setting.LEFT_DIR.CODE));
+        left.minWidthProperty().bind(super.widthProperty().multiply(0.5));
         String delimiter = "-fx-border-color: gray;\n" +
                 "-fx-border-width: 0 2 0 0;\n";
-        leftView.setStyle(delimiter);
-        super.getChildren().addAll(leftView, rightView);
-        leftView.getDirectoryView().setId("left-view");
-        rightView.getDirectoryView().setId("right-view");
-        VBox.setVgrow(this, Priority.ALWAYS);
+        left.setStyle(delimiter);
+        HBox.setHgrow(left, Priority.ALWAYS);
+        return left;
     }
 
 }

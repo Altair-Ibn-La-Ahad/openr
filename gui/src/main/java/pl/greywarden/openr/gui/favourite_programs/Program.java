@@ -11,5 +11,10 @@ public class Program {
 
     private final String name;
     private final String path;
+    private String icon;
 
+    public Program(String name, String path, String icon) {
+        this(name, path);
+        this.icon = icon;
+    }
 }

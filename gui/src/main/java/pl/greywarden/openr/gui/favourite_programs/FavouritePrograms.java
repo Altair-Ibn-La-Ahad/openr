@@ -39,7 +39,8 @@ public class FavouritePrograms {
             Element root = xml.getRootElement();
             root.getChildren().forEach(element -> programs.add(new Program(
                     element.getAttributeValue("name"),
-                    element.getAttributeValue("path"))));
+                    element.getAttributeValue("path"),
+                    element.getAttributeValue("icon"))));
         } catch (IOException | JDOMException exception) {
             log.error("Exception during loading favourite programs", exception);
         }
@@ -64,6 +65,7 @@ public class FavouritePrograms {
             Element element = new Element("program");
             element.setAttribute("name", program.getName());
             element.setAttribute("path", program.getPath());
+            element.setAttribute("icon", program.getIcon());
             xml.getRootElement().addContent(element);
         });
 

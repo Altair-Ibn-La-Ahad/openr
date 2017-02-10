@@ -23,6 +23,7 @@ public class AddNewDialog extends Dialog<Boolean> {
 
     private TextField nameInput;
     private TextField pathInput;
+    private TextField iconInput;
 
     private final FavouriteProgramsMenu parent;
 
@@ -45,8 +46,8 @@ public class AddNewDialog extends Dialog<Boolean> {
     private void handleConfirm() {
         String name = nameInput.getText();
         String path = pathInput.getText();
-
-        FavouritePrograms.add(new Program(name, path));
+        String iconPath = iconInput.getText();
+        FavouritePrograms.add(new Program(name, path, iconPath));
         parent.invalidate();
     }
 
@@ -57,23 +58,18 @@ public class AddNewDialog extends Dialog<Boolean> {
 
         Label nameLabel = new Label(getString("name"));
         Label pathLabel = new Label(getString("path"));
+        Label iconLabel = new Label(getString("icon"));
 
         nameInput = new TextField();
         pathInput = new TextField();
+        iconInput = new TextField();
 
-        HBox pathInputWrapper = new HBox();
-        Button showProgramChooser = new Button("...");
-        showProgramChooser.setOnAction(event -> {
-            FileChooser fileChooser = new FileChooser();
-            File result = fileChooser.showOpenDialog(this.getOwner());
-            pathInput.setText(result != null ? result.getAbsolutePath() : pathInput.getText());
-        });
-        HBox.setHgrow(pathInput, Priority.ALWAYS);
-        HBox.setMargin(showProgramChooser, new Insets(0, 0, 0, 5));
-        pathInputWrapper.getChildren().setAll(pathInput, showProgramChooser);
+        HBox pathInputWrapper = createPathInputWrapper();
+        HBox iconInputWrapper = createIconInputWrapper();
 
         layout.addRow(0, nameLabel, nameInput);
         layout.addRow(1, pathLabel, pathInputWrapper);
+        layout.addRow(2, iconLabel, iconInputWrapper);
 
         GridPane.setHgrow(pathInputWrapper, Priority.ALWAYS);
         GridPane.setHgrow(nameInput, Priority.ALWAYS);
@@ -83,6 +79,49 @@ public class AddNewDialog extends Dialog<Boolean> {
         getOkButton().disableProperty().bind(
                 nameInput.textProperty().isEmpty().or(pathInput.textProperty().isEmpty()));
         super.getDialogPane().setContent(layout);
+    }
+
+    private HBox createPathInputWrapper() {
+        HBox pathInputWrapper = new HBox();
+        Button showProgramChooser = createProgramChooserButton();
+        HBox.setHgrow(pathInput, Priority.ALWAYS);
+        pathInputWrapper.getChildren().setAll(pathInput, showProgramChooser);
+        return pathInputWrapper;
+    }
+
+    private HBox createIconInputWrapper() {
+        HBox iconInputWrapper = new HBox();
+        Button showIconChooser = createImageChooserButton();
+        HBox.setHgrow(iconInput, Priority.ALWAYS);
+        iconInputWrapper.getChildren().setAll(iconInput, showIconChooser);
+        return iconInputWrapper;
+    }
+
+    private Button createImageChooserButton() {
+        Button showIconChooser = new Button("...");
+        FileChooser.ExtensionFilter[] filters = new FileChooser.ExtensionFilter[] {
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+        };
+        showIconChooser.setOnAction(event -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().setAll(filters);
+            File result = fileChooser.showOpenDialog(super.getOwner());
+            iconInput.setText(result != null ? result.getAbsolutePath() : iconInput.getText());
+        });
+        HBox.setMargin(showIconChooser, new Insets(0, 0, 0, 5));
+        return showIconChooser;
+    }
+
+    private Button createProgramChooserButton() {
+        Button showProgramChooser = new Button("...");
+        showProgramChooser.setOnAction(event -> {
+            FileChooser fileChooser = new FileChooser();
+            File result = fileChooser.showOpenDialog(this.getOwner());
+            pathInput.setText(result != null ? result.getAbsolutePath() : pathInput.getText());
+        });
+        HBox.setMargin(showProgramChooser, new Insets(0, 0, 0, 5));
+        return showProgramChooser;
     }
 
     private Node getOkButton() {

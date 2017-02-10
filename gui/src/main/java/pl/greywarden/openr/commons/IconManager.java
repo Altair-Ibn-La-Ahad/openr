@@ -11,6 +11,8 @@ import javax.swing.filechooser.FileSystemView;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -36,5 +38,18 @@ public class IconManager {
             graphics.dispose();
         }
         return SwingFXUtils.toFXImage(bImg, null);
+    }
+
+    public static ImageView getIconFromPath(String path) {
+        InputStream inputStream;
+        try {
+            inputStream = new FileInputStream(new File(path));
+        } catch (FileNotFoundException e) {
+            return new ImageView();
+        }
+        ImageView result = new ImageView(new Image(inputStream));
+        result.setFitHeight(16.0);
+        result.setFitWidth(16.0);
+        return result;
     }
 }

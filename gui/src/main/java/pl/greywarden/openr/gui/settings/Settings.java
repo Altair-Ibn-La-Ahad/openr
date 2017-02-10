@@ -23,13 +23,14 @@ public class Settings extends Dialog<ButtonType> {
     private CheckBox keepClipboard;
     private CheckBox confirmClose;
 
-    private boolean reloadRequired;
+    private static boolean reloadRequired;
     private final GridPane layout = new GridPane();
     private Label languageLabel;
     private Label keepClipboardLabel;
     private Label confirmCloseLabel = new Label(getString("confirm-close") + "?");
 
     private final ButtonType apply = CommonButtons.APPLY;
+    private final ButtonType ok = CommonButtons.OK;
 
     public Settings() {
         super();
@@ -41,13 +42,17 @@ public class Settings extends Dialog<ButtonType> {
         createConfirmCloseLabelAndCheck();
         centerCheckBoxes();
         createSettingsDialogLayout();
+
         super.getDialogPane().setContent(layout);
-        ButtonType ok = CommonButtons.OK;
+        createButtons();
+        showDialog();
+    }
+
+    private void createButtons() {
         ButtonType cancel = CommonButtons.CANCEL;
         super.getDialogPane().getButtonTypes().setAll(ok, cancel, apply);
         getApplyButton().setDisable(true);
         getApplyButton().addEventFilter(ActionEvent.ACTION, this::handleApplyEvent);
-        showDialog();
     }
 
     private void createSettingsDialogLayout() {
@@ -110,7 +115,7 @@ public class Settings extends Dialog<ButtonType> {
 
     private void showDialog() {
         showAndWait().ifPresent(buttonType -> {
-            if (CommonButtons.OK.equals(buttonType)) {
+            if (ok.equals(buttonType)) {
                 saveSettings();
                 super.close();
                 if (reloadRequired) {

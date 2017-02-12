@@ -29,7 +29,7 @@ public class EntryInfoDialog extends Dialog {
 
         createInfo();
         super.getDialogPane().getButtonTypes().add(CommonButtons.OK);
-        super.setGraphic(new ImageView(IconManager.getFileIcon(selectedEntry.getAbsolutePath())));
+        super.setGraphic(new ImageView(IconManager.getFileIconBig(selectedEntry.getAbsolutePath())));
         super.setTitle(selectedEntry.getName());
         super.getDialogPane().minWidthProperty().setValue(600);
     }

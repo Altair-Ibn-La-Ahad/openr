@@ -127,7 +127,7 @@ public class FindWindow extends Stage {
         vb.setAlignment(Pos.CENTER_LEFT);
         String nameOfEntry = item.getEntryProperties().getAbsolutePath();
         Label nameLabel = new Label(nameOfEntry);
-        ImageView iv = new ImageView(IconManager.getFileIcon(item.getEntryProperties().getAbsolutePath()));
+        ImageView iv = new ImageView(IconManager.getFileIconSmall(item.getEntryProperties().getAbsolutePath()));
         HBox.setMargin(iv, new Insets(0, 3, 0, 0));
         vb.getChildren().addAll(iv, nameLabel);
         return vb;

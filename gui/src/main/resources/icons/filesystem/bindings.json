@@ -1,0 +1,17 @@
+{"icons": [
+  {"icon" : "archive",
+  "extensions" : ["zip", "rar", "gzip", "gz", "tar", "a", "ar", "bz2",
+    "lz", "lzma", "rz", "lzo", "sfark", "sz", "xz", "z", "7z", "tgz", "tbz2", "tlz", "zipx"]},
+  {"icon" : "image",
+  "extensions" : ["jpg", "jpeg", "bmp", "gif", "png"]},
+  {"icon" : "gradle",
+  "extensions" : ["gradle"]},
+  {"icon" : "xml",
+  "extensions" : ["html", "xml", "xhtml"]},
+  {"icon" : "document",
+  "extensions" : ["doc", "docx", "ppt", "pptx", "odt", "rtf"]},
+  {"icon" : "pdf",
+  "extensions" : ["pdf"]},
+  {"icon" : "properties",
+  "extensions" : ["properties"]}
+]}

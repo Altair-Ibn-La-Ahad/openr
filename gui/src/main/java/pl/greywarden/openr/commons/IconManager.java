@@ -1,59 +1,91 @@
 package pl.greywarden.openr.commons;
 
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import pl.greywarden.openr.templates.Template;
 
-import javax.swing.ImageIcon;
-import javax.swing.filechooser.FileSystemView;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IconManager {
 
-    private static String getProgramIconResourceName(String iconName) {
-        return String.format("icons%sprogram%s%s.png", File.separator, File.separator, iconName);
+    private static final Map<String, String> icons = loadIconBindingsFromFile();
+
+    private static final String filesystemIconsPath = "icons" + File.separator + "filesystem" + File.separator;
+    private static final String programIconsPath = "icons" + File.separator + "program" + File.separator;
+
+    private static Map<String, String> loadIconBindingsFromFile() {
+        Map<String, String> result = new HashMap<>();
+        String jsonString = getIconsJson();
+        JSONArray jsonArray = new JSONObject(jsonString).getJSONArray("icons");
+        jsonArray.forEach(o -> {
+            JSONObject icon = (JSONObject) o;
+            String iconName = icon.getString("icon");
+            icon.getJSONArray("extensions").forEach(ext -> result.put(ext.toString(), iconName));
+        });
+        return result;
+    }
+
+    private static String getIconsJson() {
+        try {
+            return IOUtils.toString(Template.class.getClassLoader()
+                    .getResourceAsStream("icons/filesystem/bindings.json"), "UTF-8");
+        } catch (IOException e) {
+            return "{}";
+        }
     }
 
     public static ImageView getProgramIcon(String name) {
         InputStream resource = IconManager.class.getClassLoader()
-                .getResourceAsStream(getProgramIconResourceName(name));
+                .getResourceAsStream(programIconsPath + name + ".png");
         return resource != null ? new ImageView(new Image(resource)) : null;
     }
 
-    public static Image getFileIcon(String path) {
+    public static Image getFileIconSmall(String path) {
+        return getFileIcon(path, 16);
+    }
+
+    public static Image getFileIconBig(String path) {
+        return getFileIcon(path, 32);
+    }
+
+    private static Image getFileIcon(String path, int sizeXY) {
         File file = new File(path);
-        java.awt.Image awtImage = ((ImageIcon) FileSystemView.getFileSystemView().getSystemIcon(file)).getImage();
-        BufferedImage bImg;
-        if (awtImage instanceof BufferedImage) {
-            bImg = (BufferedImage) awtImage;
+        InputStream iconInputStream;
+        if (file.isDirectory()) {
+            iconInputStream = getIconByName("directory");
         } else {
-            bImg = new BufferedImage(awtImage.getWidth(null), awtImage.getHeight(null),
-                    BufferedImage.TYPE_INT_ARGB);
-            Graphics2D graphics = bImg.createGraphics();
-            graphics.drawImage(awtImage, 0, 0, null);
-            graphics.dispose();
+            iconInputStream = getIconByName(FilenameUtils.getExtension(file.getName()).toLowerCase());
         }
-        return SwingFXUtils.toFXImage(bImg, null);
+        return new Image(iconInputStream, sizeXY, sizeXY, true, true);
+    }
+
+    private static InputStream getIconByName(String name) {
+        String iconName = "directory".equals(name) ? "directory" : icons.getOrDefault(name, "default");
+        return IconManager.class.getClassLoader()
+                .getResourceAsStream(filesystemIconsPath + iconName + ".png");
     }
 
     public static ImageView getIconFromPath(String path) {
-        InputStream inputStream;
         try {
-            inputStream = new FileInputStream(new File(path));
+            return new ImageView(
+                    new Image(new FileInputStream(
+                            new File(path)), 16, 16, true, true));
         } catch (FileNotFoundException e) {
             return new ImageView();
         }
-        ImageView result = new ImageView(new Image(inputStream));
-        result.setFitHeight(16.0);
-        result.setFitWidth(16.0);
-        return result;
+
     }
 }

@@ -51,14 +51,14 @@ public class PropertyEditorToolBar extends ToolBar {
 
     private Button createExitButton() {
         Button exit = new Button();
-        exit.setGraphic(IconManager.getIcon("exit"));
+        exit.setGraphic(IconManager.getProgramIcon("exit"));
         exit.setOnAction(event -> parent.close());
         return exit;
     }
 
     private Button createRemoveButton() {
         Button remove = new Button();
-        remove.setGraphic(IconManager.getIcon("minus"));
+        remove.setGraphic(IconManager.getProgramIcon("minus"));
         remove.setOnAction(event -> handleRemove());
         return remove;
     }
@@ -73,14 +73,14 @@ public class PropertyEditorToolBar extends ToolBar {
 
     private Button createAddButton() {
         Button add = new Button();
-        add.setGraphic(IconManager.getIcon("plus"));
+        add.setGraphic(IconManager.getProgramIcon("plus"));
         add.setOnAction(event -> new NewPropertyDialog(parent));
         return add;
     }
 
     private Button createSaveButton() {
         Button save = new Button();
-        save.setGraphic(IconManager.getIcon("save"));
+        save.setGraphic(IconManager.getProgramIcon("save"));
         save.tooltipProperty().setValue(new Tooltip(getString("save")));
         save.setOnAction(event -> handleSaveAction());
         save.disableProperty().bind(parent.propertiesEdited.not());

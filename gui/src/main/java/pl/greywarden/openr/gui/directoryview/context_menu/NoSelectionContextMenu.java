@@ -46,7 +46,7 @@ public class NoSelectionContextMenu extends ContextMenu {
 
     private MenuItem createPasteMenuItem() {
         MenuItem paste = new MenuItem(getString("paste"));
-        paste.setGraphic(IconManager.getIcon("paste"));
+        paste.setGraphic(IconManager.getProgramIcon("paste"));
         paste.setOnAction(event -> handlePasteAction());
         paste.disableProperty().bind(AbstractEntry.clipboardEmptyBinding());
         return paste;

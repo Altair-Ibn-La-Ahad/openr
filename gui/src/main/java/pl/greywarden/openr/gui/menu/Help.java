@@ -18,7 +18,7 @@ public class Help extends Menu {
         about.setOnAction(event -> new AboutDialog().show());
 
         MenuItem help = new MenuItem(getString("help-menu-item"));
-        help.setGraphic(IconManager.getIcon("help"));
+        help.setGraphic(IconManager.getProgramIcon("help"));
         help.setOnAction(event -> Platform.runLater(HelpWindow::new));
 
         super.getItems().addAll(about, help);

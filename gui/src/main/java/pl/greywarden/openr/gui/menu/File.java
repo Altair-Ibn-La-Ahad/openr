@@ -27,7 +27,7 @@ public class File extends Menu {
 
     private MenuItem createSettingsMenuItem() {
         MenuItem settings = new MenuItem(getString("settings-menu-item"));
-        settings.setGraphic(IconManager.getIcon("settings"));
+        settings.setGraphic(IconManager.getProgramIcon("settings"));
         settings.setOnAction(event -> new Settings());
         settings.setAccelerator(new KeyCodeCombination(
                 KeyCode.S, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
@@ -36,7 +36,7 @@ public class File extends Menu {
 
     private MenuItem createExitMenuItem() {
         MenuItem exit = new MenuItem(getString("exit-menu-item"));
-        exit.setGraphic(IconManager.getIcon("exit"));
+        exit.setGraphic(IconManager.getProgramIcon("exit"));
         exit.setOnAction(event -> fireClosingEvent());
         exit.setAccelerator(new KeyCodeCombination(KeyCode.F4, KeyCombination.ALT_DOWN));
         return exit;

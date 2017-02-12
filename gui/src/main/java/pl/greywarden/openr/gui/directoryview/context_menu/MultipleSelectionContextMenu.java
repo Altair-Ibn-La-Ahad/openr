@@ -27,7 +27,7 @@ public class MultipleSelectionContextMenu extends ContextMenu {
 
     private MenuItem createMoveToTrashMenuItem() {
         MenuItem moveToTrash = new MenuItem(getString("move-to-trash"));
-        moveToTrash.setGraphic(IconManager.getIcon("trash"));
+        moveToTrash.setGraphic(IconManager.getProgramIcon("trash"));
         moveToTrash.setOnAction(event -> moveSelectedItemsToTrash());
         return moveToTrash;
     }
@@ -40,7 +40,7 @@ public class MultipleSelectionContextMenu extends ContextMenu {
 
     private MenuItem createDeletePermanentlyMenuItem() {
         MenuItem deletePermanently = new MenuItem(getString("delete-permanently-menu-item"));
-        deletePermanently.setGraphic(IconManager.getIcon("delete-permanent-small"));
+        deletePermanently.setGraphic(IconManager.getProgramIcon("delete-permanent-small"));
         deletePermanently.setOnAction(event -> new ConfirmDeleteDialog(directoryView));
         return deletePermanently;
     }

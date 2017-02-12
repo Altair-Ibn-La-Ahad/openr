@@ -31,7 +31,7 @@ public class MainWindowToolBar extends ToolBar {
 
     private Button createExitButton() {
         Button exit = new Button();
-        exit.setGraphic(IconManager.getIcon("exit"));
+        exit.setGraphic(IconManager.getProgramIcon("exit"));
         exit.tooltipProperty().setValue(new Tooltip(getString("exit-menu-item")));
         exit.setOnAction(event -> fireClosingEvent());
         return exit;
@@ -43,7 +43,7 @@ public class MainWindowToolBar extends ToolBar {
 
     private Button createFindButton() {
         Button find = new Button();
-        find.setGraphic(IconManager.getIcon("find"));
+        find.setGraphic(IconManager.getProgramIcon("find"));
         find.tooltipProperty().setValue(new Tooltip(getString("find-file")));
         find.setOnAction(event -> new FindWindow());
         return find;
@@ -51,7 +51,7 @@ public class MainWindowToolBar extends ToolBar {
 
     private Button createGrepButton() {
         Button grep = new Button();
-        grep.setGraphic(IconManager.getIcon("grep"));
+        grep.setGraphic(IconManager.getProgramIcon("grep"));
         grep.tooltipProperty().setValue(new Tooltip(getString("grep-window-title")));
         grep.setOnAction(event -> new GrepWindow());
         return grep;
@@ -59,7 +59,7 @@ public class MainWindowToolBar extends ToolBar {
 
     private Button createNewFileButton() {
         Button newFile = new Button();
-        newFile.setGraphic(IconManager.getIcon("new-file"));
+        newFile.setGraphic(IconManager.getProgramIcon("new-file"));
         newFile.tooltipProperty().setValue(new Tooltip(getString("create-file")));
         newFile.setOnAction(event -> new CreateFileDialog());
         return newFile;

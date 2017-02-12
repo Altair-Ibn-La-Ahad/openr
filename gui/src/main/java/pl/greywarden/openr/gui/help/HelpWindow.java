@@ -104,14 +104,14 @@ public class HelpWindow extends Stage {
     private Button createExitButton() {
         Button exit = new Button();
         exit.setOnAction(event -> super.close());
-        exit.setGraphic(IconManager.getIcon("exit"));
+        exit.setGraphic(IconManager.getProgramIcon("exit"));
         return exit;
     }
 
     private Button createHomeButton() {
         Button goHome = new Button();
         goHome.setOnAction(event -> webEngine.load(topicWrappers.get(0).getUrlToContent()));
-        goHome.setGraphic(IconManager.getIcon("home"));
+        goHome.setGraphic(IconManager.getProgramIcon("home"));
         return goHome;
     }
 
@@ -122,7 +122,7 @@ public class HelpWindow extends Stage {
             history.go(1);
             webEngine.load(historyEntries.get(history.getCurrentIndex()).getUrl());
         });
-        goForward.setGraphic(IconManager.getIcon("forward"));
+        goForward.setGraphic(IconManager.getProgramIcon("forward"));
         return goForward;
     }
 
@@ -133,7 +133,7 @@ public class HelpWindow extends Stage {
             history.go(-1);
             webEngine.load(historyEntries.get(history.getCurrentIndex()).getUrl());
         });
-        goBack.setGraphic(IconManager.getIcon("back"));
+        goBack.setGraphic(IconManager.getProgramIcon("back"));
         return goBack;
     }
 

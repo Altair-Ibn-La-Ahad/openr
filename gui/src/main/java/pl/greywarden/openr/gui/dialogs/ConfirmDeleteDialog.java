@@ -17,7 +17,7 @@ public class ConfirmDeleteDialog extends Alert {
 
         super.setTitle(getString("confirm-delete-dialog-title"));
         super.setHeaderText(getString("confirm-delete-dialog-warning"));
-        super.setGraphic(IconManager.getIcon("delete-permanent"));
+        super.setGraphic(IconManager.getProgramIcon("delete-permanent"));
         List<AbstractEntry> items = new LinkedList<>();
         directoryView.getSelectionModel().getSelectedItems()
                 .forEach(entryWrapper -> items.add(entryWrapper.getEntry()));

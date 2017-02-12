@@ -101,14 +101,14 @@ public class SingleSelectionContextMenu extends ContextMenu {
 
     private MenuItem createDeletePermanentlyMenuItem() {
         MenuItem deletePermanently = new MenuItem(getString("delete-permanently-menu-item"));
-        deletePermanently.setGraphic(IconManager.getIcon("delete-permanent-small"));
+        deletePermanently.setGraphic(IconManager.getProgramIcon("delete-permanent-small"));
         deletePermanently.setOnAction(event -> new ConfirmDeleteDialog(directoryView));
         return deletePermanently;
     }
 
     private MenuItem createMoveToTrashMenuItem() {
         MenuItem moveToTrash = new MenuItem(getString("move-to-trash"));
-        moveToTrash.setGraphic(IconManager.getIcon("trash"));
+        moveToTrash.setGraphic(IconManager.getProgramIcon("trash"));
         moveToTrash.setOnAction(event -> handleMoveToTrashAction());
         return moveToTrash;
     }
@@ -126,7 +126,7 @@ public class SingleSelectionContextMenu extends ContextMenu {
 
     private MenuItem createPasteMenuItem() {
         MenuItem paste = new MenuItem(getString("paste"));
-        paste.setGraphic(IconManager.getIcon("paste"));
+        paste.setGraphic(IconManager.getProgramIcon("paste"));
         paste.setOnAction(event -> handlePasteAction());
         paste.disableProperty().bind(AbstractEntry.clipboardEmptyBinding());
         return paste;
@@ -150,14 +150,14 @@ public class SingleSelectionContextMenu extends ContextMenu {
 
     private MenuItem createCopyMenuItem() {
         MenuItem copy = new MenuItem(getString("copy"));
-        copy.setGraphic(IconManager.getIcon("copy"));
+        copy.setGraphic(IconManager.getProgramIcon("copy"));
         copy.setOnAction(event -> entry.copy());
         return copy;
     }
 
     private MenuItem createCutMenuItem() {
         MenuItem cut = new MenuItem(getString("cut"));
-        cut.setGraphic(IconManager.getIcon("cut"));
+        cut.setGraphic(IconManager.getProgramIcon("cut"));
         cut.setOnAction(event -> entry.cut());
         return cut;
     }

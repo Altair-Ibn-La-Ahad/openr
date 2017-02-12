@@ -27,7 +27,7 @@ public class Tools extends Menu {
 
     private MenuItem createFindMenuItem() {
         MenuItem find = new MenuItem(getString("find-file"));
-        find.setGraphic(IconManager.getIcon("find"));
+        find.setGraphic(IconManager.getProgramIcon("find"));
         find.setOnAction(event -> new FindWindow());
         find.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.SHIFT_DOWN, KeyCombination.CONTROL_DOWN));
         return find;
@@ -35,7 +35,7 @@ public class Tools extends Menu {
 
     private MenuItem createGrepMenuItem() {
         MenuItem grep = new MenuItem(getString("grep-window-title"));
-        grep.setGraphic(IconManager.getIcon("grep"));
+        grep.setGraphic(IconManager.getProgramIcon("grep"));
         grep.setOnAction(event -> new GrepWindow());
         grep.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN));
         return grep;

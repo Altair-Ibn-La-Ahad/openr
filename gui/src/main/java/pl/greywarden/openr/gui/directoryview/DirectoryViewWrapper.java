@@ -53,8 +53,8 @@ public class DirectoryViewWrapper extends VBox {
         Button go = new Button();
         Button refresh = new Button();
 
-        go.setGraphic(IconManager.getIcon("go"));
-        refresh.setGraphic(IconManager.getIcon("refresh"));
+        go.setGraphic(IconManager.getProgramIcon("go"));
+        refresh.setGraphic(IconManager.getProgramIcon("refresh"));
 
         go.setOnAction(e -> pathTextField.goToEnteredDirectory());
         refresh.setOnAction(e -> directoryView.reload());

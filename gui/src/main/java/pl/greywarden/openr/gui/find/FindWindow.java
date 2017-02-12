@@ -100,7 +100,7 @@ public class FindWindow extends Stage {
 
     private Button createSearchButton() {
         Button doSearch = new Button();
-        doSearch.setGraphic(IconManager.getIcon("go"));
+        doSearch.setGraphic(IconManager.getProgramIcon("go"));
         doSearch.setOnAction(event -> Platform.runLater(this::search));
         return doSearch;
     }

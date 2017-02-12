@@ -18,9 +18,13 @@ import java.io.InputStream;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IconManager {
 
-    public static ImageView getIcon(String name) {
+    private static String getProgramIconResourceName(String iconName) {
+        return String.format("icons%sprogram%s%s.png", File.separator, File.separator, iconName);
+    }
+
+    public static ImageView getProgramIcon(String name) {
         InputStream resource = IconManager.class.getClassLoader()
-                .getResourceAsStream("icons/" + name + ".png");
+                .getResourceAsStream(getProgramIconResourceName(name));
         return resource != null ? new ImageView(new Image(resource)) : null;
     }
 

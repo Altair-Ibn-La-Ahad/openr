@@ -50,14 +50,14 @@ public class FavouriteProgramsMenu extends Menu {
 
     private MenuItem createAddProgramMenuItem() {
         MenuItem addProgram = new MenuItem(getString("add-new-program"));
-        addProgram.setGraphic(IconManager.getIcon("plus"));
+        addProgram.setGraphic(IconManager.getProgramIcon("plus"));
         addProgram.setOnAction(event -> new AddNewDialog(this));
         return addProgram;
     }
 
     private MenuItem createRemoveMenuItem() {
         MenuItem remove = new MenuItem(getString("remove-program"));
-        remove.setGraphic(IconManager.getIcon("delete-permanent-small"));
+        remove.setGraphic(IconManager.getProgramIcon("delete-permanent-small"));
         remove.setOnAction(event -> new RemoveDialog(this));
         return remove;
     }

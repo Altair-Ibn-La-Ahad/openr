@@ -135,7 +135,7 @@ public class GrepWindow extends Stage {
 
     private void createGrepButton() {
         doGrep = new Button();
-        doGrep.setGraphic(IconManager.getIcon("go"));
+        doGrep.setGraphic(IconManager.getProgramIcon("go"));
         doGrep.setOnAction(handleGrep());
     }
 

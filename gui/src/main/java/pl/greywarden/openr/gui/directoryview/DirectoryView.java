@@ -15,6 +15,7 @@ import pl.greywarden.openr.gui.directoryview.columns.ModificationDateColumn;
 import pl.greywarden.openr.gui.directoryview.columns.NameColumn;
 import pl.greywarden.openr.gui.directoryview.columns.PrivilegesColumn;
 import pl.greywarden.openr.gui.directoryview.columns.SizeColumn;
+import pl.greywarden.openr.gui.menu.View;
 
 import java.util.Comparator;
 import java.util.List;
@@ -25,7 +26,7 @@ public class DirectoryView extends TableView<EntryWrapper> {
 
     private DirectoryEntry rootEntry;
 
-    public static boolean showHiddenFiles;
+    public static boolean showHiddenFiles = View.hiddenFilesVisible().get();
 
     @Getter
     private String rootPath;

@@ -7,7 +7,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.io.FilenameUtils;
-import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
@@ -31,6 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
+import static pl.greywarden.openr.configuration.ConfigManager.getSetting;
 
 @Log4j
 public class SingleSelectionContextMenu extends ContextMenu {
@@ -145,7 +145,7 @@ public class SingleSelectionContextMenu extends ContextMenu {
     }
 
     private boolean clearClipboard() {
-        return !Boolean.valueOf(ConfigManager.getSetting(Setting.KEEP_CLIPBOARD.CODE));
+        return !Boolean.valueOf(getSetting(Setting.KEEP_CLIPBOARD));
     }
 
     private MenuItem createCopyMenuItem() {

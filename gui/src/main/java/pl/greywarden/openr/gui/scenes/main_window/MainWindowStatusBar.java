@@ -8,8 +8,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import lombok.Getter;
 import org.controlsfx.control.StatusBar;
+import pl.greywarden.openr.configuration.Setting;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
+import static pl.greywarden.openr.configuration.ConfigManager.getSetting;
 
 public class MainWindowStatusBar extends StatusBar {
 
@@ -18,6 +20,8 @@ public class MainWindowStatusBar extends StatusBar {
 
     public MainWindowStatusBar() {
         super();
+
+        super.managedProperty().setValue(Boolean.valueOf(getSetting(Setting.STATUS_BAR_VISIBLE)));
 
         Label label = new Label(getString("status-bar-selected-file"));
         pathTextField = new TextField();

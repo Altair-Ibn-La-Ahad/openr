@@ -41,10 +41,15 @@ public class ConfigManager {
         defaultProperties.put(Setting.LANGUAGE.CODE, I18nManager.getActualLocale().getLanguage());
         defaultProperties.put(Setting.CONFIRM_CLOSE.CODE, Boolean.toString(true));
         defaultProperties.put(Setting.KEEP_CLIPBOARD.CODE, Boolean.toString(false));
+        defaultProperties.put(Setting.LEFT_VIEW_VISIBLE.CODE, Boolean.toString(true));
+        defaultProperties.put(Setting.RIGHT_VIEW_VISIBLE.CODE, Boolean.toString(true));
+        defaultProperties.put(Setting.TOOL_BAR_VISIBLE.CODE, Boolean.toString(true));
+        defaultProperties.put(Setting.STATUS_BAR_VISIBLE.CODE, Boolean.toString(true));
+        defaultProperties.put(Setting.HIDDEN_FILES_VISIBLE.CODE, Boolean.toString(false));
     }
 
-    public static String getSetting(String key) {
-        return savedProperties.get(key).toString();
+    public static String getSetting(Setting key) {
+        return savedProperties.get(key.CODE).toString();
     }
 
     private static File getConfigFile() throws URISyntaxException {
@@ -62,8 +67,8 @@ public class ConfigManager {
         }
     }
 
-    public static void setProperty(String key, String value) {
-        savedProperties.setProperty(key, value);
+    public static <T> void setProperty(Setting key, T value) {
+        savedProperties.setProperty(key.CODE, value.toString());
     }
 
 }

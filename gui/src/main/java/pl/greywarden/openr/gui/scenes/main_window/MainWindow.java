@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.commons.I18nManager;
-import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.gui.create_file.CreateFileDialog;
 import pl.greywarden.openr.gui.dialogs.AboutDialog;
@@ -17,6 +16,8 @@ import pl.greywarden.openr.gui.dialogs.ConfirmExitDialog;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
 import pl.greywarden.openr.gui.directoryview.DirectoryViewWrapper;
 import pl.greywarden.openr.gui.scenes.CentralContainter;
+
+import static pl.greywarden.openr.configuration.ConfigManager.getSetting;
 
 @Log4j
 public class MainWindow extends Stage {
@@ -45,7 +46,7 @@ public class MainWindow extends Stage {
     }
 
     private void createWindow() {
-        I18nManager.setLocale(ConfigManager.getSetting(Setting.LANGUAGE.CODE));
+        I18nManager.setLocale(getSetting(Setting.LANGUAGE));
         layout = new VBox();
         Scene scene = new Scene(layout);
         KeyCodeCombination NEW_FILE_SHORTCUT = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_ANY);

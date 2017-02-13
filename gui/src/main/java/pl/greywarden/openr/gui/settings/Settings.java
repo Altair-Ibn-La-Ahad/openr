@@ -15,6 +15,7 @@ import pl.greywarden.openr.gui.dialogs.CommonButtons;
 import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
+import static pl.greywarden.openr.configuration.ConfigManager.getSetting;
 
 public class Settings extends Dialog<ButtonType> {
 
@@ -69,14 +70,14 @@ public class Settings extends Dialog<ButtonType> {
     private void createConfirmCloseLabelAndCheck() {
         confirmCloseLabel = new Label(getString("confirm-close") + "?");
         confirmClose = new CheckBox();
-        confirmClose.setSelected(Boolean.valueOf(ConfigManager.getSetting(Setting.CONFIRM_CLOSE.CODE)));
+        confirmClose.setSelected(Boolean.valueOf(getSetting(Setting.CONFIRM_CLOSE)));
         confirmClose.selectedProperty().addListener((observable, oldValue, newValue) -> enableApplyButton());
     }
 
     private void createKeepClipboardLabelAndCheck() {
         keepClipboardLabel = new Label(getString("keep-clipboard") + "?");
         keepClipboard = new CheckBox();
-        keepClipboard.setSelected(Boolean.valueOf(ConfigManager.getSetting(Setting.KEEP_CLIPBOARD.CODE)));
+        keepClipboard.setSelected(Boolean.valueOf(getSetting(Setting.KEEP_CLIPBOARD)));
         keepClipboard.selectedProperty().addListener((observable, oldValue, newValue) -> enableApplyButton());
     }
 
@@ -128,16 +129,16 @@ public class Settings extends Dialog<ButtonType> {
     private void saveSettings() {
         I18nManager.setLocale(selectLocale.getSelectionModel().getSelectedItem().getLanguage());
         ConfigManager.setProperty(
-                Setting.LANGUAGE.CODE,
+                Setting.LANGUAGE,
                 selectLocale.getSelectionModel().getSelectedItem().getLanguage());
 
         ConfigManager.setProperty(
-                Setting.KEEP_CLIPBOARD.CODE,
-                Boolean.toString(keepClipboard.isSelected()));
+                Setting.KEEP_CLIPBOARD,
+                keepClipboard.isSelected());
 
         ConfigManager.setProperty(
-                Setting.CONFIRM_CLOSE.CODE,
-                Boolean.toString(confirmClose.isSelected()));
+                Setting.CONFIRM_CLOSE,
+                confirmClose.isSelected());
 
     }
 }

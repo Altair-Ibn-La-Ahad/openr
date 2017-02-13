@@ -5,7 +5,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import pl.greywarden.openr.commons.IconManager;
-import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
@@ -15,6 +14,7 @@ import pl.greywarden.openr.gui.menu.NewDocumentMenu;
 import pl.greywarden.openr.gui.menu.NewFileMenu;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
+import static pl.greywarden.openr.configuration.ConfigManager.getSetting;
 
 public class NoSelectionContextMenu extends ContextMenu {
 
@@ -62,7 +62,7 @@ public class NoSelectionContextMenu extends ContextMenu {
     }
 
     private boolean cleanClipboard() {
-        return !Boolean.valueOf(ConfigManager.getSetting(Setting.KEEP_CLIPBOARD.CODE));
+        return !Boolean.valueOf(getSetting(Setting.KEEP_CLIPBOARD));
     }
 
 }

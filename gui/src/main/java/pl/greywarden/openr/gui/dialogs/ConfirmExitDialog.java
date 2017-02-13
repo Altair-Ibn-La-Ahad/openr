@@ -12,6 +12,7 @@ import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 import java.util.function.Predicate;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
+import static pl.greywarden.openr.configuration.ConfigManager.getSetting;
 
 public class ConfirmExitDialog extends Alert {
 
@@ -33,7 +34,7 @@ public class ConfirmExitDialog extends Alert {
     }
 
     private Boolean askForConfirm() {
-        return Boolean.valueOf(ConfigManager.getSetting(Setting.CONFIRM_CLOSE.CODE));
+        return Boolean.valueOf(getSetting(Setting.CONFIRM_CLOSE));
     }
 
     private Predicate<ButtonType> selectedYesOption() {
@@ -41,9 +42,9 @@ public class ConfirmExitDialog extends Alert {
     }
 
     private void storeSettingsAndExit() {
-        ConfigManager.setProperty(Setting.LEFT_DIR.CODE,
+        ConfigManager.setProperty(Setting.LEFT_DIR,
                 MainWindow.getLeftDirectoryView().getRootPath());
-        ConfigManager.setProperty(Setting.RIGHT_DIR.CODE,
+        ConfigManager.setProperty(Setting.RIGHT_DIR,
                 MainWindow.getRightDirectoryView().getRootPath());
         ConfigManager.storeSettings();
 

@@ -25,6 +25,8 @@ public class DirectoryView extends TableView<EntryWrapper> {
 
     private DirectoryEntry rootEntry;
 
+    public static boolean showHiddenFiles;
+
     @Getter
     private String rootPath;
 
@@ -110,7 +112,9 @@ public class DirectoryView extends TableView<EntryWrapper> {
     }
 
     public void reload() {
-        changePath(rootPath);
+        if (managedProperty().get()) {
+            changePath(rootPath);
+        }
     }
 
 }

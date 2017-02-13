@@ -3,6 +3,7 @@ package pl.greywarden.openr.gui.menu;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.SeparatorMenuItem;
+import pl.greywarden.openr.gui.directoryview.DirectoryView;
 import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
@@ -12,13 +13,26 @@ public class View extends Menu {
     private final CheckMenuItem leftPanelVisibility = createLeftPanelVisibilityCheck();
     private final CheckMenuItem rightPanelVisibility = createRightPanelVisibilityCheck();
 
+    private CheckMenuItem createHiddenFilesVisibilityCheck() {
+        CheckMenuItem hiddenFiles = new CheckMenuItem(getString("hidden-files"));
+        hiddenFiles.setSelected(false);
+        hiddenFiles.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            DirectoryView.showHiddenFiles = newValue;
+            MainWindow.getLeftDirectoryView().reload();
+            MainWindow.getRightDirectoryView().reload();
+        });
+        return hiddenFiles;
+    }
+
     public View() {
         super(getString("view-menu"));
         forceOnePanelAlwaysVisible();
         CheckMenuItem statusBarVisibility = createStatusBarVisibilityCheck();
         CheckMenuItem toolBarVisibility = createToolBarVisibilityCheck();
+        CheckMenuItem showHiddenFiles = createHiddenFilesVisibilityCheck();
         super.getItems().addAll(statusBarVisibility, toolBarVisibility, new SeparatorMenuItem(),
-                leftPanelVisibility, rightPanelVisibility);
+                leftPanelVisibility, rightPanelVisibility, new SeparatorMenuItem(),
+                showHiddenFiles);
     }
 
     private void forceOnePanelAlwaysVisible() {

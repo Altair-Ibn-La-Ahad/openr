@@ -29,7 +29,7 @@ public class DirectoryViewDataBuilder {
         File[] filesArray = rootEntry.getFilesystemEntry().listFiles();
         List<File> files = Arrays.asList(filesArray == null ? FileUtils.EMPTY_FILE_ARRAY : filesArray);
         Stream<File> stream = files.size() > 10 ? files.parallelStream() : files.stream();
-        return stream.filter(file -> !file.isHidden()).collect(Collectors.toList());
+        return stream.filter(file -> DirectoryView.showHiddenFiles || !file.isHidden()).collect(Collectors.toList());
     }
 
     private List<EntryWrapper> createEntryWrappers() {

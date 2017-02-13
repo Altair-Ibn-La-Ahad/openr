@@ -23,8 +23,8 @@ public class IconManager {
 
     private static final Map<String, String> icons = loadIconBindingsFromFile();
 
-    private static final String filesystemIconsPath = "icons" + File.separator + "filesystem" + File.separator;
-    private static final String programIconsPath = "icons" + File.separator + "program" + File.separator;
+    private static final String filesystemIconsPath = "icons/filesystem/";
+    private static final String programIconsPath = "icons/program/";
 
     private static Map<String, String> loadIconBindingsFromFile() {
         Map<String, String> result = new HashMap<>();

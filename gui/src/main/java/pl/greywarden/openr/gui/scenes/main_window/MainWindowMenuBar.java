@@ -11,7 +11,7 @@ public class MainWindowMenuBar extends MenuBar {
 
     public MainWindowMenuBar() {
         super();
-        super.getMenus().addAll(new File(), new View(), new Tools(),
+        super.getMenus().addAll(new File(), View.getInstance(), new Tools(),
                 new FavouriteProgramsMenu(), new Help());
     }
 }

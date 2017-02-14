@@ -6,6 +6,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.stage.WindowEvent;
 import pl.greywarden.openr.commons.IconManager;
+import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.gui.create_file.CreateFileDialog;
 import pl.greywarden.openr.gui.find.FindWindow;
@@ -20,6 +21,8 @@ public class MainWindowToolBar extends ToolBar {
     public MainWindowToolBar() {
         super();
         super.managedProperty().setValue(Boolean.valueOf(getSetting(Setting.TOOL_BAR_VISIBLE)));
+        super.managedProperty().addListener((observable, oldValue, newValue) ->
+                ConfigManager.setProperty(Setting.TOOL_BAR_VISIBLE, newValue));
         createToolBar();
         super.visibleProperty().bind(managedProperty());
     }

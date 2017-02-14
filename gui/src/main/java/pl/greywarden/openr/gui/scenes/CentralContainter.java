@@ -4,6 +4,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
+import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.gui.directoryview.DirectoryViewWrapper;
 
@@ -35,6 +36,8 @@ public class CentralContainter extends HBox {
     private DirectoryViewWrapper createLeftView() {
         DirectoryViewWrapper left = new DirectoryViewWrapper(getSetting(Setting.LEFT_DIR));
         left.managedProperty().setValue(Boolean.valueOf(getSetting(Setting.LEFT_VIEW_VISIBLE)));
+        left.managedProperty().addListener((observable, oldValue, newValue) ->
+                ConfigManager.setProperty(Setting.LEFT_VIEW_VISIBLE, newValue));
         left.minWidthProperty().bind(super.widthProperty().multiply(0.5));
         String delimiter = "-fx-border-color: gray;\n" +
                 "-fx-border-width: 0 2 0 0;\n";

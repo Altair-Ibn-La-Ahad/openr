@@ -14,73 +14,83 @@ import static pl.greywarden.openr.configuration.ConfigManager.getSetting;
 
 public class View extends Menu {
 
-    private static final CheckMenuItem leftPanelVisibility = createLeftPanelVisibilityCheck();
-    private static final CheckMenuItem rightPanelVisibility = createRightPanelVisibilityCheck();
-    private static final CheckMenuItem statusBarVisibility = createStatusBarVisibilityCheck();
-    private static final CheckMenuItem toolBarVisibility = createToolBarVisibilityCheck();
-    private static final CheckMenuItem hiddenFilesVisibility = createHiddenFilesVisibilityCheck();
+    private final CheckMenuItem leftPanelVisibility = createLeftPanelVisibilityCheck();
+    private final CheckMenuItem rightPanelVisibility = createRightPanelVisibilityCheck();
+    private final CheckMenuItem statusBarVisibility = createStatusBarVisibilityCheck();
+    private final CheckMenuItem toolBarVisibility = createToolBarVisibilityCheck();
+    private final CheckMenuItem hiddenFilesVisibility = createHiddenFilesVisibilityCheck();
 
-    public View() {
-        super(getString("view-menu"));
+    private static View instance;
+
+    public static View getInstance() {
+        if (instance == null) {
+            instance = new View();
+        }
+        instance.setLabels();
+        return instance;
+    }
+
+    private View() {
+        super();
         forceOnePanelAlwaysVisible();
-        super.getItems().addAll(statusBarVisibility, toolBarVisibility, new SeparatorMenuItem(),
+        super.getItems().setAll(statusBarVisibility, toolBarVisibility, new SeparatorMenuItem(),
                 leftPanelVisibility, rightPanelVisibility, new SeparatorMenuItem(),
                 hiddenFilesVisibility);
     }
 
-    public static BooleanProperty hiddenFilesVisible() {
+    public BooleanProperty hiddenFilesVisible() {
         return hiddenFilesVisibility.selectedProperty();
     }
 
-    private static CheckMenuItem createHiddenFilesVisibilityCheck() {
-        CheckMenuItem hiddenFiles = new CheckMenuItem(getString("hidden-files"));
+    private void setLabels() {
+        super.setText(getString("view-menu"));
+        hiddenFilesVisibility.setText(getString("hidden-files"));
+        rightPanelVisibility.setText(getString("right-panel"));
+        leftPanelVisibility.setText(getString("left-panel"));
+        toolBarVisibility.setText(getString("tool-bar"));
+        statusBarVisibility.setText(getString("status-bar-visibility-check"));
+    }
+
+    private CheckMenuItem createHiddenFilesVisibilityCheck() {
+        CheckMenuItem hiddenFiles = new CheckMenuItem();
         hiddenFiles.setSelected(Boolean.valueOf(getSetting(Setting.HIDDEN_FILES_VISIBLE)));
         hiddenFiles.selectedProperty().addListener((observable, oldValue, newValue) -> {
             DirectoryView.showHiddenFiles = newValue;
             ConfigManager.setProperty(Setting.HIDDEN_FILES_VISIBLE, newValue);
-            MainWindow.getLeftDirectoryView().reload();
-            MainWindow.getRightDirectoryView().reload();
+            MainWindow.reloadViews();
         });
         return hiddenFiles;
     }
 
-    private static CheckMenuItem createRightPanelVisibilityCheck() {
-        CheckMenuItem rightPanelVisibility = new CheckMenuItem(getString("right-panel"));
+    private CheckMenuItem createRightPanelVisibilityCheck() {
+        CheckMenuItem rightPanelVisibility = new CheckMenuItem();
         rightPanelVisibility.setSelected(Boolean.valueOf(getSetting(Setting.RIGHT_VIEW_VISIBLE)));
-        rightPanelVisibility.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            ConfigManager.setProperty(Setting.RIGHT_VIEW_VISIBLE, newValue);
-            MainWindow.getRightWrapper().managedProperty().setValue(newValue);
-        });
+        rightPanelVisibility.selectedProperty().addListener((observable, oldValue, newValue) ->
+                MainWindow.getRightWrapper().managedProperty().setValue(newValue));
         return rightPanelVisibility;
     }
 
-    private static CheckMenuItem createLeftPanelVisibilityCheck() {
-        CheckMenuItem leftPanelVisibility = new CheckMenuItem(getString("left-panel"));
+    private CheckMenuItem createLeftPanelVisibilityCheck() {
+        CheckMenuItem leftPanelVisibility = new CheckMenuItem();
         leftPanelVisibility.setSelected(Boolean.valueOf(getSetting(Setting.LEFT_VIEW_VISIBLE)));
-        leftPanelVisibility.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            ConfigManager.setProperty(Setting.LEFT_VIEW_VISIBLE, newValue);
-            MainWindow.getLeftWrapper().managedProperty().setValue(newValue);
-        });
+        leftPanelVisibility.selectedProperty().addListener((observable, oldValue, newValue) ->
+                MainWindow.getLeftWrapper().managedProperty().setValue(newValue));
         return leftPanelVisibility;
     }
 
-    private static CheckMenuItem createStatusBarVisibilityCheck() {
-        CheckMenuItem statusBarVisibility = new CheckMenuItem(getString("status-bar-visibility-check"));
+    private CheckMenuItem createStatusBarVisibilityCheck() {
+        CheckMenuItem statusBarVisibility = new CheckMenuItem();
         statusBarVisibility.setSelected(Boolean.valueOf(getSetting(Setting.STATUS_BAR_VISIBLE)));
-        statusBarVisibility.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            ConfigManager.setProperty(Setting.STATUS_BAR_VISIBLE, newValue);
-            MainWindow.getStatusBar().managedProperty().setValue(newValue);
-        });
+        statusBarVisibility.selectedProperty().addListener((observable, oldValue, newValue) ->
+                MainWindow.getStatusBar().managedProperty().setValue(newValue));
         return statusBarVisibility;
     }
 
-    private static CheckMenuItem createToolBarVisibilityCheck() {
-        CheckMenuItem toolBarVisibility = new CheckMenuItem(getString("tool-bar"));
+    private CheckMenuItem createToolBarVisibilityCheck() {
+        CheckMenuItem toolBarVisibility = new CheckMenuItem();
         toolBarVisibility.setSelected(Boolean.valueOf(getSetting(Setting.TOOL_BAR_VISIBLE)));
-        toolBarVisibility.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            ConfigManager.setProperty(Setting.TOOL_BAR_VISIBLE, newValue);
-            MainWindow.getMainWindowToolBar().managedProperty().setValue(newValue);
-        });
+        toolBarVisibility.selectedProperty().addListener((observable, oldValue, newValue) ->
+                MainWindow.getMainWindowToolBar().managedProperty().setValue(newValue));
         return toolBarVisibility;
     }
 

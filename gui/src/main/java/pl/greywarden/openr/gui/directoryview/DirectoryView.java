@@ -26,7 +26,7 @@ public class DirectoryView extends TableView<EntryWrapper> {
 
     private DirectoryEntry rootEntry;
 
-    public static boolean showHiddenFiles = View.hiddenFilesVisible().get();
+    public static boolean showHiddenFiles = View.getInstance().hiddenFilesVisible().get();
 
     @Getter
     private String rootPath;

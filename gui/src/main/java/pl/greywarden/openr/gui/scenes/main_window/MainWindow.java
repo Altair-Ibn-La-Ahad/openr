@@ -87,4 +87,8 @@ public class MainWindow extends Stage {
         return centralContainter.getRightView();
     }
 
+    public static void reloadViews() {
+        getRightDirectoryView().reload();
+        getLeftDirectoryView().reload();
+    }
 }

@@ -41,7 +41,7 @@ public class IconManager {
     private static String getIconsJson() {
         try {
             return IOUtils.toString(Template.class.getClassLoader()
-                    .getResourceAsStream("icons/filesystem/bindings.json"), "UTF-8");
+                    .getResourceAsStream("file_icons.json"), "UTF-8");
         } catch (IOException e) {
             return "{}";
         }

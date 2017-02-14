@@ -25,6 +25,8 @@ public class IconManager {
 
     private static final String filesystemIconsPath = "icons/filesystem/";
     private static final String programIconsPath = "icons/program/";
+    private static final int smallIcon = 16;
+    private static final int bigIcon = 32;
 
     private static Map<String, String> loadIconBindingsFromFile() {
         Map<String, String> result = new HashMap<>();
@@ -54,11 +56,11 @@ public class IconManager {
     }
 
     public static Image getFileIconSmall(String path) {
-        return getFileIcon(path, 16);
+        return getFileIcon(path, smallIcon);
     }
 
     public static Image getFileIconBig(String path) {
-        return getFileIcon(path, 32);
+        return getFileIcon(path, bigIcon);
     }
 
     private static Image getFileIcon(String path, int sizeXY) {
@@ -82,7 +84,7 @@ public class IconManager {
         try {
             return new ImageView(
                     new Image(new FileInputStream(
-                            new File(path)), 16, 16, true, true));
+                            new File(path)), smallIcon, smallIcon, true, true));
         } catch (FileNotFoundException e) {
             return new ImageView();
         }

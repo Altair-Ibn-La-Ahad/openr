@@ -11,7 +11,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import pl.greywarden.openr.commons.IconManager;
-import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
+import pl.greywarden.openr.gui.main_window.MainWindow;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 

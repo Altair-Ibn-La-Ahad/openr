@@ -8,7 +8,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
+import pl.greywarden.openr.gui.main_window.MainWindow;
 
 import java.io.File;
 

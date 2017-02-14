@@ -3,7 +3,7 @@ package pl.greywarden.openr.app;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
+import pl.greywarden.openr.gui.main_window.MainWindow;
 
 public class Main extends Application {
 

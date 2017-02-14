@@ -7,7 +7,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
+import pl.greywarden.openr.gui.main_window.MainWindow;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 import static pl.greywarden.openr.configuration.ConfigManager.getSetting;

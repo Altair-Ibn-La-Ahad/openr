@@ -18,9 +18,9 @@ import pl.greywarden.openr.gui.dialogs.NewDirectoryDialog;
 import pl.greywarden.openr.gui.dialogs.PreviewImageDialog;
 import pl.greywarden.openr.gui.dialogs.RenameDialog;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.gui.property_editor.PropertyEditorDialog;
-import pl.greywarden.openr.gui.menu.NewDocumentMenu;
-import pl.greywarden.openr.gui.menu.NewFileMenu;
+import pl.greywarden.openr.gui.dialogs.property_editor.PropertyEditorDialog;
+import pl.greywarden.openr.gui.menu.file.NewDocumentMenu;
+import pl.greywarden.openr.gui.menu.file.NewFileMenu;
 
 import java.awt.Desktop;
 import java.io.File;

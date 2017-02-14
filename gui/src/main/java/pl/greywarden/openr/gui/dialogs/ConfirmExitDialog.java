@@ -7,7 +7,7 @@ import javafx.stage.WindowEvent;
 import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.gui.favourite_programs.FavouritePrograms;
-import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
+import pl.greywarden.openr.gui.main_window.MainWindow;
 
 import java.util.function.Predicate;
 

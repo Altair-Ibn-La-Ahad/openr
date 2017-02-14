@@ -4,8 +4,10 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import pl.greywarden.openr.commons.IconManager;
+import pl.greywarden.openr.gui.dialogs.AddNewProgramDialog;
+import pl.greywarden.openr.gui.dialogs.ModifyProgramsDialog;
 import pl.greywarden.openr.gui.favourite_programs.FavouritePrograms;
-import pl.greywarden.openr.gui.favourite_programs.Program;
+import pl.greywarden.openr.gui.favourite_programs.ProgramWrapper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -44,21 +46,21 @@ public class FavouriteProgramsMenu extends Menu {
         return items;
     }
 
-    private boolean addToItems(Program program) {
+    private boolean addToItems(ProgramWrapper program) {
         return items.add(new ProgramMenuItem(program));
     }
 
     private MenuItem createAddProgramMenuItem() {
         MenuItem addProgram = new MenuItem(getString("add-new-program"));
         addProgram.setGraphic(IconManager.getProgramIcon("plus"));
-        addProgram.setOnAction(event -> new AddNewDialog(this));
+        addProgram.setOnAction(event -> new AddNewProgramDialog(this));
         return addProgram;
     }
 
     private MenuItem createRemoveMenuItem() {
         MenuItem remove = new MenuItem(getString("remove-program"));
         remove.setGraphic(IconManager.getProgramIcon("delete-permanent-small"));
-        remove.setOnAction(event -> new RemoveDialog(this));
+        remove.setOnAction(event -> new ModifyProgramsDialog(this));
         return remove;
     }
 }

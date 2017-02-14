@@ -80,7 +80,7 @@ public class IconManager {
                 .getResourceAsStream(filesystemIconsPath + iconName + ".png");
     }
 
-    public static ImageView getIconFromPath(String path) {
+    public static ImageView getSmallIconFromPath(String path) {
         try {
             return new ImageView(
                     new Image(new FileInputStream(
@@ -88,6 +88,15 @@ public class IconManager {
         } catch (FileNotFoundException e) {
             return new ImageView();
         }
+    }
 
+    public static ImageView getBigIconFromPath(String path) {
+        try {
+            return new ImageView(
+                    new Image(new FileInputStream(
+                            new File(path)), bigIcon, bigIcon, true, true));
+        } catch (FileNotFoundException e) {
+            return new ImageView();
+        }
     }
 }

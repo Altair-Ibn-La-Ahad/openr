@@ -6,8 +6,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import pl.greywarden.openr.commons.IconManager;
-import pl.greywarden.openr.gui.find.FindWindow;
-import pl.greywarden.openr.gui.grep.GrepWindow;
+import pl.greywarden.openr.gui.dialogs.find.FindWindow;
+import pl.greywarden.openr.gui.dialogs.grep.GrepWindow;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 

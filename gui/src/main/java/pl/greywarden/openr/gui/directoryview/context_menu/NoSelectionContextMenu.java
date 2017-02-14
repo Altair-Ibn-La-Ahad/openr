@@ -10,8 +10,8 @@ import pl.greywarden.openr.filesystem.AbstractEntry;
 import pl.greywarden.openr.filesystem.DirectoryEntry;
 import pl.greywarden.openr.gui.dialogs.NewDirectoryDialog;
 import pl.greywarden.openr.gui.directoryview.DirectoryView;
-import pl.greywarden.openr.gui.menu.NewDocumentMenu;
-import pl.greywarden.openr.gui.menu.NewFileMenu;
+import pl.greywarden.openr.gui.menu.file.NewDocumentMenu;
+import pl.greywarden.openr.gui.menu.file.NewFileMenu;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 import static pl.greywarden.openr.configuration.ConfigManager.getSetting;

@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FavouritePrograms {
 
-    private static final Collection<Program> programs = new LinkedList<>();
+    private static final Collection<ProgramWrapper> programs = new LinkedList<>();
 
     static {
         loadFromFile();
@@ -37,7 +37,7 @@ public class FavouritePrograms {
         try {
             Document xml = builder.build(sourceXml);
             Element root = xml.getRootElement();
-            root.getChildren().forEach(element -> programs.add(new Program(
+            root.getChildren().forEach(element -> programs.add(new ProgramWrapper(
                     element.getAttributeValue("name"),
                     element.getAttributeValue("path"),
                     element.getAttributeValue("icon"))));
@@ -80,15 +80,15 @@ public class FavouritePrograms {
         }
     }
 
-    public static void add(Program program) {
+    public static void add(ProgramWrapper program) {
         programs.add(program);
     }
 
-    public static void remove(Program program) {
+    public static void remove(ProgramWrapper program) {
         programs.remove(program);
     }
 
-    public static Collection<Program> getPrograms() {
+    public static Collection<ProgramWrapper> getPrograms() {
         return programs.stream().sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()))
                 .collect(Collectors.toList());
     }

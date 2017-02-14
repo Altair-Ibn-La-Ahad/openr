@@ -15,7 +15,7 @@ import pl.greywarden.openr.filesystem.ParentDirectoryEntry;
 import pl.greywarden.openr.gui.directoryview.context_menu.MultipleSelectionContextMenu;
 import pl.greywarden.openr.gui.directoryview.context_menu.NoSelectionContextMenu;
 import pl.greywarden.openr.gui.directoryview.context_menu.SingleSelectionContextMenu;
-import pl.greywarden.openr.gui.scenes.main_window.MainWindow;
+import pl.greywarden.openr.gui.main_window.MainWindow;
 
 import java.awt.Desktop;
 import java.io.File;

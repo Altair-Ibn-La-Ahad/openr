@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Log4j
 @AllArgsConstructor
@@ -36,7 +38,7 @@ public class Template {
         }
     }
 
-    public static List<Template> getAvailableTemplates() {
+    public static List<Template> getAvailableTemplatesList() {
         try {
             List <Template> result = new ArrayList<>();
             InputStream inputStream = Template.class.getClassLoader()
@@ -54,7 +56,14 @@ public class Template {
             log.error("Get available templates exception", exception);
             throw new RuntimeException(exception);
         }
+    }
 
+    private static Map<String, List<Template>> getAvailableTemplates() {
+        return getAvailableTemplatesList().stream().collect(Collectors.groupingBy(Template::getType));
+    }
+
+    public static List<Template> getTemplatesByType(String type) {
+        return getAvailableTemplates().get(type);
     }
 
 }

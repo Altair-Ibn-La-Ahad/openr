@@ -12,7 +12,7 @@ public class TemplateComboBox extends ComboBox<Template> {
     public TemplateComboBox() {
         super();
         setButtonCellAndCellFactory();
-        super.getItems().setAll(Template.getAvailableTemplates());
+        super.getItems().setAll(Template.getAvailableTemplatesList());
         selectFirstItem();
         super.managedProperty().bind(itemCountBinding());
     }

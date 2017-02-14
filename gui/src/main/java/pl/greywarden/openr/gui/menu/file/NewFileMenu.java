@@ -8,7 +8,6 @@ import pl.greywarden.openr.templates.Template;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
@@ -18,8 +17,7 @@ public class NewFileMenu extends Menu {
 
     public NewFileMenu() {
         super.setText(getString("new-file-menu"));
-        Template.getAvailableTemplates().stream().filter(isText())
-                .forEach(this::createTextMenuItem);
+        Template.getTemplatesByType("text").forEach(this::createTextMenuItem);
         super.getItems().addAll(items);
     }
 
@@ -30,13 +28,9 @@ public class NewFileMenu extends Menu {
         items.add(item);
     }
 
-    private Predicate<Template> isText() {
-        return template -> "text".equals(template.getType());
-    }
-
     public NewFileMenu(DirectoryView selectedView) {
         super.setText(getString("new-file-menu"));
-        Template.getAvailableTemplates().stream().filter(isText())
+        Template.getTemplatesByType("text")
                 .forEach(template -> createTextMenuItem(selectedView, template));
         super.getItems().addAll(items);
     }

@@ -8,7 +8,6 @@ import pl.greywarden.openr.templates.Template;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
@@ -18,13 +17,8 @@ public class NewDocumentMenu extends Menu {
 
     public NewDocumentMenu() {
         super.setText(getString("new-document-menu"));
-        Template.getAvailableTemplates().stream().filter(isDocument())
-                .forEach(this::createDocumentItem);
+        Template.getTemplatesByType("document").forEach(this::createDocumentItem);
         super.getItems().addAll(items);
-    }
-
-    private Predicate<Template> isDocument() {
-        return template -> "document".equals(template.getType());
     }
 
     private void createDocumentItem(Template template) {
@@ -36,7 +30,7 @@ public class NewDocumentMenu extends Menu {
 
     public NewDocumentMenu(DirectoryView selectedView) {
         super.setText(getString("new-document-menu"));
-        Template.getAvailableTemplates().stream().filter(isDocument())
+        Template.getTemplatesByType("document")
                 .forEach(template -> createDocumentItem(selectedView, template));
         super.getItems().addAll(items);
     }

@@ -25,6 +25,10 @@ public class TemplateComboBox extends ComboBox<Template> {
         super.managedProperty().bind(itemCountBinding());
     }
 
+    public Template getSelectedTemplate() {
+        return super.getSelectionModel().getSelectedItem();
+    }
+
     private ListCell<Template> templateComboBoxListCell() {
         return new ListCell<Template>() {
             @Override
@@ -51,9 +55,5 @@ public class TemplateComboBox extends ComboBox<Template> {
                 return TemplateComboBox.super.getItems().size() > 1;
             }
         };
-    }
-
-    public Template getSelectedTemplate() {
-        return super.getSelectionModel().getSelectedItem();
     }
 }

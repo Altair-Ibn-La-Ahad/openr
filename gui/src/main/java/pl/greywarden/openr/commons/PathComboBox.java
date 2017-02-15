@@ -16,6 +16,42 @@ public class PathComboBox extends ComboBox<DirectoryView> {
 
     public PathComboBox() {
         super();
+        setPathsInComboBox();
+        createComponent();
+    }
+
+    public PathComboBox(DirectoryView selectedView) {
+        super();
+        super.getItems().setAll(selectedView);
+        createComponent();
+        super.managedProperty().setValue(false);
+    }
+
+    public String getSelectedPath() {
+        return super.getSelectionModel().getSelectedItem().getRootPath();
+    }
+
+    public void reloadSelected() {
+        String path = getSelectedPath();
+        if (isSelectionDirectoryView(path)) {
+            super.getSelectionModel().getSelectedItem().reload();
+        }
+    }
+
+    public final BooleanBinding pathValidBinding = createPathValidBinding();
+
+    private BooleanBinding createPathValidBinding() {
+        return Bindings.createBooleanBinding(() -> {
+            String path = PathComboBox.super.getEditor().textProperty().get();
+            if (path.isEmpty()) {
+                path = getSelectedPath();
+            }
+            File file = new File(path);
+            return !(isEnteredPathExistingDirectory(file));
+        });
+    }
+
+    private void setPathsInComboBox() {
         if (leftViewVisible()) {
             if (rightViewVisible()) {
                 addBothViews();
@@ -26,26 +62,45 @@ public class PathComboBox extends ComboBox<DirectoryView> {
         if (rightViewVisible() && !leftViewVisible()) {
             addRightView();
         }
-        createComponent();
-        super.getEditor().setOnKeyPressed(this::handleKeyEvent);
     }
 
     private void handleKeyEvent(KeyEvent event) {
-        if (event.isControlDown() && KeyCode.TAB.equals(event.getCode())) {
+        if (pressedCtrlTab(event)) {
             selectNextItem();
-            super.getEditor().positionCaret(getSelectedPath().length());
+            moveCaretToTextEnd();
             event.consume();
         }
     }
 
+    private boolean pressedCtrlTab(KeyEvent event) {
+        return event.isControlDown() && KeyCode.TAB.equals(event.getCode());
+    }
+
+    private void moveCaretToTextEnd() {
+        super.getEditor().positionCaret(getSelectedPath().length());
+    }
+
     private void selectNextItem() {
-        int curentIndex = super.getSelectionModel().getSelectedIndex();
-        int maxIndex = super.getItems().size();
-        if (curentIndex == maxIndex - 1) {
-            super.getSelectionModel().select(0);
+        if (selectedLastItem()) {
+            selectFirstItem();
         } else {
-            super.getSelectionModel().select(maxIndex - 1);
+            selectSecondItem();
         }
+    }
+
+    private void selectSecondItem() {
+        int maxIndex = getMaxIndex();
+        super.getSelectionModel().select(maxIndex - 1);
+    }
+
+    private int getMaxIndex() {
+        return super.getItems().size();
+    }
+
+    private boolean selectedLastItem() {
+        int maxIndex = getMaxIndex();
+        int curentIndex = super.getSelectionModel().getSelectedIndex();
+        return curentIndex == maxIndex - 1;
     }
 
     private boolean rightViewVisible() {
@@ -70,7 +125,22 @@ public class PathComboBox extends ComboBox<DirectoryView> {
 
     private void createComponent() {
         setButtonCellAndCellFactory();
-        super.setConverter(new StringConverter<DirectoryView>() {
+        super.setConverter(directoryViewStringConverter());
+        super.setEditable(true);
+        super.getEditor().textProperty().addListener((observable, oldValue, newValue) -> handleEditingEvent(newValue));
+        selectFirstItem();
+        super.getEditor().setOnKeyPressed(this::handleKeyEvent);
+    }
+
+    private void handleEditingEvent(String newValue) {
+        File enteredDirectoryPath = new File(newValue);
+        super.getEditor().setStyle(
+                isEnteredPathExistingDirectory(enteredDirectoryPath) ? null : "-fx-text-fill: red");
+        pathValidBinding.invalidate();
+    }
+
+    private StringConverter<DirectoryView> directoryViewStringConverter() {
+        return new StringConverter<DirectoryView>() {
             @Override
             public String toString(DirectoryView object) {
                 return object == null ? "" : object.getRootPath();
@@ -94,30 +164,11 @@ public class PathComboBox extends ComboBox<DirectoryView> {
             private boolean isLeftRootPath(String string) {
                 return string.equals(MainWindow.getLeftDirectoryView().getRootPath());
             }
-        });
-        super.setEditable(true);
-        super.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
-            File enteredDirectoryPath = new File(newValue);
-            if (enteredDirectoryPath.exists() && enteredDirectoryPath.isDirectory()) {
-                super.getEditor().setStyle(null);
-                pathValidBinding.invalidate();
-            } else {
-                super.getEditor().setStyle("-fx-text-fill: red");
-                pathValidBinding.invalidate();
-            }
-        });
-        selectFirstItem();
+        };
     }
 
-    public PathComboBox(DirectoryView selectedView) {
-        super();
-        super.getItems().setAll(selectedView);
-        createComponent();
-        super.managedProperty().setValue(false);
-    }
-
-    public String getSelectedPath() {
-        return super.getSelectionModel().getSelectedItem().getRootPath();
+    private boolean isEnteredPathExistingDirectory(File enteredDirectoryPath) {
+        return enteredDirectoryPath.exists() && enteredDirectoryPath.isDirectory();
     }
 
     private void selectFirstItem() {
@@ -129,9 +180,7 @@ public class PathComboBox extends ComboBox<DirectoryView> {
             @Override
             protected void updateItem(DirectoryView dv, boolean empty) {
                 super.updateItem(dv, empty);
-                if (!empty) {
-                    setText(dv.getRootPath());
-                }
+                setText(empty ? "" : dv.getRootPath());
             }
         };
     }
@@ -141,24 +190,9 @@ public class PathComboBox extends ComboBox<DirectoryView> {
         super.setCellFactory(param -> pathComboBoxButtonCell());
     }
 
-    public void reloadSelected() {
-        String path = getSelectedPath();
-        if (isSelectionDirectoryView(path)) {
-            super.getSelectionModel().getSelectedItem().reload();
-        }
-    }
-
     private boolean isSelectionDirectoryView(String path) {
         return path.equals(MainWindow.getLeftDirectoryView().getRootPath())
                 || path.equals(MainWindow.getRightDirectoryView().getRootPath());
     }
 
-    public final BooleanBinding pathValidBinding = Bindings.createBooleanBinding(() -> {
-        String path = PathComboBox.super.getEditor().textProperty().get();
-        if (path.isEmpty()) {
-            path = getSelectedPath();
-        }
-        File file = new File(path);
-        return !(file.exists() && file.isDirectory());
-    });
 }

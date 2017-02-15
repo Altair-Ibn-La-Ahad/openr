@@ -1,6 +1,5 @@
 package pl.greywarden.openr.gui.directoryview.context_menu;
 
-import javafx.application.Platform;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -25,8 +24,11 @@ import pl.greywarden.openr.gui.menu.file.NewFileMenu;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
@@ -40,9 +42,15 @@ public class SingleSelectionContextMenu extends ContextMenu {
 
     private static final Set<String> editableFiles;
 
+    private static final Map<String, Class> supportedFilePreview;
+
     static {
         editableFiles = new HashSet<>();
         editableFiles.add("properties");
+
+        supportedFilePreview = new HashMap<>();
+        supportedFilePreview.put("image", PreviewImageDialog.class);
+        supportedFilePreview.put("text", PreviewTextDialog.class);
     }
 
     public SingleSelectionContextMenu(DirectoryView directoryView, AbstractEntry entry) {
@@ -170,13 +178,27 @@ public class SingleSelectionContextMenu extends ContextMenu {
 
     private MenuItem createPreviewMenuItem() {
         MenuItem preview = new MenuItem(getString("preview"));
-        preview.setVisible(isImage());
-        preview.setOnAction(event -> showPreviewImageDialog());
+        preview.setVisible(isPreviewSupported());
+        preview.setOnAction(event -> showPreviewDialog());
         return preview;
     }
 
-    private void showPreviewImageDialog() {
-        Platform.runLater(() -> new PreviewImageDialog(getSelectedFile()).show());
+    @SuppressWarnings("unchecked")
+    private void showPreviewDialog() {
+        try {
+            supportedFilePreview.get(getSimpleFileType())
+                    .getDeclaredConstructor(File.class).newInstance(getSelectedFile());
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getSimpleFileType() {
+        try {
+            return Files.probeContentType(getSelectedFile().toPath()).split("/")[0];
+        } catch (IOException | NullPointerException e) {
+            return "";
+        }
     }
 
     private MenuItem createOpenMenuItem() {
@@ -214,10 +236,15 @@ public class SingleSelectionContextMenu extends ContextMenu {
         }).start();
     }
 
-    private boolean isImage() {
+    private boolean isPreviewSupported() {
         try {
             String contentType = Files.probeContentType(getSelectedFile().toPath());
-            return contentType.contains("image");
+            for (String type : supportedFilePreview.keySet()) {
+                if (contentType.contains(type)) {
+                    return true;
+                }
+            }
+            return false;
         } catch (IOException ignored) {
             return false;
         }

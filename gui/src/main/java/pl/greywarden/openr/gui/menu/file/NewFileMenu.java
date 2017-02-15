@@ -21,24 +21,21 @@ public class NewFileMenu extends Menu {
         super.getItems().addAll(items);
     }
 
-    private void createTextMenuItem(Template template) {
-        MenuItem item = new MenuItem(getString(template.getName() + "-menu-item"));
-        item.setOnAction(event ->
-                new CreateFileDialog(template));
-        items.add(item);
-    }
-
     public NewFileMenu(DirectoryView selectedView) {
         super.setText(getString("new-file-menu"));
-        Template.getTemplatesByType("text")
-                .forEach(template -> createTextMenuItem(selectedView, template));
+        Template.getTemplatesByType("text").forEach(template -> createTextMenuItem(selectedView, template));
         super.getItems().addAll(items);
+    }
+
+    private void createTextMenuItem(Template template) {
+        MenuItem item = new MenuItem(getString(template.getName() + "-menu-item"));
+        item.setOnAction(event -> new CreateFileDialog(template));
+        items.add(item);
     }
 
     private void createTextMenuItem(DirectoryView selectedView, Template template) {
         MenuItem item = new MenuItem(getString(template.getName() + "-menu-item"));
-        item.setOnAction(event ->
-                new CreateFileDialog(template, selectedView));
+        item.setOnAction(event -> new CreateFileDialog(template, selectedView));
         items.add(item);
     }
 

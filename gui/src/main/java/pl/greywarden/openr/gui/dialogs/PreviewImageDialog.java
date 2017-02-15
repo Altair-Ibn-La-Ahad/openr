@@ -26,6 +26,7 @@ public class PreviewImageDialog extends Stage {
         imagePane.getChildren().setAll(imageView);
         super.setScene(new Scene(imagePane));
         centerOnScreen();
+        show();
     }
 
     private StackPane createImagePane(ImageView imageView) {

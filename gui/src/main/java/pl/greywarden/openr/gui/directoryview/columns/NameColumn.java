@@ -27,27 +27,43 @@ public class NameColumn extends TableColumn<AbstractEntry, AbstractEntry> {
             protected void updateItem(AbstractEntry item, boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty) {
-                    HBox vb = new HBox();
-                    vb.setAlignment(Pos.CENTER_LEFT);
                     String nameOfEntry = item.getEntryProperties().getBaseName();
                     Label nameLabel = new Label(nameOfEntry);
-                    ImageView iv = new ImageView(IconManager.getFileIconSmall(item.getEntryProperties().getAbsolutePath()));
-                    HBox.setMargin(iv, new Insets(0, 3, 0, (item instanceof ParentDirectoryEntry
-                            || item.getFilesystemEntry().getParentFile().getParentFile() == null) ? 0 : 8));
-                    vb.getChildren().addAll(iv, nameLabel);
-                    setGraphic(vb);
+                    ImageView icon = createIconForFilesystemEntry(item);
+                    setGraphic(createLabelWrapper(nameLabel, icon));
                     Tooltip.install(this, new Tooltip(item.getEntryProperties().getName()));
                 }
             }
+
+            private HBox createLabelWrapper(Label nameLabel, ImageView iv) {
+                HBox wrapper = new HBox();
+                wrapper.setAlignment(Pos.CENTER_LEFT);
+                wrapper.getChildren().addAll(iv, nameLabel);
+                return wrapper;
+            }
+
+            private ImageView createIconForFilesystemEntry(AbstractEntry item) {
+                ImageView icon = new ImageView(IconManager.getFileIconSmall(item.getEntryProperties().getAbsolutePath()));
+                HBox.setMargin(icon, new Insets(0, 3, 0, (isItemParentDirectoryEntry(item) || hasParent(item)) ? 0 : 8));
+                return icon;
+            }
+
+            private boolean hasParent(AbstractEntry item) {
+                return item.getFilesystemEntry().getParentFile().getParentFile() == null;
+            }
         });
         super.setComparator(nameComparator());
+    }
+
+    private boolean isItemParentDirectoryEntry(AbstractEntry item) {
+        return item instanceof ParentDirectoryEntry;
     }
 
     private Comparator<AbstractEntry> nameComparator() {
         return (o1, o2) -> {
             String n1 = o1.getEntryProperties().getBaseName();
             String n2 = o2.getEntryProperties().getBaseName();
-            if ("..".equals(n1) || "..".equals(n2)) {
+            if (isItemParentDirectoryEntry(o1) || isItemParentDirectoryEntry(o2)) {
                 return -1;
             }
             return n1.compareToIgnoreCase(n2);

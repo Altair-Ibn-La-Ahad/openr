@@ -51,7 +51,16 @@ public class DirectoryView extends TableView<EntryWrapper> {
     public void changePath(String rootPath) {
         this.rootPath = rootPath;
         rootEntry = new DirectoryEntry(rootPath);
-        loadData();
+        Task<Void> changePath = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                loadData();
+                return null;
+            }
+        };
+        Thread thread = new Thread(changePath);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private void build(String rootPath) {
@@ -60,20 +69,11 @@ public class DirectoryView extends TableView<EntryWrapper> {
     }
 
     private void loadData() {
-        Task<Void> load = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                DirectoryViewDataBuilder builder = new DirectoryViewDataBuilder(rootEntry);
-                makeFirstRowAlwaysFirst();
-                List<EntryWrapper> data = builder.getData();
-                setItems(FXCollections.observableList(data));
-                refresh();
-                return null;
-            }
-        };
-        Thread thread = new Thread(load);
-        thread.setDaemon(true);
-        thread.run();
+        DirectoryViewDataBuilder builder = new DirectoryViewDataBuilder(rootEntry);
+        makeFirstRowAlwaysFirst();
+        List<EntryWrapper> data = builder.getData();
+        setItems(FXCollections.observableList(data));
+        refresh();
     }
 
     private void makeFirstRowAlwaysFirst() {

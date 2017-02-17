@@ -31,10 +31,10 @@ public class FavouriteProgramsMenu extends Menu {
     private void createMenu() {
         List<MenuItem> items = createProgramItems();
         MenuItem addProgram = createAddProgramMenuItem();
-        MenuItem remove = createRemoveMenuItem();
+        MenuItem edit = createEditMenuItem();
 
         items.add(addProgram);
-        items.add(remove);
+        items.add(edit);
 
         super.getItems().setAll(items);
     }
@@ -53,12 +53,12 @@ public class FavouriteProgramsMenu extends Menu {
     private MenuItem createAddProgramMenuItem() {
         MenuItem addProgram = new MenuItem(getString("add-new-program"));
         addProgram.setGraphic(IconManager.getProgramIcon("plus"));
-        addProgram.setOnAction(event -> new AddNewProgramDialog(this));
+        addProgram.setOnAction(event -> new AddNewProgramDialog(this).showDialog());
         return addProgram;
     }
 
-    private MenuItem createRemoveMenuItem() {
-        MenuItem remove = new MenuItem(getString("remove-program"));
+    private MenuItem createEditMenuItem() {
+        MenuItem remove = new MenuItem(getString("edit-program"));
         remove.setGraphic(IconManager.getProgramIcon("delete-permanent-small"));
         remove.setOnAction(event -> new ModifyProgramsDialog(this));
         return remove;

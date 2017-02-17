@@ -19,21 +19,32 @@ import pl.greywarden.openr.gui.favourite_programs.FavouritePrograms;
 import pl.greywarden.openr.gui.favourite_programs.ProgramWrapper;
 import pl.greywarden.openr.gui.menu.favourite_programs.FavouriteProgramsMenu;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class ModifyProgramsDialog extends Dialog<Boolean> {
 
     private final FavouriteProgramsMenu parent;
+    private final List<ProgramWrapper> programsToDelete;
 
     public ModifyProgramsDialog(FavouriteProgramsMenu parent) {
         super();
         super.initStyle(StageStyle.UTILITY);
 
         this.parent = parent;
+        this.programsToDelete = new LinkedList<>();
 
         ListView<ProgramWrapper> programs = createProgramsListView();
 
-        super.getDialogPane().getButtonTypes().setAll(CommonButtons.OK);
+        super.getDialogPane().getButtonTypes().setAll(CommonButtons.CANCEL, CommonButtons.OK);
+        super.setResultConverter(param -> CommonButtons.OK.equals(param));
         super.getDialogPane().setContent(programs);
-        super.showAndWait();
+        super.showAndWait().ifPresent(confirmed -> {
+            if (confirmed) {
+                programsToDelete.forEach(FavouritePrograms::remove);
+                parent.invalidate();
+            }
+        });
     }
 
     private ListView<ProgramWrapper> createProgramsListView() {
@@ -56,9 +67,8 @@ public class ModifyProgramsDialog extends Dialog<Boolean> {
 
     private void removeSelectedItem(ListView<ProgramWrapper> programs) {
         ProgramWrapper selectedItem = programs.getSelectionModel().getSelectedItem();
+        programsToDelete.add(selectedItem);
         programs.getItems().remove(selectedItem);
-        FavouritePrograms.remove(selectedItem);
-        parent.invalidate();
     }
 
     private ListCell<ProgramWrapper> createProgramListCell(ListView<ProgramWrapper> programs) {
@@ -69,14 +79,25 @@ public class ModifyProgramsDialog extends Dialog<Boolean> {
                 HBox wrapper = new HBox();
                 if (!empty) {
                     ImageView programIcon = createProgramIcon(item);
+                    Button modify = createModifyButton(item);
                     Button remove = createRemoveButton(item);
                     Label name = new Label(item.getName());
                     Pane spacer = new Pane();
                     HBox.setHgrow(spacer, Priority.ALWAYS);
                     wrapper.setAlignment(Pos.CENTER);
-                    wrapper.getChildren().setAll(programIcon, name, spacer, remove);
+                    wrapper.getChildren().setAll(programIcon, name, spacer, modify, remove);
                 }
                 super.setGraphic(wrapper);
+            }
+
+            private Button createModifyButton(ProgramWrapper item) {
+                Button modify = new Button();
+                modify.setGraphic(IconManager.getProgramIcon("edit"));
+                modify.setOnAction(event -> {
+                    new EditProgramDialog(parent, item).showDialog();
+                    programs.getItems().setAll(FavouritePrograms.getPrograms());
+                });
+                return modify;
             }
 
             private ImageView createProgramIcon(ProgramWrapper item) {
@@ -94,8 +115,7 @@ public class ModifyProgramsDialog extends Dialog<Boolean> {
 
             private void removeProgramFromList(ProgramWrapper item) {
                 programs.getItems().remove(item);
-                FavouritePrograms.remove(item);
-                parent.invalidate();
+                programsToDelete.add(item);
             }
         };
     }

@@ -11,6 +11,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
 import javafx.stage.StageStyle;
+import lombok.AccessLevel;
+import lombok.Getter;
 import pl.greywarden.openr.gui.favourite_programs.FavouritePrograms;
 import pl.greywarden.openr.gui.favourite_programs.ProgramWrapper;
 import pl.greywarden.openr.gui.menu.favourite_programs.FavouriteProgramsMenu;
@@ -21,8 +23,11 @@ import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class AddNewProgramDialog extends Dialog<Boolean> {
 
+    @Getter(AccessLevel.PROTECTED)
     private TextField nameInput;
+    @Getter(AccessLevel.PROTECTED)
     private TextField pathInput;
+    @Getter(AccessLevel.PROTECTED)
     private TextField iconInput;
 
     private final FavouriteProgramsMenu parent;
@@ -36,6 +41,9 @@ public class AddNewProgramDialog extends Dialog<Boolean> {
         createDialog();
         super.setResultConverter(param -> CommonButtons.OK.equals(param));
         nameInput.requestFocus();
+    }
+
+    public void showDialog() {
         super.showAndWait().ifPresent(confirmed -> {
             if (confirmed) {
                 handleConfirm();
@@ -43,7 +51,7 @@ public class AddNewProgramDialog extends Dialog<Boolean> {
         });
     }
 
-    private void handleConfirm() {
+    protected void handleConfirm() {
         String name = nameInput.getText();
         String path = pathInput.getText();
         String iconPath = iconInput.getText();
@@ -102,6 +110,11 @@ public class AddNewProgramDialog extends Dialog<Boolean> {
         FileChooser.ExtensionFilter[] filters = getImageExtensionFilters();
         showIconChooser.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
+            File iconDirectory = new File(iconInput.getText());
+            if (iconDirectory.exists()) {
+                fileChooser.setInitialDirectory(iconDirectory.isFile()
+                        ? iconDirectory.getParentFile() : iconDirectory);
+            }
             fileChooser.getExtensionFilters().setAll(filters);
             File result = fileChooser.showOpenDialog(super.getOwner());
             iconInput.setText(result != null ? result.getAbsolutePath() : iconInput.getText());
@@ -111,9 +124,8 @@ public class AddNewProgramDialog extends Dialog<Boolean> {
     }
 
     private FileChooser.ExtensionFilter[] getImageExtensionFilters() {
-        return new FileChooser.ExtensionFilter[] {
-                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png"),
+        return new FileChooser.ExtensionFilter[]{
+                new FileChooser.ExtensionFilter("*.jpg, *.png", "*.jpg", "*.png")
         };
     }
 
@@ -121,6 +133,11 @@ public class AddNewProgramDialog extends Dialog<Boolean> {
         Button showProgramChooser = new Button("...");
         showProgramChooser.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
+            File programDirectory = new File(iconInput.getText());
+            if (programDirectory.exists()) {
+                fileChooser.setInitialDirectory(programDirectory.isFile()
+                        ? programDirectory.getParentFile() : programDirectory);
+            }
             File result = fileChooser.showOpenDialog(this.getOwner());
             pathInput.setText(result != null ? result.getAbsolutePath() : pathInput.getText());
         });

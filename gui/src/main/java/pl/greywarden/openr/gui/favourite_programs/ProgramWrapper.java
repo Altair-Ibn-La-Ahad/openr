@@ -1,20 +1,16 @@
 package pl.greywarden.openr.gui.favourite_programs;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ProgramWrapper {
 
-    private final String name;
-    private final String path;
+    private String name;
+    private String path;
     private String icon;
 
-    public ProgramWrapper(String name, String path, String icon) {
-        this(name, path);
-        this.icon = icon;
-    }
 }

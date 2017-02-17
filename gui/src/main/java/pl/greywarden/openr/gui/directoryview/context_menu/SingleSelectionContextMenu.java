@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
@@ -238,7 +239,7 @@ public class SingleSelectionContextMenu extends ContextMenu {
 
     private boolean isPreviewSupported() {
         try {
-            String contentType = Files.probeContentType(getSelectedFile().toPath());
+            String contentType = Optional.ofNullable(Files.probeContentType(getSelectedFile().toPath())).orElse("");
             for (String type : supportedFilePreview.keySet()) {
                 if (contentType.contains(type)) {
                     return true;

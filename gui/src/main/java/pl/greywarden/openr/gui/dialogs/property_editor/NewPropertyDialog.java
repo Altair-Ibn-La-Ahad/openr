@@ -40,7 +40,7 @@ public class NewPropertyDialog extends Dialog <Boolean> {
         String value = StringEscapeUtils.escapeJava(valueInput.getText());
         parent.getTableView().getItems().add(new PropertyWrapper(key, value));
         parent.getTableView().editedProperty.set(true);
-        parent.setTitleWithoutAsterisk();
+        parent.setTitleWithAsterisk();
         parent.propertiesEdited.invalidate();
     }
 

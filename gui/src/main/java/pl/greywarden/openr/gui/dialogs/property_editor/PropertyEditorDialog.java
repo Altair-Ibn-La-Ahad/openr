@@ -84,7 +84,7 @@ public class PropertyEditorDialog extends Stage {
             OutputStream outputStream = new FileOutputStream(file);
             tableView.getItems().forEach(property -> appendProperty(builder, property));
             outputStream.write(builder.toString().getBytes());
-            setTitleWithAsterisk();
+            setTitleWithoutAsterisk();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -110,11 +110,11 @@ public class PropertyEditorDialog extends Stage {
         tableView.getItems().setAll(new SortedList<>(filteredProperties));
     }
 
-    public void setTitleWithoutAsterisk() {
+    public void setTitleWithAsterisk() {
         super.setTitle(file.getAbsolutePath() + "*");
     }
 
-    private void setTitleWithAsterisk() {
+    private void setTitleWithoutAsterisk() {
         super.setTitle(file.getAbsolutePath());
     }
 }

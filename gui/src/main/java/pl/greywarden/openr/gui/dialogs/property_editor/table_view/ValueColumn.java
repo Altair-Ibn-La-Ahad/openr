@@ -31,7 +31,7 @@ public class ValueColumn extends TableColumn<PropertyWrapper, String> {
 
             @Override
             public void commitEdit(String newValue) {
-                super.commitEdit(StringEscapeUtils.escapeJava(newValue));
+                super.commitEdit(newValue);
             }
         };
     }
@@ -44,7 +44,9 @@ public class ValueColumn extends TableColumn<PropertyWrapper, String> {
             event.getTableView().getItems().get(selectedRow).setValue(newValue);
             PropertyEditorDialog dialog =
                     (PropertyEditorDialog) event.getTableView().getParent().getScene().getWindow();
-            dialog.setTitleWithoutAsterisk();
+            dialog.setTitleWithAsterisk();
+            dialog.getTableView().editedProperty.setValue(true);
+            dialog.propertiesEdited.invalidate();
         }
     }
 }

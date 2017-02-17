@@ -30,7 +30,7 @@ public class KeyColumn extends TableColumn<PropertyWrapper, String> {
         } else {
             table.getItems().get(selectedRow).setKey(newValue);
             table.editedProperty.setValue(true);
-            dialog.setTitleWithoutAsterisk();
+            dialog.setTitleWithAsterisk();
         }
         dialog.propertiesEdited.invalidate();
     }

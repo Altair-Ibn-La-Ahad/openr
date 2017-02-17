@@ -11,6 +11,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -41,8 +42,12 @@ public class FavouritePrograms {
                     element.getAttributeValue("name"),
                     element.getAttributeValue("path"),
                     element.getAttributeValue("icon"))));
-        } catch (IOException | JDOMException exception) {
-            log.error("Exception during loading favourite programs", exception);
+        } catch (JDOMException exception) {
+            log.error("Parse xml exception", exception);
+        } catch (FileNotFoundException exception) {
+            log.warn(String.format("File %s does not exist", sourceXml.getName()));
+        } catch (IOException exception) {
+            log.error(String.format("IOException during loading %s", sourceXml.getName()), exception);
         }
     }
 

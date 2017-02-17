@@ -16,4 +16,7 @@
     "builder" : "pl.greywarden.openr.templates.builders.DocxFileTemplateBuilder"},
   {"type" : "document",
     "name" : "pptx-file",
-    "builder" : "pl.greywarden.openr.templates.builders.PptxFileTemplateBuilder"}]}
+    "builder" : "pl.greywarden.openr.templates.builders.PptxFileTemplateBuilder"},
+  {"type" : "document",
+    "name" : "xlsx-file",
+    "builder" : "pl.greywarden.openr.templates.builders.XlsxFileTemplateBuilder"}]}

@@ -31,7 +31,7 @@ public class I18nManager {
             return ResourceBundle.getBundle("i18n/strings", getActualLocale(),
                     I18nManager.class.getClassLoader()).getString(key);
         } catch (MissingResourceException exception) {
-            log.error("Unable to find key for specified bundle", exception);
+            log.warn(String.format("No value for key %s", key));
             return key;
         }
     }

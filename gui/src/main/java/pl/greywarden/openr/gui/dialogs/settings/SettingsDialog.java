@@ -3,15 +3,19 @@ package pl.greywarden.openr.gui.dialogs.settings;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import pl.greywarden.openr.commons.I18nManager;
 import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.gui.dialogs.CommonButtons;
+import pl.greywarden.openr.gui.dialogs.putty.SetPuttyPathDialog;
 import pl.greywarden.openr.gui.main_window.MainWindow;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
@@ -23,12 +27,14 @@ public class SettingsDialog extends Dialog<ButtonType> {
 
     private CheckBox keepClipboard;
     private CheckBox confirmClose;
+    private Button setPuttyPath;
 
     private static boolean reloadRequired;
     private final GridPane layout = new GridPane();
     private Label languageLabel;
     private Label keepClipboardLabel;
     private Label confirmCloseLabel = new Label(getString("confirm-close") + "?");
+    private final Label puttyPathLabel = new Label("PuTTY");
 
     private final ButtonType apply = CommonButtons.APPLY;
     private final ButtonType ok = CommonButtons.OK;
@@ -42,11 +48,18 @@ public class SettingsDialog extends Dialog<ButtonType> {
         createKeepClipboardLabelAndCheck();
         createConfirmCloseLabelAndCheck();
         centerCheckBoxes();
+        createPuttyPathCustomization();
         createSettingsDialogLayout();
 
         super.getDialogPane().setContent(layout);
         createButtons();
         showDialog();
+    }
+
+    private void createPuttyPathCustomization() {
+        setPuttyPath = new Button("...");
+        setPuttyPath.setOnAction(event -> new SetPuttyPathDialog(ConfigManager.getSetting(Setting.PUTTY)));
+        GridPane.setHalignment(setPuttyPath, HPos.CENTER);
     }
 
     private void createButtons() {
@@ -60,6 +73,7 @@ public class SettingsDialog extends Dialog<ButtonType> {
         layout.addRow(0, languageLabel, selectLocale);
         layout.addRow(1, keepClipboardLabel, keepClipboard);
         layout.addRow(2, confirmCloseLabel, confirmClose);
+        layout.addRow(3, puttyPathLabel, setPuttyPath);
     }
 
     private void centerCheckBoxes() {
@@ -89,6 +103,7 @@ public class SettingsDialog extends Dialog<ButtonType> {
                     reloadRequired = true;
                     enableApplyButton();
                 });
+        HBox.setHgrow(selectLocale, Priority.ALWAYS);
     }
 
     private void createLayout() {

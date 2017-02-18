@@ -18,19 +18,26 @@ import static pl.greywarden.openr.commons.I18nManager.getString;
 
 public class SetPuttyPathDialog extends Dialog<Boolean> {
 
-    private final TextField pathInput;
+    private final TextField pathInput = new TextField();
 
     public SetPuttyPathDialog() {
         super();
-        super.setTitle(getString("putty-path"));
+        createAndShowDialog();
+    }
 
+    public SetPuttyPathDialog(String actualPath) {
+        pathInput.setText(actualPath == null ? "" : actualPath);
+        createAndShowDialog();
+    }
+
+    private void createAndShowDialog() {
+        super.setTitle(getString("putty-path"));
         GridPane layout = new GridPane();
         layout.setHgap(5);
         layout.setMinWidth(500);
 
         Label pathLabel = new Label(getString("path"));
         HBox pathInputWrapper = new HBox(5);
-        pathInput = new TextField();
         Button pathChooser = createPathChooserButton();
         pathInputWrapper.getChildren().setAll(pathInput, pathChooser);
 

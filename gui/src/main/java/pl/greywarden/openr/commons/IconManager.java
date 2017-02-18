@@ -57,7 +57,8 @@ public class IconManager {
     public static ImageView getProgramIcon(String name) {
         InputStream resource = IconManager.class.getClassLoader()
                 .getResourceAsStream(programIconsPath + name + ".png");
-        return resource != null ? new ImageView(new Image(resource)) : null;
+        return resource == null ? new ImageView() :
+                new ImageView(new Image(resource, smallIcon, smallIcon, true, true));
     }
 
     public static Image getFileIconSmall(String path) {

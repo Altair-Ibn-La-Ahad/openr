@@ -5,17 +5,22 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.stage.WindowEvent;
+import lombok.extern.log4j.Log4j;
 import pl.greywarden.openr.commons.IconManager;
 import pl.greywarden.openr.configuration.ConfigManager;
 import pl.greywarden.openr.configuration.Setting;
 import pl.greywarden.openr.gui.dialogs.create_file.CreateFileDialog;
 import pl.greywarden.openr.gui.dialogs.find.FindWindow;
 import pl.greywarden.openr.gui.dialogs.grep.GrepWindow;
+import pl.greywarden.openr.gui.dialogs.putty.SetPuttyPathDialog;
+
+import java.io.IOException;
 
 import static pl.greywarden.openr.configuration.ConfigManager.getSetting;
 
 import static pl.greywarden.openr.commons.I18nManager.getString;
 
+@Log4j
 public class MainWindowToolBar extends ToolBar {
 
     public MainWindowToolBar() {
@@ -31,9 +36,29 @@ public class MainWindowToolBar extends ToolBar {
         Button newFile = createNewFileButton();
         Button grep = createGrepButton();
         Button find = createFindButton();
+        Button putty = createPuttyButton();
         Button exit = createExitButton();
 
-        super.getItems().addAll(newFile, new Separator(), grep, find, new Separator(), exit);
+        super.getItems().addAll(newFile, new Separator(), grep, find, putty, new Separator(), exit);
+    }
+
+    private Button createPuttyButton() {
+        Button putty = new Button();
+        putty.setGraphic(IconManager.getProgramIcon("putty"));
+        Tooltip.install(putty, new Tooltip("PuTTY"));
+        putty.setOnAction(event -> {
+            String puttyPath = ConfigManager.getSetting(Setting.PUTTY);
+            if (puttyPath == null) {
+                new SetPuttyPathDialog();
+            } else {
+                try {
+                    new ProcessBuilder(puttyPath).start();
+                } catch (IOException e) {
+                    log.warn("Failed to start PuTTY", e);
+                }
+            }
+        });
+        return putty;
     }
 
     private Button createExitButton() {

@@ -49,7 +49,8 @@ public class ConfigManager {
     }
 
     public static String getSetting(Setting key) {
-        return savedProperties.get(key.CODE).toString();
+        Object result = savedProperties.getProperty(key.CODE);
+        return result == null ? null : result.toString();
     }
 
     private static File getConfigFile() throws URISyntaxException {

@@ -9,6 +9,9 @@ mainClassName = 'pl.greywarden.openr.app.Main'
 repositories {
     jcenter()
     mavenCentral()
+    maven {
+        url "https://repo.adobe.com/nexus/content/repositories/public/"
+    }
 }
 
 dependencies {
@@ -32,6 +35,9 @@ subprojects {
     repositories {
         jcenter()
         mavenCentral()
+        maven {
+            url "https://repo.adobe.com/nexus/content/repositories/public/"
+        }
     }
 
     dependencies {

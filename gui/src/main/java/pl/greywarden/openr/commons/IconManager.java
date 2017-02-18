@@ -1,18 +1,23 @@
 package pl.greywarden.openr.commons;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.ImagingConstants;
+import org.apache.commons.imaging.common.SimpleBufferedImageFactory;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import pl.greywarden.openr.templates.Template;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -80,23 +85,27 @@ public class IconManager {
                 .getResourceAsStream(filesystemIconsPath + iconName + ".png");
     }
 
-    public static ImageView getSmallIconFromPath(String path) {
+    private static ImageView getIconFromPath(String path, int sizeXY) {
         try {
-            return new ImageView(
-                    new Image(new FileInputStream(
-                            new File(path)), smallIcon, smallIcon, true, true));
-        } catch (FileNotFoundException e) {
+            final Map<String, Object> renderingParams = new HashMap<>();
+            renderingParams.put(ImagingConstants.BUFFERED_IMAGE_FACTORY, new SimpleBufferedImageFactory());
+            WritableImage resultImage = new WritableImage(sizeXY, sizeXY);
+            BufferedImage image = Imaging.getBufferedImage(new File(path), renderingParams);
+            ImageView result = new ImageView(SwingFXUtils.toFXImage(image, resultImage));
+            result.setFitHeight(sizeXY);
+            result.setFitWidth(sizeXY);
+            result.setSmooth(true);
+            return result;
+        } catch (IOException | ImageReadException e) {
             return new ImageView();
         }
     }
 
+    public static ImageView getSmallIconFromPath(String path) {
+        return getIconFromPath(path, smallIcon);
+    }
+
     public static ImageView getBigIconFromPath(String path) {
-        try {
-            return new ImageView(
-                    new Image(new FileInputStream(
-                            new File(path)), bigIcon, bigIcon, true, true));
-        } catch (FileNotFoundException e) {
-            return new ImageView();
-        }
+        return getIconFromPath(path, bigIcon);
     }
 }

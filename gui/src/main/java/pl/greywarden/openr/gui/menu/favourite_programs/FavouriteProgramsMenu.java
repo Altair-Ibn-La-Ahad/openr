@@ -59,7 +59,7 @@ public class FavouriteProgramsMenu extends Menu {
 
     private MenuItem createEditMenuItem() {
         MenuItem remove = new MenuItem(getString("edit-program"));
-        remove.setGraphic(IconManager.getProgramIcon("delete-permanent-small"));
+        remove.setGraphic(IconManager.getProgramIcon("edit"));
         remove.setOnAction(event -> new ModifyProgramsDialog(this));
         return remove;
     }

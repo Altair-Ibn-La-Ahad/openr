@@ -125,7 +125,7 @@ public class AddNewProgramDialog extends Dialog<Boolean> {
 
     private FileChooser.ExtensionFilter[] getImageExtensionFilters() {
         return new FileChooser.ExtensionFilter[]{
-                new FileChooser.ExtensionFilter("*.jpg, *.png", "*.jpg", "*.png")
+                new FileChooser.ExtensionFilter(getString("images"), "*.jpg", "*.png", "*.ico", "*.xpm")
         };
     }
 

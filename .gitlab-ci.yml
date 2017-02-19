@@ -1,0 +1,15 @@
+image: java:8
+before_script:
+    - apt-get update
+    - apt-get install -y openjfx
+    - chmod +x gradlew
+build:
+  stage: build
+  script:
+    - ./gradlew clean build assemble
+  allow_failure: false
+# Use the generated build output to run the tests.
+test:
+  stage: test
+  script:
+    - ./gradlew check

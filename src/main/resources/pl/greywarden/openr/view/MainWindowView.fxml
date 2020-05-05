@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.StatusBar?>
+<?import pl.greywarden.openr.component.ButtonWithIcon?>
+<?import pl.greywarden.openr.component.DirectoryTableView?>
+<?import pl.greywarden.openr.component.DirectoryViewPathComponent?>
+<?import pl.greywarden.openr.component.MenuItemWithIcon?>
+<?import java.net.URL?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pl.greywarden.openr.view.MainWindowView"
+      prefHeight="600.0" prefWidth="800.0">
+
+    <stylesheets>
+        <URL value="@/css/application.css"/>
+    </stylesheets>
+
+    <MenuBar>
+        <Menu text="File">
+            <Menu text="New file"/>
+            <Menu text="New document"/>
+            <MenuItemWithIcon icon="mdi-settings" text="Settings" accelerator="Shortcut+Alt+S"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Exit"/>
+        </Menu>
+        <Menu text="View">
+            <CheckMenuItem text="Status bar"/>
+            <CheckMenuItem text="Toolbar"/>
+            <SeparatorMenuItem/>
+            <CheckMenuItem text="Left panel"/>
+            <CheckMenuItem text="Right panel"/>
+            <SeparatorMenuItem/>
+            <CheckMenuItem text="Hidden files"/>
+        </Menu>
+        <Menu text="Tools">
+            <MenuItem text="Grep"/>
+            <MenuItem text="Find file"/>
+            <MenuItem text="Console"/>
+            <MenuItem text="SSH"/>
+        </Menu>
+        <Menu text="Programs">
+            <SeparatorMenuItem/>
+            <MenuItem text="Add new"/>
+            <MenuItem text="Edit"/>
+        </Menu>
+        <Menu text="Help">
+            <MenuItem text="About"/>
+            <MenuItem text="Help"/>
+        </Menu>
+    </MenuBar>
+    <ToolBar>
+        <ButtonWithIcon icon="mdi-file"/>
+        <ButtonWithIcon icon="mdi-settings"/>
+        <Separator/>
+        <ButtonWithIcon icon="mdi-file-find"/>
+        <ButtonWithIcon icon="mdi-binoculars"/>
+        <ButtonWithIcon icon="mdi-console"/>
+        <ButtonWithIcon icon="mdi-server-network"/>
+        <Separator/>
+        <ButtonWithIcon icon="mdi-exit-to-app"/>
+    </ToolBar>
+
+    <SplitPane VBox.vgrow="ALWAYS">
+        <VBox HBox.hgrow="ALWAYS" styleClass="left-right-padding-5px,bottom-padding-5px">
+            <DirectoryViewPathComponent styleClass="padding-5px" directoryViewId="dvLeft"/>
+            <DirectoryTableView VBox.vgrow="ALWAYS"/>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS" styleClass="left-right-padding-5px,bottom-padding-5px">
+            <DirectoryViewPathComponent styleClass="padding-5px" directoryViewId="dvRight"/>
+            <DirectoryTableView VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </SplitPane>
+    <StatusBar text="OpenR"/>
+
+</VBox>

@@ -1,48 +1,55 @@
-apply plugin: 'java'
-apply plugin: 'application'
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'org.springframework.boot' version '2.2.6.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'io.freefair.lombok' version '5.0.1'
+    id 'io.wusa.semver-git-plugin' version '2.0.2'
+}
+
+javafx {
+    version = '11'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+wrapper {
+    gradleVersion = '6.3'
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
 
 group 'pl.greywarden.openr'
-version '0.1.5-alpha'
 
-mainClassName = 'pl.greywarden.openr.app.Main'
+semver {
+    snapshotSuffix = "SNAPSHOT"
+    dirtyMarker = "dirty"
+    branches {
+        branch {
+            regex = ".+"
+            incrementer = "MINOR_INCREMENTER"
+            formatter = { "${semver.info.version.major}.${semver.info.version.minor}.${semver.info.version.patch}+build.${semver.info.count}" }
+        }
+    }
+}
+version = semver.info
+
+mainClassName = 'pl.greywarden.openr.OpenR'
 
 repositories {
-    jcenter()
     mavenCentral()
-    maven {
-        url "https://repo.adobe.com/nexus/content/repositories/public/"
-    }
 }
 
 dependencies {
-    compile project(':app')
-}
+    implementation 'org.springframework.boot:spring-boot-starter'
 
+    implementation 'de.saxsys:mvvmfx:1.8.0'
+    implementation 'de.saxsys:mvvmfx-spring-boot:1.8.0'
 
-task install {}
-install.dependsOn (build, installDist)
+    implementation 'org.kordamp.ikonli:ikonli-javafx:11.3.4'
+    implementation 'org.kordamp.ikonli:ikonli-material-pack:11.3.4'
+    implementation 'org.kordamp.ikonli:ikonli-materialdesign-pack:11.3.4'
 
-task copyDist(type: Copy) {
-     from 'build/distributions'
-     into 'dist'
- }
-
-subprojects {
-    apply plugin: 'java'
-
-    sourceCompatibility = 1.8
-
-    repositories {
-        jcenter()
-        mavenCentral()
-        maven {
-            url "https://repo.adobe.com/nexus/content/repositories/public/"
-        }
-    }
-
-    dependencies {
-        testCompile 'junit:junit:4.+'
-        compile group: 'log4j', name: 'log4j', version: '1.2.17'
-        compile group: 'org.projectlombok', name: 'lombok', version: '1.16.12'
-    }
+    implementation 'org.controlsfx:controlsfx:11.0.1'
 }

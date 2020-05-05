@@ -1,6 +1,0 @@
-group 'pl.greywarden.openr'
-version '0.1.5-alpha'
-
-dependencies {
-    compile project(':gui')
-}

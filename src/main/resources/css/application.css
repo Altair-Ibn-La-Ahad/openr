@@ -1,0 +1,11 @@
+.padding-5px {
+    -fx-padding: 5px;
+}
+
+.left-right-padding-5px {
+    -fx-padding: 0 5px;
+}
+
+.bottom-padding-5px {
+    -fx-padding: 0 0 5px 0;
+}

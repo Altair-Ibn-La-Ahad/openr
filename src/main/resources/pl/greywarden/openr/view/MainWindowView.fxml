@@ -31,7 +31,7 @@
             <Menu text="New document"/>
             <MenuItemWithIcon icon="mdi-settings" text="Settings" accelerator="Shortcut+Alt+S"/>
             <SeparatorMenuItem/>
-            <MenuItem text="Exit"/>
+            <MenuItem text="Exit" onAction="#exitApplication"/>
         </Menu>
         <Menu text="View">
             <CheckMenuItem text="Status bar"/>
@@ -67,7 +67,7 @@
         <ButtonWithIcon icon="mdi-console"/>
         <ButtonWithIcon icon="mdi-server-network"/>
         <Separator/>
-        <ButtonWithIcon icon="mdi-exit-to-app"/>
+        <ButtonWithIcon icon="mdi-exit-to-app" onAction="#exitApplication"/>
     </ToolBar>
 
     <SplitPane VBox.vgrow="ALWAYS">

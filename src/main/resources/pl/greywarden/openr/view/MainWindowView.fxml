@@ -54,8 +54,8 @@
             <MenuItem text="Edit"/>
         </Menu>
         <Menu text="Help">
-            <MenuItem text="About"/>
-            <MenuItem text="Help"/>
+            <MenuItemWithIcon text="About" icon="mdi-information-outline"/>
+            <MenuItemWithIcon text="Help" icon="mdi-help-circle-outline"/>
         </Menu>
     </MenuBar>
     <ToolBar>

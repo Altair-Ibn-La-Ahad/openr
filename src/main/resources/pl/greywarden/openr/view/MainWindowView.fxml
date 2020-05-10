@@ -54,10 +54,11 @@
             <MenuItem text="Edit"/>
         </Menu>
         <Menu text="Help">
-            <MenuItemWithIcon text="About" icon="mdi-information-outline"/>
+            <MenuItemWithIcon text="About" icon="mdi-information-outline" onAction="#showAboutDialog"/>
             <MenuItemWithIcon text="Help" icon="mdi-help-circle-outline"/>
         </Menu>
     </MenuBar>
+
     <ToolBar>
         <ButtonWithIcon icon="mdi-file"/>
         <ButtonWithIcon icon="mdi-settings"/>

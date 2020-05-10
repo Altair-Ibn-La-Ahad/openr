@@ -53,3 +53,11 @@ dependencies {
 
     implementation 'org.controlsfx:controlsfx:11.0.1'
 }
+
+processResources {
+    doFirst {
+        def resourcesDir = sourceSets.main.output.resourcesDir
+        resourcesDir.mkdirs()
+        new File(resourcesDir, "app-info.properties").text = "app-version=$version"
+    }
+}

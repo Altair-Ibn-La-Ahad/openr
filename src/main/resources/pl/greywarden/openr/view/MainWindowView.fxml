@@ -22,8 +22,8 @@
 <?import javafx.scene.control.TextField?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="pl.greywarden.openr.view.MainWindowView"
-      prefHeight="600.0" prefWidth="800.0">
+      fx:id="mainContainer"
+      fx:controller="pl.greywarden.openr.view.MainWindowView">
 
     <stylesheets>
         <URL value="@/css/application.css"/>

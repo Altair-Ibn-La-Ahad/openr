@@ -3,12 +3,15 @@ package pl.greywarden.openr.view;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +22,9 @@ import java.util.ResourceBundle;
 @Component
 public class MainWindowView implements FxmlView<MainWindowViewModel>, Initializable {
     @FXML
+    private VBox mainContainer;
+
+    @FXML
     private TextField selectedFile;
 
     @InjectViewModel
@@ -26,6 +32,20 @@ public class MainWindowView implements FxmlView<MainWindowViewModel>, Initializa
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        mainContainer.setPrefWidth(mainWindowViewModel.getWidth());
+        mainContainer.setPrefHeight(mainWindowViewModel.getHeight());
+
+        mainContainer.widthProperty().addListener(observable -> {
+            if (!getWindow().isMaximized()) {
+                mainWindowViewModel.mainWindowWidthProperty().setValue(((ReadOnlyDoubleProperty)observable).get());
+            }
+        });
+        mainContainer.heightProperty().addListener(observable -> {
+            if (!getWindow().isMaximized()) {
+                mainWindowViewModel.mainWindowHeightProperty().setValue(((ReadOnlyDoubleProperty)observable).get());
+            }
+        });
+
         selectedFile.textProperty().bindBidirectional(mainWindowViewModel.selectedFileProperty());
     }
 
@@ -53,4 +73,9 @@ public class MainWindowView implements FxmlView<MainWindowViewModel>, Initializa
         
         aboutDialog.show();
     }
+
+    private Stage getWindow() {
+        return (Stage) mainContainer.getScene().getWindow();
+    }
+
 }

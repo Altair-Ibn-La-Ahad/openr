@@ -3,6 +3,7 @@ package pl.greywarden.openr;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.spring.MvvmfxSpringApplication;
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,8 +17,13 @@ public class OpenR extends MvvmfxSpringApplication {
 
     @Override
     public void startMvvmfx(Stage stage) {
-        var view = FluentViewLoader.fxmlView(MainWindowView.class).load().getView();
+        var viewTuple = FluentViewLoader.fxmlView(MainWindowView.class).load();
+        var view = viewTuple.getView();
+        var viewModel = viewTuple.getViewModel();
+
         stage.setScene(new Scene(view));
+        stage.setMaximized(viewModel.isMaximized());
+        stage.maximizedProperty().addListener(observable -> viewModel.isMaximizedProperty().setValue(((ReadOnlyBooleanProperty) observable).get()));
         stage.setTitle("OpenR");
         stage.show();
     }

@@ -16,6 +16,10 @@
 <?import pl.greywarden.openr.component.DirectoryViewPathComponent?>
 <?import pl.greywarden.openr.component.MenuItemWithIcon?>
 <?import java.net.URL?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="pl.greywarden.openr.view.MainWindowView"
@@ -81,6 +85,17 @@
             <DirectoryTableView VBox.vgrow="ALWAYS"/>
         </VBox>
     </SplitPane>
-    <StatusBar text="OpenR"/>
+    <StatusBar text="OpenR">
+        <rightItems>
+            <GridPane hgap="10.0">
+                <columnConstraints>
+                    <ColumnConstraints/>
+                    <ColumnConstraints minWidth="600"/>
+                </columnConstraints>
+                <Label text="Selected file" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="selectedFile" editable="false" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            </GridPane>
+        </rightItems>
+    </StatusBar>
 
 </VBox>

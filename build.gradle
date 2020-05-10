@@ -61,3 +61,4 @@ processResources {
         new File(resourcesDir, "app-info.properties").text = "app-version=$version"
     }
 }
+run.mustRunAfter('processResources')

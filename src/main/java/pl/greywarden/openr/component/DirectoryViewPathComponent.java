@@ -37,4 +37,8 @@ public class DirectoryViewPathComponent extends GridPane {
 
         super.addRow(0, pathLabel, pathTextField, goButton, refreshButton);
     }
+
+    public StringProperty textProperty() {
+        return this.pathTextField.textProperty();
+    }
 }

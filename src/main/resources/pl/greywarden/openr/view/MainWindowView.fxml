@@ -77,12 +77,12 @@
 
     <SplitPane VBox.vgrow="ALWAYS">
         <VBox HBox.hgrow="ALWAYS" styleClass="left-right-padding-5px,bottom-padding-5px">
-            <DirectoryViewPathComponent styleClass="padding-5px" directoryViewId="dvLeft"/>
-            <DirectoryTableView VBox.vgrow="ALWAYS"/>
+            <DirectoryViewPathComponent fx:id="leftPath" styleClass="padding-5px" directoryViewId="dvLeft"/>
+            <DirectoryTableView fx:id="dvLeft" VBox.vgrow="ALWAYS"/>
         </VBox>
         <VBox HBox.hgrow="ALWAYS" styleClass="left-right-padding-5px,bottom-padding-5px">
-            <DirectoryViewPathComponent styleClass="padding-5px" directoryViewId="dvRight"/>
-            <DirectoryTableView VBox.vgrow="ALWAYS"/>
+            <DirectoryViewPathComponent fx:id="rightPath" styleClass="padding-5px" directoryViewId="dvRight"/>
+            <DirectoryTableView fx:id="dvRight" VBox.vgrow="ALWAYS"/>
         </VBox>
     </SplitPane>
     <StatusBar text="OpenR">

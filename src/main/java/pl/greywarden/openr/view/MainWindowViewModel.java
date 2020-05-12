@@ -10,26 +10,45 @@ import javafx.beans.property.StringProperty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+import pl.greywarden.openr.domain.FilesystemEntryWrapper;
+import pl.greywarden.openr.service.FilesystemEntryWrapperFactory;
+import pl.greywarden.openr.service.FilesystemService;
 
 import javax.annotation.PreDestroy;
+import java.util.List;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 
 @Component
 @PropertySource("classpath:/app-info.properties")
 public class MainWindowViewModel implements ViewModel {
     private final Preferences applicationSettings;
+    private final FilesystemService filesystemService;
+
     private final StringProperty selectedFileProperty = new SimpleStringProperty();
+
+    private final StringProperty leftPath = new SimpleStringProperty();
+    private final StringProperty rightPathProperty = new SimpleStringProperty();
 
     private final DoubleProperty mainWindowWidthProperty = new SimpleDoubleProperty();
     private final DoubleProperty mainWindowHeightProperty = new SimpleDoubleProperty();
     private final BooleanProperty isMaximizedProperty = new SimpleBooleanProperty();
+    private final FilesystemEntryWrapperFactory filesystemEntryWrapperFactory;
 
-    public MainWindowViewModel(Preferences applicationSettings) {
+    public MainWindowViewModel(Preferences applicationSettings,
+                               FilesystemService filesystemService,
+                               FilesystemEntryWrapperFactory filesystemEntryWrapperFactory) {
         this.applicationSettings = applicationSettings;
 
         mainWindowWidthProperty.setValue(applicationSettings.getDouble("main-window.width", 1024));
         mainWindowHeightProperty.setValue(applicationSettings.getDouble("main-window.height", 768));
         isMaximizedProperty.setValue(applicationSettings.getBoolean("main-window.is-maximized", true));
+
+        leftPath.setValue(applicationSettings.get("main-window.left-path", System.getProperty("user.dir")));
+        rightPathProperty.setValue(applicationSettings.get("main-window.right-path", System.getProperty("user.dir")));
+
+        this.filesystemService = filesystemService;
+        this.filesystemEntryWrapperFactory = filesystemEntryWrapperFactory;
     }
 
     @Value("${app-version}")
@@ -80,5 +99,20 @@ public class MainWindowViewModel implements ViewModel {
 
     public BooleanProperty isMaximizedProperty() {
         return this.isMaximizedProperty;
+    }
+
+    public StringProperty rightPathProperty() {
+        return rightPathProperty;
+    }
+
+    public StringProperty leftPathProperty() {
+        return leftPath;
+    }
+
+    public List<FilesystemEntryWrapper> getFiles(StringProperty textProperty) {
+        return filesystemService.getContentOfDirectory(textProperty.getValue())
+                .stream()
+                .map(filesystemEntryWrapperFactory::wrap)
+                .collect(Collectors.toList());
     }
 }

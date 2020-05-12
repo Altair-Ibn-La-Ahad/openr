@@ -14,6 +14,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import pl.greywarden.openr.component.DirectoryTableView;
+import pl.greywarden.openr.component.DirectoryViewPathComponent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -22,8 +24,16 @@ import java.util.ResourceBundle;
 @Component
 public class MainWindowView implements FxmlView<MainWindowViewModel>, Initializable {
     @FXML
-    private VBox mainContainer;
+    public DirectoryTableView dvLeft;
+    @FXML
+    public DirectoryTableView dvRight;
 
+    @FXML
+    private VBox mainContainer;
+    @FXML
+    private DirectoryViewPathComponent leftPath;
+    @FXML
+    private DirectoryViewPathComponent rightPath;
     @FXML
     private TextField selectedFile;
 
@@ -32,6 +42,26 @@ public class MainWindowView implements FxmlView<MainWindowViewModel>, Initializa
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        configureMainContainerSize();
+
+        leftPath.textProperty().bindBidirectional(mainWindowViewModel.leftPathProperty());
+        rightPath.textProperty().bindBidirectional(mainWindowViewModel.rightPathProperty());
+
+        dvLeft.pathProperty().bindBidirectional(leftPath.textProperty());
+        dvRight.pathProperty().bindBidirectional(rightPath.textProperty());
+
+        selectedFile.textProperty().bindBidirectional(mainWindowViewModel.selectedFileProperty());
+
+        Platform.runLater(() -> changeDirectory(dvLeft));
+        Platform.runLater(() -> changeDirectory(dvRight));
+    }
+
+    private void changeDirectory(DirectoryTableView tableView) {
+        var files = mainWindowViewModel.getFiles(tableView.pathProperty());
+        tableView.setData(files);
+    }
+
+    private void configureMainContainerSize() {
         mainContainer.setPrefWidth(mainWindowViewModel.getWidth());
         mainContainer.setPrefHeight(mainWindowViewModel.getHeight());
 
@@ -45,8 +75,6 @@ public class MainWindowView implements FxmlView<MainWindowViewModel>, Initializa
                 mainWindowViewModel.mainWindowHeightProperty().setValue(((ReadOnlyDoubleProperty)observable).get());
             }
         });
-
-        selectedFile.textProperty().bindBidirectional(mainWindowViewModel.selectedFileProperty());
     }
 
     @FXML

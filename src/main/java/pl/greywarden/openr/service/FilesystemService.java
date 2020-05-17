@@ -20,6 +20,6 @@ public class FilesystemService {
     private FilesystemEntry toFilesystemEntry(File file) {
         var uri = file.toURI();
         var type = file.isFile() ? FilesystemEntry.EntryType.FILE : FilesystemEntry.EntryType.DIRECTORY;
-        return new FilesystemEntry(uri, type);
+        return new FilesystemEntry(uri, type, file.isHidden());
     }
 }

@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -27,7 +28,6 @@ public class MainWindowView implements FxmlView<MainWindowViewModel>, Initializa
     private DirectoryTableView dvLeft;
     @FXML
     private DirectoryTableView dvRight;
-
     @FXML
     private VBox mainContainer;
     @FXML
@@ -36,6 +36,8 @@ public class MainWindowView implements FxmlView<MainWindowViewModel>, Initializa
     private DirectoryViewPathComponent rightPath;
     @FXML
     private TextField selectedFile;
+    @FXML
+    private CheckMenuItem showHiddenFiles;
 
     @InjectViewModel
     private MainWindowViewModel mainWindowViewModel;
@@ -51,6 +53,11 @@ public class MainWindowView implements FxmlView<MainWindowViewModel>, Initializa
         dvRight.pathProperty().bindBidirectional(rightPath.textProperty());
 
         selectedFile.textProperty().bindBidirectional(mainWindowViewModel.selectedFileProperty());
+        showHiddenFiles.selectedProperty().bindBidirectional(mainWindowViewModel.showHiddenFilesProperty());
+        showHiddenFiles.selectedProperty().addListener(observable -> {
+            changeDirectory(dvLeft);
+            changeDirectory(dvRight);
+        });
 
         changeDirectory(dvLeft);
         changeDirectory(dvRight);

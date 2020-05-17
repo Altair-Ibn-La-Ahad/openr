@@ -34,6 +34,9 @@ public class MainWindowViewModel implements ViewModel {
     private final DoubleProperty mainWindowWidthProperty = new SimpleDoubleProperty();
     private final DoubleProperty mainWindowHeightProperty = new SimpleDoubleProperty();
     private final BooleanProperty isMaximizedProperty = new SimpleBooleanProperty();
+
+    private final BooleanProperty showHiddenFilesProperty = new SimpleBooleanProperty(false);
+
     private final FilesystemEntryWrapperFactory filesystemEntryWrapperFactory;
 
     public MainWindowViewModel(Preferences applicationSettings,
@@ -110,13 +113,18 @@ public class MainWindowViewModel implements ViewModel {
         return leftPath;
     }
 
+    public BooleanProperty showHiddenFilesProperty() {
+        return showHiddenFilesProperty;
+    }
+
     public DirectoryContent getFiles(String path) {
         var directory = new File(path);
         var directoryContent = new DirectoryContent(
                 filesystemService.getContentOfDirectory(directory)
-                .stream()
-                .map(filesystemEntryWrapperFactory::wrap)
-                .collect(Collectors.toList()));
+                        .stream()
+                        .filter(entry -> showHiddenFilesProperty.getValue() || !entry.isHidden())
+                        .map(filesystemEntryWrapperFactory::wrap)
+                        .collect(Collectors.toList()));
         if (directory.getParentFile() != null) {
             directoryContent.add(createParentDirectoryEntry());
             directoryContent.setHasParent(true);

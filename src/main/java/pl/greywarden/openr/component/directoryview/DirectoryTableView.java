@@ -44,6 +44,7 @@ public class DirectoryTableView extends TableView<FilesystemEntryWrapper> {
         Platform.runLater(() -> {
             nameColumn.hasParentProperty().setValue(files.hasParent());
             setItems(FXCollections.observableArrayList(files));
+            refresh();
             sort();
         });
     }

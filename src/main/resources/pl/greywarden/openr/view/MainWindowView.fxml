@@ -44,7 +44,7 @@
             <CheckMenuItem text="Left panel"/>
             <CheckMenuItem text="Right panel"/>
             <SeparatorMenuItem/>
-            <CheckMenuItem text="Hidden files"/>
+            <CheckMenuItem text="Hidden files" fx:id="showHiddenFiles"/>
         </Menu>
         <Menu text="Tools">
             <MenuItem text="Grep"/>

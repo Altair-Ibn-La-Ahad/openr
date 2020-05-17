@@ -8,6 +8,7 @@ import java.net.URI;
 public class FilesystemEntry {
     private final URI uri;
     private final EntryType type;
+    private final boolean hidden;
 
     public enum EntryType {
         FILE,

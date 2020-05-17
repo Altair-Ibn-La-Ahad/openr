@@ -12,8 +12,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.StatusBar?>
 <?import pl.greywarden.openr.component.ButtonWithIcon?>
-<?import pl.greywarden.openr.component.DirectoryTableView?>
-<?import pl.greywarden.openr.component.DirectoryViewPathComponent?>
+<?import pl.greywarden.openr.component.directoryview.DirectoryTableView?>
+<?import pl.greywarden.openr.component.directoryview.DirectoryViewPathComponent?>
 <?import pl.greywarden.openr.component.MenuItemWithIcon?>
 <?import java.net.URL?>
 <?import javafx.scene.layout.GridPane?>

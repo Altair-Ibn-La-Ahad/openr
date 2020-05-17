@@ -1,5 +1,6 @@
 package pl.greywarden.openr.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -8,6 +9,7 @@ import pl.greywarden.openr.domain.FilesystemEntry;
 import pl.greywarden.openr.domain.FilesystemEntryWrapper;
 
 import java.io.File;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermissions;
@@ -15,10 +17,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class FilesystemEntryWrapperFactory {
+    private final IconService iconService;
+
     public FilesystemEntryWrapper wrap(FilesystemEntry entry) {
         var uri = entry.getUri();
-        var type = entry.getType().name();
+        var type = entry.getType();
         var file = new File(uri);
 
         var name = getName(file);
@@ -26,15 +31,16 @@ public class FilesystemEntryWrapperFactory {
         var size = getSize(file);
         var modified = getLastModified(file);
         var privileges = getPrivileges(file);
+        var icon = iconService.getIcon(file);
 
-        return new FilesystemEntryWrapper(
-                name,
-                extension,
-                type,
-                size,
-                modified,
-                privileges
-        );
+        return new FilesystemEntryWrapper()
+                .withName(name)
+                .withExtension(extension)
+                .withSize(size)
+                .withModified(modified)
+                .withPrivileges(privileges)
+                .withType(type)
+                .withIcon(icon);
     }
 
     @SneakyThrows
@@ -59,8 +65,8 @@ public class FilesystemEntryWrapperFactory {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(lastModified.toMillis()));
     }
 
-    private String getSize(File file) {
-        return FileUtils.byteCountToDisplaySize(FileUtils.sizeOf(file));
+    private BigInteger getSize(File file) {
+        return file.isDirectory() ? null : FileUtils.sizeOfAsBigInteger(file);
     }
 
     private String getExtension(File file) {

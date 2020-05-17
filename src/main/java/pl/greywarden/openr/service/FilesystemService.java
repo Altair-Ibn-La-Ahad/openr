@@ -10,8 +10,8 @@ import java.util.stream.Stream;
 
 @Service
 public class FilesystemService {
-    public List<FilesystemEntry> getContentOfDirectory(String path) {
-        return Stream.ofNullable(new File(path).listFiles())
+    public List<FilesystemEntry> getContentOfDirectory(File directory) {
+        return Stream.ofNullable(directory.listFiles())
                 .flatMap(Stream::of)
                 .map(this::toFilesystemEntry)
                 .collect(Collectors.toList());

@@ -1,4 +1,4 @@
-package pl.greywarden.openr.component;
+package pl.greywarden.openr.component.directoryview;
 
 import javafx.beans.NamedArg;
 import javafx.beans.property.SimpleStringProperty;
@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import pl.greywarden.openr.component.ButtonWithIcon;
 
 public class DirectoryViewPathComponent extends GridPane {
     private final StringProperty directoryViewId = new SimpleStringProperty();

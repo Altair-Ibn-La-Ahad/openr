@@ -50,18 +50,21 @@ dependencies {
     implementation 'org.kordamp.ikonli:ikonli-javafx:11.3.4'
     implementation 'org.kordamp.ikonli:ikonli-material-pack:11.3.4'
     implementation 'org.kordamp.ikonli:ikonli-materialdesign-pack:11.3.4'
+    implementation 'org.kordamp.ikonli:ikonli-feather-pack:11.5.0'
+    implementation 'org.kordamp.ikonli:ikonli-octicons-pack:11.5.0'
 
     implementation 'org.controlsfx:controlsfx:11.0.1'
 
     implementation 'commons-io:commons-io:2.6'
     implementation 'org.apache.commons:commons-lang3:3.10'
+
+    implementation 'javax.activation:activation:1.1.1'
 }
 
 processResources {
-    doFirst {
+    doLast {
         def resourcesDir = sourceSets.main.output.resourcesDir
         resourcesDir.mkdirs()
         new File(resourcesDir, "app-info.properties").text = "app-version=$version"
     }
 }
-run.mustRunAfter('processResources')

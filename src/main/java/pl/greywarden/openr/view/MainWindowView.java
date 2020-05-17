@@ -14,8 +14,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import pl.greywarden.openr.component.DirectoryTableView;
-import pl.greywarden.openr.component.DirectoryViewPathComponent;
+import pl.greywarden.openr.component.directoryview.DirectoryTableView;
+import pl.greywarden.openr.component.directoryview.DirectoryViewPathComponent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -24,9 +24,9 @@ import java.util.ResourceBundle;
 @Component
 public class MainWindowView implements FxmlView<MainWindowViewModel>, Initializable {
     @FXML
-    public DirectoryTableView dvLeft;
+    private DirectoryTableView dvLeft;
     @FXML
-    public DirectoryTableView dvRight;
+    private DirectoryTableView dvRight;
 
     @FXML
     private VBox mainContainer;
@@ -52,13 +52,15 @@ public class MainWindowView implements FxmlView<MainWindowViewModel>, Initializa
 
         selectedFile.textProperty().bindBidirectional(mainWindowViewModel.selectedFileProperty());
 
-        Platform.runLater(() -> changeDirectory(dvLeft));
-        Platform.runLater(() -> changeDirectory(dvRight));
+        changeDirectory(dvLeft);
+        changeDirectory(dvRight);
     }
 
     private void changeDirectory(DirectoryTableView tableView) {
-        var files = mainWindowViewModel.getFiles(tableView.pathProperty());
-        tableView.setData(files);
+        Platform.runLater(() -> {
+            var files = mainWindowViewModel.getFiles(tableView.pathProperty().getValue());
+            tableView.setData(files);
+        });
     }
 
     private void configureMainContainerSize() {

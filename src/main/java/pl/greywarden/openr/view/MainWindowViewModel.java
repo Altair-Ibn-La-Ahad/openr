@@ -10,12 +10,13 @@ import javafx.beans.property.StringProperty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+import pl.greywarden.openr.domain.DirectoryContent;
 import pl.greywarden.openr.domain.FilesystemEntryWrapper;
 import pl.greywarden.openr.service.FilesystemEntryWrapperFactory;
 import pl.greywarden.openr.service.FilesystemService;
 
 import javax.annotation.PreDestroy;
-import java.util.List;
+import java.io.File;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
@@ -109,10 +110,21 @@ public class MainWindowViewModel implements ViewModel {
         return leftPath;
     }
 
-    public List<FilesystemEntryWrapper> getFiles(StringProperty textProperty) {
-        return filesystemService.getContentOfDirectory(textProperty.getValue())
+    public DirectoryContent getFiles(String path) {
+        var directory = new File(path);
+        var directoryContent = new DirectoryContent(
+                filesystemService.getContentOfDirectory(directory)
                 .stream()
                 .map(filesystemEntryWrapperFactory::wrap)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+        if (directory.getParentFile() != null) {
+            directoryContent.add(createParentDirectoryEntry());
+            directoryContent.setHasParent(true);
+        }
+        return directoryContent;
+    }
+
+    private FilesystemEntryWrapper createParentDirectoryEntry() {
+        return new FilesystemEntryWrapper();
     }
 }

@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.StatusBar?>
@@ -16,10 +20,6 @@
 <?import pl.greywarden.openr.component.directoryview.DirectoryViewPathComponent?>
 <?import pl.greywarden.openr.component.MenuItemWithIcon?>
 <?import java.net.URL?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:id="mainContainer"
@@ -77,11 +77,11 @@
 
     <SplitPane VBox.vgrow="ALWAYS">
         <VBox HBox.hgrow="ALWAYS" styleClass="left-right-padding-5px,bottom-padding-5px">
-            <DirectoryViewPathComponent fx:id="leftPath" styleClass="padding-5px" directoryViewId="dvLeft"/>
+            <DirectoryViewPathComponent fx:id="leftPath" styleClass="padding-5px"/>
             <DirectoryTableView fx:id="dvLeft" VBox.vgrow="ALWAYS"/>
         </VBox>
         <VBox HBox.hgrow="ALWAYS" styleClass="left-right-padding-5px,bottom-padding-5px">
-            <DirectoryViewPathComponent fx:id="rightPath" styleClass="padding-5px" directoryViewId="dvRight"/>
+            <DirectoryViewPathComponent fx:id="rightPath" styleClass="padding-5px"/>
             <DirectoryTableView fx:id="dvRight" VBox.vgrow="ALWAYS"/>
         </VBox>
     </SplitPane>

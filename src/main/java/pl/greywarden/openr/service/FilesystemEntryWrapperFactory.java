@@ -32,6 +32,7 @@ public class FilesystemEntryWrapperFactory {
         var modified = getLastModified(file);
         var privileges = getPrivileges(file);
         var icon = iconService.getIcon(file);
+        var path = file.getAbsolutePath();
 
         return new FilesystemEntryWrapper()
                 .withName(name)
@@ -40,6 +41,7 @@ public class FilesystemEntryWrapperFactory {
                 .withModified(modified)
                 .withPrivileges(privileges)
                 .withType(type)
+                .withPath(path)
                 .withIcon(icon);
     }
 

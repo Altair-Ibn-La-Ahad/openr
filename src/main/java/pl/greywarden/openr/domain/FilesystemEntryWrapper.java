@@ -16,6 +16,7 @@ public class FilesystemEntryWrapper {
     private BigInteger size;
     private String modified;
     private String privileges;
+    private String path;
 
     private FilesystemEntry.EntryType type;
     private String icon;

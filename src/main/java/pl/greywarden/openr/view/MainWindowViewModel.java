@@ -125,14 +125,15 @@ public class MainWindowViewModel implements ViewModel {
                         .filter(entry -> showHiddenFilesProperty.getValue() || !entry.isHidden())
                         .map(filesystemEntryWrapperFactory::wrap)
                         .collect(Collectors.toList()));
-        if (directory.getParentFile() != null) {
-            directoryContent.add(createParentDirectoryEntry());
+        var parentFile = directory.getParentFile();
+        if (parentFile != null) {
+            directoryContent.add(createParentDirectoryEntry(parentFile.getAbsolutePath()));
             directoryContent.setHasParent(true);
         }
         return directoryContent;
     }
 
-    private FilesystemEntryWrapper createParentDirectoryEntry() {
-        return new FilesystemEntryWrapper();
+    private FilesystemEntryWrapper createParentDirectoryEntry(String path) {
+        return new FilesystemEntryWrapper().withPath(path);
     }
 }

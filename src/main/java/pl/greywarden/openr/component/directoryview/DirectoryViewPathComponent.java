@@ -1,8 +1,8 @@
 package pl.greywarden.openr.component.directoryview;
 
-import javafx.beans.NamedArg;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
@@ -11,15 +11,13 @@ import javafx.scene.layout.Priority;
 import pl.greywarden.openr.component.ButtonWithIcon;
 
 public class DirectoryViewPathComponent extends GridPane {
-    private final StringProperty directoryViewId = new SimpleStringProperty();
     private final Label pathLabel = new Label();
     private final TextField pathTextField = new TextField();
     private final ButtonWithIcon goButton = new ButtonWithIcon("gmi-forward", 18);
     private final ButtonWithIcon refreshButton = new ButtonWithIcon("gmi-refresh", 18);
 
-    public DirectoryViewPathComponent(@NamedArg("directoryViewId") String directoryViewId) {
+    public DirectoryViewPathComponent() {
         super();
-        this.directoryViewId.setValue(directoryViewId);
         initComponent();
     }
 
@@ -37,6 +35,11 @@ public class DirectoryViewPathComponent extends GridPane {
         super.getColumnConstraints().setAll(labelColumnConstraint, pathColumnConstraint, goButtonColumnConstraint, refreshButtonColumnConstraint);
 
         super.addRow(0, pathLabel, pathTextField, goButton, refreshButton);
+    }
+
+    public void setChangePathHandler(EventHandler<ActionEvent> handler) {
+        pathTextField.setOnAction(handler);
+        goButton.setOnAction(handler);
     }
 
     public StringProperty textProperty() {

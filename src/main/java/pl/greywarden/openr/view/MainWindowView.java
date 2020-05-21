@@ -11,12 +11,14 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import pl.greywarden.openr.component.directoryview.DirectoryTableView;
 import pl.greywarden.openr.component.directoryview.DirectoryViewPathComponent;
+import pl.greywarden.openr.domain.FilesystemEntry;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -52,20 +54,40 @@ public class MainWindowView implements FxmlView<MainWindowViewModel>, Initializa
         dvLeft.pathProperty().bindBidirectional(leftPath.textProperty());
         dvRight.pathProperty().bindBidirectional(rightPath.textProperty());
 
+        dvLeft.setDoubleClickHandler(event -> doubleClickHandler(dvLeft, event));
+        dvRight.setDoubleClickHandler(event -> doubleClickHandler(dvRight, event));
+
+        leftPath.setChangePathHandler(event -> changeDirectory(dvLeft, leftPath.textProperty().getValue()));
+        rightPath.setChangePathHandler(event -> changeDirectory(dvRight, rightPath.textProperty().getValue()));
+
+        leftPath.textProperty().bindBidirectional(dvLeft.pathProperty());
+        rightPath.textProperty().bindBidirectional(dvRight.pathProperty());
+
         selectedFile.textProperty().bindBidirectional(mainWindowViewModel.selectedFileProperty());
         showHiddenFiles.selectedProperty().bindBidirectional(mainWindowViewModel.showHiddenFilesProperty());
         showHiddenFiles.selectedProperty().addListener(observable -> {
-            changeDirectory(dvLeft);
-            changeDirectory(dvRight);
+            changeDirectory(dvLeft, dvLeft.pathProperty().getValue());
+            changeDirectory(dvRight, dvRight.pathProperty().getValue());
         });
 
-        changeDirectory(dvLeft);
-        changeDirectory(dvRight);
+        changeDirectory(dvLeft, dvLeft.pathProperty().getValue());
+        changeDirectory(dvRight, dvRight.pathProperty().getValue());
     }
 
-    private void changeDirectory(DirectoryTableView tableView) {
+    private void doubleClickHandler(DirectoryTableView dv, MouseEvent event) {
+        var selectedItems = dv.getSelectionModel().getSelectedItems();
+        if (selectedItems.size() == 1 && event.getClickCount() == 2) {
+            var selectedItem = selectedItems.get(0);
+            if (selectedItem.getType() == FilesystemEntry.EntryType.DIRECTORY) {
+                changeDirectory(dv, selectedItem.getPath());
+            }
+        }
+    }
+
+    private void changeDirectory(DirectoryTableView tableView, String path) {
         Platform.runLater(() -> {
-            var files = mainWindowViewModel.getFiles(tableView.pathProperty().getValue());
+            var files = mainWindowViewModel.getFiles(path);
+            tableView.pathProperty().setValue(path);
             tableView.setData(files);
         });
     }

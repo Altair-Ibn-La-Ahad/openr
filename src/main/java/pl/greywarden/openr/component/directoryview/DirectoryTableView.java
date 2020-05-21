@@ -4,9 +4,12 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import pl.greywarden.openr.component.directoryview.column.ExtensionColumn;
 import pl.greywarden.openr.component.directoryview.column.NameColumn;
 import pl.greywarden.openr.component.directoryview.column.SizeColumn;
@@ -81,5 +84,13 @@ public class DirectoryTableView extends TableView<FilesystemEntryWrapper> {
         extensionColumn.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getExtension()));
         modifiedColumn.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getModified()));
         privilegesColumn.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getPrivileges()));
+    }
+
+    public void setDoubleClickHandler(EventHandler<? super MouseEvent> handler) {
+        super.setRowFactory(tv -> {
+            var row = new TableRow<FilesystemEntryWrapper>();
+            row.setOnMouseClicked(handler);
+            return row;
+        });
     }
 }
